@@ -170,13 +170,10 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
   const GitlabDiv = () => (
       <div id="gitlabDiv">
           <TextField
-//             margin={{5}}
-//             sx={{ m: 1, width: '25ch' }}
             id="GitlabUsername"
             label="Gitlab Account Username"
             type="text"
             style={{width: 250}}
-//             variant="outlined"
             required
             InputProps={{
               startAdornment: (
@@ -187,13 +184,10 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
             }}
           />
           <TextField
-//             margin={{5}}
-//             sx={{ m: 1, width: '25ch' }}
             id="GitlabPassword"
             label="Gitlab Account Password"
             type="password"
             style={{width: 250}}
-//             variant="outlined"
             required
             InputProps={{
               startAdornment: (
@@ -281,16 +275,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         <DialogContentText>
             To add a repository, please select a repository type and enter the repository URL.
         </DialogContentText>
-{/*         <TextField */}
-{/*           margin="dense" */}
-{/*           id="RepositoryURL" */}
-{/*           label="Repository URL" */}
-{/*           type="text" */}
-{/*           fullWidth */}
-{/*           onChange={(e) => { */}
-{/*             setRepositoryURL(e.target.value) */}
-{/*           }} */}
-{/*         /> */}
         <label htmlFor="githubURL" margin="normal">
             <input type = "radio" id = "selectedGithub" name = "repoType" onClick={onClick1}/>
             GitHub
@@ -306,7 +290,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
             {showGitlabDiv ? <GitlabDiv /> : null}
         </div>
         <label htmlFor="sonarqubeURL" margin="normal">
-            <input type = "radio" value = "selectedSonar" name = "repoType" onClick={onClick2}/>
+            <input type = "radio" id = "selectedSonar" name = "repoType" onClick={onClick2}/>
             SonarQube
         </label>
         <div>
