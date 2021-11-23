@@ -15,8 +15,9 @@ import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
 import {RiAccountCircleFill} from 'react-icons/ri'
 import {GiToken} from 'react-icons/gi'
 
-export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, repoType}) {
+export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId}) {
   const [repositoryURL, setRepositoryURL] = useState("")
+  const [repoType, setRepoType] = useState("")
   const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
   const [gitlabRepositoryURL, setGitlabRepositoryURL] = useState("")
   const [sonarRepositoryURL, setSonarRepositoryURL] = useState("")
@@ -50,10 +51,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           if (response.includes(false) === false) {
             let payload = {
               projectId: projectId,
-              repositoryURL: repositoryURL,
-              githubRepositoryURL: githubRepositoryURL,
-              gitlabRepositoryURL: gitlabRepositoryURL,
-              sonarRepositoryURL: sonarRepositoryURL
+              repositoryURL: repositoryURL
             }
 
             Axios.post(`http://localhost:9100/pvs-api/project/${projectId}/repository/${repoType}`, payload,
@@ -154,6 +152,8 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           fullWidth
           onChange={(e) => {
             setGithubRepositoryURL(e.target.value)
+            setRepositoryURL(e.target.value)
+            setRepoType("github")
           }}
           required
           InputProps={{
@@ -226,6 +226,8 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
             fullWidth
             onChange={(e) => {
               setGitlabRepositoryURL(e.target.value)
+              setRepositoryURL(e.target.value)
+              setRepoType("gitlab")
             }}
             required
             InputProps={{
@@ -249,6 +251,8 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           fullWidth
           onChange={(e) => {
             setSonarRepositoryURL(e.target.value)
+            setRepositoryURL(e.target.value)
+            setRepoType("sonar")
           }}
           required
           InputProps={{
@@ -264,6 +268,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
 
   useEffect(() => {
     setRepositoryURL("")
+    setRepoType("")
     setGithubRepositoryURL("")
     setGitlabRepositoryURL("")
     setSonarRepositoryURL("")
