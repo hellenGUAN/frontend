@@ -32,7 +32,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
 
   const addRepository = () => {
     let checker = []
-    if (repositoryURL === "" && (githubRepositoryURL === "" && sonarRepositoryURL === "" && gitlabRepositoryURL === "")) {
+    if (githubRepositoryURL === "" && sonarRepositoryURL === "" && gitlabRepositoryURL === "") {
       alert("不準啦馬的>///<")
     } else {
 
@@ -281,16 +281,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         <DialogContentText>
             To add a repository, please select a repository type and enter the repository URL.
         </DialogContentText>
-        <TextField
-          margin="dense"
-          id="RepositoryURL"
-          label="Repository URL"
-          type="text"
-          fullWidth
-          onChange={(e) => {
-            setRepositoryURL(e.target.value)
-          }}
-        />
         <label htmlFor="githubURL" margin="normal">
             <input type = "radio" id = "selectedGithub" name = "repoType" onClick={onClick1}/>
             GitHub
