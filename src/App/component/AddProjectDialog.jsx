@@ -38,7 +38,7 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
     } catch (e) {
       alert(e?.response?.status)
       console.error(e)
-    }
+    } // 回傳給後端
 
     reloadProjects()
     handleClose()
