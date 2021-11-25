@@ -15,37 +15,33 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
   const [projectName, setProjectName] = useState("")
   const jwtToken = localStorage.getItem("jwtToken")
 
-  const createProject = () => {
-    let checker = []
-    if (projectName === "") {
+  const createProject = async () => {
+    if (projectName.trim() === "") {
       alert("不準啦馬的>///<")
-    } else {
-
-      Promise.all(checker)
-        .then((response) => {
-          if (response.includes(false) === false) {
-            let payload = {
-              projectName: projectName,
-              githubRepositoryURL: "",
-              sonarRepositoryURL: ""
-            } // 傳空的repository
-
-            Axios.post("http://localhost:9100/pvs-api/project", payload,
-              {headers: {"Authorization": `${jwtToken}`}})
-              .then(() => {
-                reloadProjects()
-                handleClose()
-              })
-              .catch((e) => {
-                alert(e.response.status)
-                console.error(e)
-              }) // 回傳project name給後端去create project
-          }
-        }).catch((e) => {
-        alert(e.response.status)
-        console.error(e)
-      })
+      return
     }
+
+    const payload = {
+      projectName,
+      githubRepositoryURL: "",
+      sonarRepositoryURL: ""
+    }
+
+    const config = {
+      headers: {
+        ...(jwtToken && {"Authorization": jwtToken})
+      }
+    }
+
+    try {
+      await Axios.post("http://localhost:9100/pvs-api/project", payload, config)
+    } catch (e) {
+      alert(e?.response?.status)
+      console.error(e)
+    }
+
+    reloadProjects()
+    handleClose()
   }
 
   // 刷新
