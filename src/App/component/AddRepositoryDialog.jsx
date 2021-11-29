@@ -12,10 +12,8 @@ import {
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
-import {RiAccountCircleFill} from 'react-icons/ri'
-import {GiToken} from 'react-icons/gi'
 
-export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId}) {
+export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, addSonarAvailable}) {
   const [repositoryURL, setRepositoryURL] = useState("")
   const [repoType, setRepoType] = useState("")
   const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
@@ -32,7 +30,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
 
   const addRepository = () => {
     let checker = []
-    if (repositoryURL === "" && (githubRepositoryURL === "" && sonarRepositoryURL === "" && gitlabRepositoryURL === "")) {
+    if (githubRepositoryURL.trim() === "" && gitlabRepositoryURL.trim() === "" && sonarRepositoryURL.trim() === "") {
       alert("不準啦馬的>///<")
     } else {
 
@@ -41,17 +39,19 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       }
       if (gitlabRepositoryURL !== "") {
         checker.push(checkGitlabRepositoryURL());
+        checker.push(checkAddSonarAvailable());
       }
       if (sonarRepositoryURL !== "") {
         checker.push(checkSonarRepositoryURL());
+        checker.push(checkAddSonarAvailable());
       }
 
       Promise.all(checker)
         .then((response) => {
           if (response.includes(false) === false) {
-            let payload = {
-              projectId: projectId,
-              repositoryURL: repositoryURL
+            const payload = {
+              projectId,
+              repositoryURL
             }
 
             Axios.post(`http://localhost:9100/pvs-api/project/${projectId}/repository/${repoType}`, payload,
@@ -112,6 +112,15 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       })
   }
 
+  const checkAddSonarAvailable = () => {
+    if (addSonarAvailable) {
+      return true
+    } else {
+      alert("To add a SonarQube repository, you should first add a Github/GitLab repository.")
+      return false
+    }
+  }
+
   const onClick1 = () => {
     setShowGithubDiv(true)
     setShowGitlabDiv(false)
@@ -170,49 +179,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
   const GitlabDiv = () => (
       <div id="gitlabDiv">
           <TextField
-            id="GitlabUsername"
-            label="Gitlab Account Username"
-            type="text"
-            style={{width: 250}}
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <RiAccountCircleFill />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            id="GitlabPassword"
-            label="Gitlab Account Password"
-            type="password"
-            style={{width: 250}}
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <RiAccountCircleFill />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            margin="dense"
-            id="GitlabToken"
-            label="Gitlab Token"
-            type="text"
-            fullWidth
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <GiToken />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
             margin="dense"
             id="GitlabRepositoryURL"
             label="Gitlab Repository URL"
@@ -220,8 +186,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
             fullWidth
             onChange={(e) => {
               setGitlabRepositoryURL(e.target.value)
-              setRepositoryURL(e.target.value)
-              setRepoType("gitlab")
             }}
             required
             InputProps={{
