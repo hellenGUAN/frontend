@@ -12,8 +12,6 @@ import {
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
-import {RiAccountCircleFill} from 'react-icons/ri'
-import {GiToken} from 'react-icons/gi'
 
 export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, addSonarAvailable}) {
   const [repositoryURL, setRepositoryURL] = useState("")
@@ -44,7 +42,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       }
       if (sonarRepositoryURL !== "") {
         checker.push(checkSonarRepositoryURL());
-        checker.push(addSonarAvailable);
+        checker.push(addSonarAvailable());
       }
 
       Promise.all(checker)
