@@ -15,7 +15,7 @@ import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
 import {RiAccountCircleFill} from 'react-icons/ri'
 import {GiToken} from 'react-icons/gi'
 
-export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId}) {
+export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, addSonarAvailable}) {
   const [repositoryURL, setRepositoryURL] = useState("")
   const [repoType, setRepoType] = useState("")
   const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
@@ -44,6 +44,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       }
       if (sonarRepositoryURL !== "") {
         checker.push(checkSonarRepositoryURL());
+        checker.push(addSonarAvailable);
       }
 
       Promise.all(checker)
@@ -110,6 +111,15 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         console.error(e)
         return false
       })
+  }
+
+  const checkAddSonarAvailable = () => {
+    if (addSonarAvailable) {
+      return true
+    } else {
+      alert("To add a SonarQube repository, you should first add a Github / GitLab repository.")
+      return false
+    }
   }
 
   const onClick1 = () => {
