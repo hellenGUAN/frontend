@@ -42,7 +42,7 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       }
       if (sonarRepositoryURL !== "") {
         checker.push(checkSonarRepositoryURL());
-        checker.push(addSonarAvailable());
+        checker.push(checkAddSonarAvailable());
       }
 
       Promise.all(checker)
