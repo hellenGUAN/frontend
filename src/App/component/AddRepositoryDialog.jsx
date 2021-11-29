@@ -180,55 +180,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
   const GitlabDiv = () => (
       <div id="gitlabDiv">
           <TextField
-//             margin={{5}}
-//             sx={{ m: 1, width: '25ch' }}
-            id="GitlabUsername"
-            label="Gitlab Account Username"
-            type="text"
-            style={{width: 250}}
-//             variant="outlined"
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <RiAccountCircleFill />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-//             margin={{5}}
-//             sx={{ m: 1, width: '25ch' }}
-            id="GitlabPassword"
-            label="Gitlab Account Password"
-            type="password"
-            style={{width: 250}}
-//             variant="outlined"
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <RiAccountCircleFill />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            margin="dense"
-            id="GitlabToken"
-            label="Gitlab Token"
-            type="text"
-            fullWidth
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <GiToken />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
             margin="dense"
             id="GitlabRepositoryURL"
             label="Gitlab Repository URL"
