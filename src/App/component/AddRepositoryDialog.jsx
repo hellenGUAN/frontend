@@ -7,13 +7,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormControlLabel
 } from '@material-ui/core'
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
 
-export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, addSonarAvailable}) {
+export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId}) {
   const [repositoryURL, setRepositoryURL] = useState("")
   const [repoType, setRepoType] = useState("")
   const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
@@ -42,7 +47,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
       }
       if (sonarRepositoryURL !== "") {
         checker.push(checkSonarRepositoryURL());
-        checker.push(checkAddSonarAvailable());
       }
 
       Promise.all(checker)
@@ -109,15 +113,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         console.error(e)
         return false
       })
-  }
-
-  const checkAddSonarAvailable = () => {
-    if (addSonarAvailable) {
-      return true
-    } else {
-      alert("To add a SonarQube repository, you should first add a Github / GitLab repository.")
-      return false
-    }
   }
 
   const onClick1 = () => {
@@ -240,27 +235,27 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         <DialogContentText>
             To add a repository, please select a repository type and enter the repository URL.
         </DialogContentText>
-        <label htmlFor="githubURL" margin="normal">
-            <input type = "radio" id = "selectedGithub" name = "repoType" onClick={onClick1}/>
-            GitHub
-        </label>
+
+        <FormControl component="fieldset">
+          <FormLabel component="legend" />
+          <RadioGroup row aria-label="repoType" name="row-radio-buttons-group">
+            <FormControlLabel value="gitlab" control={<Radio />} onClick={onClick1} label="GitHub" />
+            <FormControlLabel value="github" control={<Radio />} onClick={onClick3} label="GitLab" />
+            <FormControlLabel value="sonar" control={<Radio />} onClick={onClick2} label="SonarQube" />
+            <FormControlLabel
+              value="disabled"
+              disabled
+              control={<Radio />}
+              label="other"
+            />
+          </RadioGroup>
+        </FormControl>
         <div>
             {showGithubDiv ? <GithubDiv /> : null}
-        </div>
-        <label htmlFor="gitlabURL" margin="normal">
-            <input type = "radio" id = "selectedGitlab" name = "repoType" onClick={onClick3}/>
-            GitLab
-        </label>
-        <div>
             {showGitlabDiv ? <GitlabDiv /> : null}
-        </div>
-        <label htmlFor="sonarqubeURL" margin="normal">
-            <input type = "radio" value = "selectedSonar" name = "repoType" onClick={onClick2}/>
-            SonarQube
-        </label>
-        <div>
             {showSonarDiv ? <SonarDiv /> : null}
         </div>
+
       </DialogContent>
       <DialogActions>
         <Button onClick={close} color="secondary">

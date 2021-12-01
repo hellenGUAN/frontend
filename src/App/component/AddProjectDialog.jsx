@@ -15,7 +15,7 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
   const [projectName, setProjectName] = useState("")
   const jwtToken = localStorage.getItem("jwtToken")
 
-  const createProject = () => {
+  const createProject = async () => {
     if (projectName.trim() === "") {
       alert("不準啦馬的>///<")
       return
@@ -34,7 +34,7 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
     }
 
     try {
-      Axios.post("http://localhost:9100/pvs-api/project", payload, config)
+      await Axios.post("http://localhost:9100/pvs-api/project", payload, config)
     } catch (e) {
       alert(e?.response?.status)
       console.error(e)
