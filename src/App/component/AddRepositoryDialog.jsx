@@ -24,9 +24,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
   const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
   const [gitlabRepositoryURL, setGitlabRepositoryURL] = useState("")
   const [sonarRepositoryURL, setSonarRepositoryURL] = useState("")
-  const setIsGithubAvailable = useState(false)[1]
-  const setIsGitlabAvailable = useState(false)[1]
-  const setIsSonarAvailable = useState(false)[1]
   const jwtToken = localStorage.getItem("jwtToken")
 
   const [showGithubDiv, setShowGithubDiv] = useState(false)
@@ -79,7 +76,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
     return Axios.get(`http://localhost:9100/pvs-api/repository/github/check?url=${githubRepositoryURL}`,
       {headers: {"Authorization": `${jwtToken}`}})
       .then(() => {
-        setIsGithubAvailable(true);
         return true
       })
       .catch(() => {
@@ -92,7 +88,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
     return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${gitlabRepositoryURL}`,
       {headers: {"Authorization": `${jwtToken}`}})
       .then(() => {
-        setIsGitlabAvailable(true);
         return true
       })
       .catch(() => {
@@ -105,7 +100,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
     return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${sonarRepositoryURL}`,
       {headers: {"Authorization": `${jwtToken}`}})
       .then(() => {
-        setIsSonarAvailable(true);
         return true
       })
       .catch((e) => {
