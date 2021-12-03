@@ -25,7 +25,7 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
       projectName,
       githubRepositoryURL: "",
       sonarRepositoryURL: ""
-    } // 傳空的repository
+    }
 
     const config = {
       headers: {
