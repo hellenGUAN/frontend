@@ -7,49 +7,37 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormControlLabel
 } from '@material-ui/core'
 
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
 
-export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId, addSonarAvailable}) {
+export default function AddRepositoryDialog({open, reloadProjects, handleClose, projectId}) {
+
   const [repositoryURL, setRepositoryURL] = useState("")
   const [repoType, setRepoType] = useState("")
-  const [githubRepositoryURL, setGithubRepositoryURL] = useState("")
-  const [gitlabRepositoryURL, setGitlabRepositoryURL] = useState("")
-  const [sonarRepositoryURL, setSonarRepositoryURL] = useState("")
-  const setIsGithubAvailable = useState(false)[1]
-  const setIsGitlabAvailable = useState(false)[1]
-  const setIsSonarAvailable = useState(false)[1]
   const jwtToken = localStorage.getItem("jwtToken")
 
-  const [showGithubDiv, setShowGithubDiv] = useState(false)
-  const [showGitlabDiv, setShowGitlabDiv] = useState(false)
-  const [showSonarDiv, setShowSonarDiv] = useState(false)
+  const [showDiv, setShowDiv] = useState(false)
 
   const addRepository = () => {
     let checker = []
-    if (githubRepositoryURL.trim() === "" && gitlabRepositoryURL.trim() === "" && sonarRepositoryURL.trim() === "") {
+    if (repositoryURL.trim() === "") {
       alert("不準啦馬的>///<")
     } else {
 
-      if (githubRepositoryURL !== "") {
-        checker.push(checkGithubRepositoryURL());
-      }
-      if (gitlabRepositoryURL !== "") {
-        checker.push(checkGitlabRepositoryURL());
-        checker.push(checkAddSonarAvailable());
-      }
-      if (sonarRepositoryURL !== "") {
-        checker.push(checkSonarRepositoryURL());
-        checker.push(checkAddSonarAvailable());
-      }
+      checker.push(checkRepositoryURL());
 
       Promise.all(checker)
         .then((response) => {
           if (response.includes(false) === false) {
-            const payload = {
+            let payload = {
               projectId,
               repositoryURL
             }
@@ -72,37 +60,33 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
     }
   }
 
-  const checkGithubRepositoryURL = () => {
-    return Axios.get(`http://localhost:9100/pvs-api/repository/github/check?url=${githubRepositoryURL}`,
+  const checkRepositoryURL = () => {
+    if (repoType === "github") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/github/check?url=${repositoryURL}`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then(() => {
+          return true
+        })
+        .catch(() => {
+          alert("github error")
+          return false
+        })
+    }
+    if (repoType === "gitlab") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${repositoryURL}`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then(() => {
+          return true
+        })
+        .catch(() => {
+          alert("gitlab error")
+          return false
+        })
+    }
+    if (repoType === "sonar") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${repositoryURL}`,
       {headers: {"Authorization": `${jwtToken}`}})
       .then(() => {
-        setIsGithubAvailable(true);
-        return true
-      })
-      .catch(() => {
-        alert("github error")
-        return false
-      })
-  }
-
-  const checkGitlabRepositoryURL = () => {
-    return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${gitlabRepositoryURL}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(() => {
-        setIsGitlabAvailable(true);
-        return true
-      })
-      .catch(() => {
-        alert("gitlab error")
-        return false
-      })
-  }
-
-  const checkSonarRepositoryURL = () => {
-    return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${sonarRepositoryURL}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(() => {
-        setIsSonarAvailable(true);
         return true
       })
       .catch((e) => {
@@ -110,57 +94,24 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         console.error(e)
         return false
       })
-  }
-
-  const checkAddSonarAvailable = () => {
-    if (addSonarAvailable) {
-      return true
-    } else {
-      alert("To add a SonarQube repository, you should first add a Github/GitLab repository.")
-      return false
     }
   }
 
-  const onClick1 = () => {
-    setShowGithubDiv(true)
-    setShowGitlabDiv(false)
-    setShowSonarDiv(false)
-  }
-  const onClick2 = () => {
-    setShowSonarDiv(true)
-    setShowGithubDiv(false)
-    setShowGitlabDiv(false)
-  }
-  const onClick3 = () => {
-    setShowGitlabDiv(true)
-    setShowGithubDiv(false)
-    setShowSonarDiv(false)
+  const selected = (e) => {
+    setRepoType(e.target.value)
+    setShowDiv(e.target.checked)
   }
 
-  const close = () => {
-    setShowGithubDiv(false)
-    setShowGitlabDiv(false)
-    setShowSonarDiv(false)
-    handleClose()
-  }
-
-  const add = () => {
-    setShowGithubDiv(false)
-    setShowGitlabDiv(false)
-    setShowSonarDiv(false)
-    addRepository()
-  }
-
-  const GithubDiv = () => (
-    <div id="githubDiv">
+  const InputDiv = () => {
+    return(
+      <div>
         <TextField
           margin="dense"
-          id="GithubRepositoryURL"
-          label="Github Repository URL"
+          id="RepositoryURL"
+          label="Repository URL"
           type="text"
           fullWidth
           onChange={(e) => {
-            setGithubRepositoryURL(e.target.value)
             setRepositoryURL(e.target.value)
             setRepoType("github")
           }}
@@ -168,68 +119,27 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SiGithub/>
+                {repoType === "github" &&
+                <SiGithub />
+                }
+                {repoType === "gitlab" &&
+                <SiGitlab />
+                }
+                {repoType === "sonar" &&
+                <SiSonarqube />
+                }
               </InputAdornment>
             ),
           }}
         />
-    </div>
-  )
-
-  const GitlabDiv = () => (
-      <div id="gitlabDiv">
-          <TextField
-            margin="dense"
-            id="GitlabRepositoryURL"
-            label="Gitlab Repository URL"
-            type="text"
-            fullWidth
-            onChange={(e) => {
-              setGitlabRepositoryURL(e.target.value)
-            }}
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SiGitlab/>
-                </InputAdornment>
-              ),
-            }}
-          />
       </div>
-  )
-
-  const SonarDiv = () => (
-    <div id = "sonarDiv">
-        <TextField
-          margin="dense"
-          id="SonarRepositoryURL"
-          label="Sonar Repository URL"
-          type="text"
-          fullWidth
-          onChange={(e) => {
-            setSonarRepositoryURL(e.target.value)
-            setRepositoryURL(e.target.value)
-            setRepoType("sonar")
-          }}
-          required
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SiSonarqube/>
-              </InputAdornment>
-            ),
-          }}
-        />
-    </div>
-  )
+    )
+  }
 
   useEffect(() => {
     setRepositoryURL("")
     setRepoType("")
-    setGithubRepositoryURL("")
-    setGitlabRepositoryURL("")
-    setSonarRepositoryURL("")
+    setShowDiv(false)
   }, [open])
 
   return (
@@ -239,33 +149,29 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
         <DialogContentText>
             To add a repository, please select a repository type and enter the repository URL.
         </DialogContentText>
-        <label htmlFor="githubURL" margin="normal">
-            <input type = "radio" id = "selectedGithub" name = "repoType" onClick={onClick1}/>
-            GitHub
-        </label>
+        <FormControl component="fieldset">
+          <FormLabel component="legend" />
+            <RadioGroup row aria-label="repositoryType" name="row-radio-buttons-group">
+              <FormControlLabel value="github" control={<Radio />} onChange={selected} label="GitHub" />
+              <FormControlLabel value="gitlab" control={<Radio />} onClick={selected} label="GitLab" />
+              <FormControlLabel value="sonar" control={<Radio />} onClick={selected} label="SonarQube" />
+              <FormControlLabel
+                value="disabled"
+                disabled
+                control={<Radio />}
+                label="other"
+              />
+            </RadioGroup>
+        </FormControl>
         <div>
-            {showGithubDiv ? <GithubDiv /> : null}
-        </div>
-        <label htmlFor="gitlabURL" margin="normal">
-            <input type = "radio" id = "selectedGitlab" name = "repoType" onClick={onClick3}/>
-            GitLab
-        </label>
-        <div>
-            {showGitlabDiv ? <GitlabDiv /> : null}
-        </div>
-        <label htmlFor="sonarqubeURL" margin="normal">
-            <input type = "radio" id = "selectedSonar" name = "repoType" onClick={onClick2}/>
-            SonarQube
-        </label>
-        <div>
-            {showSonarDiv ? <SonarDiv /> : null}
+            {showDiv ? <InputDiv /> : null}
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={close} color="secondary">
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={add} color="primary" id="AddRepositoryBtn">
+        <Button onClick={addRepository} color="primary" id="AddRepositoryBtn">
           Create
         </Button>
       </DialogActions>
