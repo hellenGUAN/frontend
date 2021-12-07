@@ -26,7 +26,7 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
       githubRepositoryURL: "",
       gitlabRepositoryURL: "",
       sonarRepositoryURL: ""
-    }
+    } // forget gitlab
 
     const config = {
       headers: {
