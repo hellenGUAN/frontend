@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {useEffect, useState} from 'react'
 import logo_p from '../../assets/p.png'
 import logo_v from '../../assets/v.png'
