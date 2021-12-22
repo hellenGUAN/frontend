@@ -9,6 +9,7 @@ import CodeCoveragePage from '../App/component/CodeCoveragePage'
 import BugsPage from '../App/component/BugsPage'
 import CodeSmellsPage from '../App/component/CodeSmellsPage'
 import DuplicationsPage from '../App/component/DuplicationsPage'
+import TrelloBoardPage from '../App/component/TrelloBoardPage'
 
 const routes = [
   {path: "/", redirect: true, to: "/select"},
@@ -23,6 +24,7 @@ const routes = [
   {path: "/bugs", component: BugsPage, loginRequired: true},
   {path: "/code_smells", component: CodeSmellsPage, loginRequired: true},
   {path: "/duplications", component: DuplicationsPage, loginRequired: true},
+  {path: "/trello_board", component: TrelloBoardPage, loginRequired: true},
 ]
 
 export default routes

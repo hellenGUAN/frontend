@@ -72,6 +72,44 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           return false
         })
     }
+
+    if (repoType === "gitlab") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${repositoryURL}`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then(() => {
+          return true
+        })
+        .catch(() => {
+          alert("gitlab error")
+          return false
+        })
+    }
+
+    if (repoType === "sonar") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${repositoryURL}`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then(() => {
+          return true
+        })
+        .catch((e) => {
+          alert("sonar error")
+          console.error(e)
+          return false
+        })
+    }
+
+    if (repoType === "trello") {
+      return Axios.get(`http://localhost:9100/pvs-api/repository/trello/check?url=${repositoryURL}`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then(() => {
+          return true
+        })
+        .catch((e) => {
+          alert("trello error")
+          console.error(e)
+          return false
+        })
+    }
     if (repoType === "gitlab") {
       return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${repositoryURL}`,
         {headers: {"Authorization": `${jwtToken}`}})
@@ -113,6 +151,26 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           fullWidth
           onChange={(e) => {
             setRepositoryURL(e.target.value)
+            setRepoType("github")
+          }}
+          required
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                {repoType === "github" &&
+                <SiGithub />
+                }
+                {repoType === "gitlab" &&
+                <SiGitlab />
+                }
+                {repoType === "sonar" &&
+                <SiSonarqube />
+                }
+                {repoType === "trello" &&
+                <SiTrello />
+                }
+              </InputAdornment>
+            ),
           }}
           required
           InputProps={{

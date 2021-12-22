@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {useEffect, useState} from 'react'
 import logo_p from '../../assets/p.png'
 import logo_v from '../../assets/v.png'
@@ -29,7 +30,7 @@ import {AiFillBug} from 'react-icons/ai'
 import {IoGitCommitSharp, IoNuclear} from 'react-icons/io5'
 import {GoIssueOpened} from 'react-icons/go'
 import {HiDocumentDuplicate} from 'react-icons/hi'
-import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
+import {SiGithub, SiSonarqube, SiGitlab, SiTrello} from 'react-icons/si'
 import {RiDashboardFill} from 'react-icons/ri'
 import clsx from 'clsx'
 import {MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers'
@@ -158,6 +159,7 @@ function Sidebar(prop) {
   const [githubMenuOpen, setGithubMenuOpen] = useState(true)
   const [gitlabMenuOpen, setGitlabMenuOpen] = useState(true)
   const [sonarMenuOpen, setSonarMenuOpen] = useState(true)
+  const [trelloMenuOpen, setTrelloMenuOpen] = useState(true)
 
   const list = () => (
     <div className={classes.list} role="presentation">
@@ -165,6 +167,7 @@ function Sidebar(prop) {
         {prop.currentProjectId !== 0 &&
         <div>
 
+          {/* back to select page UI button */}
           <ListItem button onClick={goToSelect}>
             <ListItemIcon>
               <ArrowBack/>
@@ -172,7 +175,7 @@ function Sidebar(prop) {
             <ListItemText primary="Select"/>
           </ListItem>
 
-
+          {/* dashboard UI button */}
           <Divider className={classes.divider}/>
           <ListItem button onClick={goToDashBoard}>
             <ListItemIcon>
@@ -182,6 +185,7 @@ function Sidebar(prop) {
           </ListItem>
           <Divider className={classes.divider}/>
 
+          {/* github metrics UI button */}
           {currentProject &&
           currentProject.repositoryDTOList.find(x => x.type === "github") &&
           <div>
@@ -230,6 +234,7 @@ function Sidebar(prop) {
           </div>
           }
 
+          {/* gitlab metrics UI button */}
           {currentProject &&
           currentProject.repositoryDTOList.find(x => x.type === "gitlab") &&
           <div>
@@ -278,6 +283,7 @@ function Sidebar(prop) {
           </div>
           }
 
+          {/* sonar metrics UI button */}
           {currentProject &&
           currentProject.repositoryDTOList.find(x => x.type === "sonar") &&
           <div>
@@ -324,6 +330,36 @@ function Sidebar(prop) {
                 </ListItem>
               </List>
               <Divider/>
+            </Collapse>
+          </div>
+          }
+
+          {/* trello metrics UI button */}
+          {currentProject &&
+          currentProject.repositoryDTOList.find(x => x.type === "trello") &&
+          <div>
+            <ListItem button onClick={() => {
+              setTrelloMenuOpen(!trelloMenuOpen)
+            }}>
+              <ListItemIcon>
+                <SiTrello size={30}/>
+              </ListItemIcon>
+              <ListItemText primary="Trello"/>
+                {trelloMenuOpen ? <ExpandLess/> : <ExpandMore/>}
+            </ListItem>
+
+            <Divider/>
+            <Collapse in={trelloMenuOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding className={classes.innerList}>
+
+                <ListItem button className={classes.nested} onClick={goToTrelloBoard}>
+                  <ListItemIcon>
+                    <IoGitCommitSharp size={24.5}/>
+                  </ListItemIcon>
+                  <ListItemText primary="board"/>
+                </ListItem>
+
+              </List>
             </Collapse>
           </div>
           }
@@ -376,6 +412,10 @@ function Sidebar(prop) {
 
   const goToDuplication = () => {
     history.push("/duplications")
+  }
+
+  const goToTrelloBoard = () => {
+    history.push("/trello_board")
   }
 
   const jwtToken = localStorage.getItem("jwtToken")
