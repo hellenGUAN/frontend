@@ -9,7 +9,8 @@ import {
   ExpandLess,
   ExpandMore,
   Code,
-  GpsFixed
+  GpsFixed,
+  Compare
 } from '@material-ui/icons'
 import {
   Drawer,
@@ -28,7 +29,7 @@ import {AiFillBug} from 'react-icons/ai'
 import {IoGitCommitSharp, IoNuclear} from 'react-icons/io5'
 import {GoIssueOpened} from 'react-icons/go'
 import {HiDocumentDuplicate} from 'react-icons/hi'
-import {SiGithub, SiSonarqube} from 'react-icons/si'
+import {SiGithub, SiSonarqube, SiGitlab} from 'react-icons/si'
 import {RiDashboardFill} from 'react-icons/ri'
 import clsx from 'clsx'
 import {MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers'
@@ -155,6 +156,7 @@ function Sidebar(prop) {
   const classes = useStyles()
   const [currentProject, setCurrentProject] = useState(undefined)
   const [githubMenuOpen, setGithubMenuOpen] = useState(true)
+  const [gitlabMenuOpen, setGitlabMenuOpen] = useState(true)
   const [sonarMenuOpen, setSonarMenuOpen] = useState(true)
 
   const list = () => (
@@ -215,6 +217,61 @@ function Sidebar(prop) {
                     <Code/>
                   </ListItemIcon>
                   <ListItemText primary="Code Base"/>
+                </ListItem>
+
+                <ListItem button className={classes.nested} onClick={goToComparison}>
+                  <ListItemIcon>
+                    <Compare/>
+                  </ListItemIcon>
+                  <ListItemText primary="Comparison"/>
+                </ListItem>
+              </List>
+            </Collapse>
+          </div>
+          }
+
+          {currentProject &&
+          currentProject.repositoryDTOList.find(x => x.type === "gitlab") &&
+          <div>
+            <ListItem button onClick={() => {
+              setGitlabMenuOpen(!gitlabMenuOpen)
+            }}>
+              <ListItemIcon>
+                <SiGitlab size={30}/>
+              </ListItemIcon>
+              <ListItemText primary="GitLab"/>
+                {gitlabMenuOpen ? <ExpandLess/> : <ExpandMore/>}
+              </ListItem>
+
+              <Divider/>
+              <Collapse in={gitlabMenuOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding className={classes.innerList}>
+                <ListItem button className={classes.nested} onClick={goToCommit}>
+                  <ListItemIcon>
+                    <IoGitCommitSharp size={24.5}/>
+                  </ListItemIcon>
+                  <ListItemText primary="Commits"/>
+                </ListItem>
+
+                <ListItem button className={classes.nested} onClick={goToIssue}>
+                  <ListItemIcon>
+                    <GoIssueOpened size={24.5}/>
+                  </ListItemIcon>
+                  <ListItemText primary="Issues"/>
+                </ListItem>
+
+                <ListItem button className={classes.nested} onClick={goToCodeBase}>
+                  <ListItemIcon>
+                    <Code/>
+                  </ListItemIcon>
+                  <ListItemText primary="Code Base"/>
+                </ListItem>
+
+                <ListItem button className={classes.nested} onClick={goToComparison}>
+                  <ListItemIcon>
+                    <Compare/>
+                  </ListItemIcon>
+                  <ListItemText primary="Comparison"/>
                 </ListItem>
               </List>
             </Collapse>
@@ -299,6 +356,10 @@ function Sidebar(prop) {
 
   const goToCodeBase = () => {
     history.push("/codebase")
+  }
+
+  const goToComparison = () => {
+    history.push("/comparison")
   }
 
   const goToCodeCoverage = () => {
