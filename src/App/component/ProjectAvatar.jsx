@@ -5,11 +5,7 @@ import {Box, CardActionArea, Avatar, CardActions, IconButton} from '@material-ui
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
-<<<<<<< HEAD
-import BallotIcon from '@material-ui/icons/Ballot';
-=======
 import DashboardIcon from '@material-ui/icons/Dashboard';
->>>>>>> SE_frontend/main
 import AddIcon from '@material-ui/icons/Add';
 import AddRepositoryDialog from './AddRepositoryDialog';
 import {connect} from 'react-redux'
@@ -54,7 +50,6 @@ function ProjectAvatar(props) {
   const [hasGitlabRepo, setHasGitlabRepo] = useState(false)
   const [hasSonarRepo, setHasSonarRepo] = useState(false)
   const [hasTrelloBoard, setHasTrelloBoard] = useState(false)
-
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
   const jwt = localStorage.getItem("jwtToken")
 

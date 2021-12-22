@@ -110,29 +110,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           return false
         })
     }
-    if (repoType === "gitlab") {
-      return Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${repositoryURL}`,
-        {headers: {"Authorization": `${jwtToken}`}})
-        .then(() => {
-          return true
-        })
-        .catch(() => {
-          alert("gitlab error")
-          return false
-        })
-    }
-    if (repoType === "sonar") {
-      return Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${repositoryURL}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(() => {
-        return true
-      })
-      .catch((e) => {
-        alert("sonar error")
-        console.error(e)
-        return false
-      })
-    }
   }
 
   const selected = (e) => {
@@ -152,25 +129,6 @@ export default function AddRepositoryDialog({open, reloadProjects, handleClose, 
           onChange={(e) => {
             setRepositoryURL(e.target.value)
             setRepoType("github")
-          }}
-          required
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                {repoType === "github" &&
-                <SiGithub />
-                }
-                {repoType === "gitlab" &&
-                <SiGitlab />
-                }
-                {repoType === "sonar" &&
-                <SiSonarqube />
-                }
-                {repoType === "trello" &&
-                <SiTrello />
-                }
-              </InputAdornment>
-            ),
           }}
           required
           InputProps={{
