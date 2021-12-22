@@ -311,7 +311,7 @@ function ComparisonPage(prop) {
       <div className={classes.root}>
         <div>
           <div>
-            <h2>Comparison Of Commits To Different Branches</h2>
+            <h2>Number of Commits From Two Branches</h2>
 
             <div className={classes.toLeft}>
                 <div className={classes.toLeft}>
