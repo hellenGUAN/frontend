@@ -54,7 +54,7 @@ function ComparisonPage(prop) {
   const classes = useStyles()
   const [commitListDataLeft, setCommitListDataLeft] = useState([])
   const [commitListDataRight, setCommitListDataRight] = useState([])
-  const [dataForTeamCommitChart, setDataForTeamCommitChart] = useState({labels: [], data: {branch1: [], branch2: []}})
+  const [dataForTeamCommitChart, setDataForTeamCommitChart] = useState({labels: [], data: {}})
   const [currentProject, setCurrentProject] = useState({})
 
   const [branchList, setBranchList] = useState([])
