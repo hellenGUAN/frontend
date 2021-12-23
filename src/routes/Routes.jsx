@@ -3,6 +3,7 @@ import SelectProject from '../App/component/SelectProject'
 import DashboardPage from '../App/component/DashboardPage'
 import CommitsPage from '../App/component/CommitsPage'
 import IssuesPage from '../App/component/IssuesPage'
+import PullRequestPage from '../App/component/PullRequestPage'
 import CodeBasePage from '../App/component/CodeBasePage'
 import CodeCoveragePage from '../App/component/CodeCoveragePage'
 import BugsPage from '../App/component/BugsPage'
@@ -16,6 +17,7 @@ const routes = [
   {path: "/dashboard", component: DashboardPage, loginRequired: true},
   {path: "/commits", component: CommitsPage, loginRequired: true},
   {path: "/issues", component: IssuesPage, loginRequired: true},
+  {path: "/pull_request", component: PullRequestPage, loginRequired: true},
   {path: "/codebase", component: CodeBasePage, loginRequired: true},
   {path: "/code_coverage", component: CodeCoveragePage, loginRequired: true},
   {path: "/bugs", component: BugsPage, loginRequired: true},
