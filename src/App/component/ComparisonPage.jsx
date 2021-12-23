@@ -72,7 +72,7 @@ function ComparisonPage(prop) {
   };
 
   const projectId = localStorage.getItem("projectId")
-//   const jwtToken = localStorage.getItem("jwtToken")
+  //   const jwtToken = localStorage.getItem("jwtToken")
 
   const sendPVSBackendRequest = async (method, url, jwt) => {
     const baseURL = 'http://localhost:9100/pvs-api';
@@ -80,7 +80,7 @@ function ComparisonPage(prop) {
       baseURL,
       url,
       method,
-      headers: {...(jwt && {'Authorization': jwt})}
+      headers: { ...(jwt && { 'Authorization': jwt }) }
     };
     return (await Axios.request(requestConfig))?.data;
   };
@@ -111,7 +111,7 @@ function ComparisonPage(prop) {
       // todo need refactor with async
       sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
         .then((responseData) => {
-          if(responseData){
+          if (responseData) {
             setCommitListDataLeft(responseData)
             setLoading(false)
           }
@@ -126,7 +126,7 @@ function ComparisonPage(prop) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
       sendPVSBackendRequest('GET', `gitlab/commits/${query}/${branch}`)
         .then((responseData) => {
-          if(responseData) {
+          if (responseData) {
             setCommitListDataLeft(responseData)
             setLoading(false)
           }
@@ -147,7 +147,7 @@ function ComparisonPage(prop) {
       // todo need refactor with async
       sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
         .then((responseData) => {
-          if(responseData) {
+          if (responseData) {
             setCommitListDataRight(responseData)
             setLoading(false)
           }
@@ -162,7 +162,7 @@ function ComparisonPage(prop) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
       sendPVSBackendRequest('GET', `/gitlab/commits/${query}/${branch}`)
         .then((responseData) => {
-          if(responseData) {
+          if (responseData) {
             setCommitListDataRight(responseData)
             setLoading(false)
           }
@@ -182,7 +182,7 @@ function ComparisonPage(prop) {
       const query = githubRepo.url.split("github.com/")[1]
       sendPVSBackendRequest('GET', `/github/commits/branchList/${query}`)
         .then((responseData) => {
-          if(responseData) {
+          if (responseData) {
             setBranchList(responseData)
           }
         })
@@ -196,7 +196,7 @@ function ComparisonPage(prop) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
       sendPVSBackendRequest('GET', `/gitlab/commits/branchList/${query}`)
         .then((responseData) => {
-          if(responseData) {
+          if (responseData) {
             setBranchList(responseData)
           }
         })
