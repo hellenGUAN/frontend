@@ -72,18 +72,34 @@ function ComparisonPage(prop) {
   };
 
   const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
+//   const jwtToken = localStorage.getItem("jwtToken")
 
-  useEffect(() => {
-    Axios.get(`http://localhost:9100/pvs-api/project/1/${projectId}`,
-      { headers: { "Authorization": `${jwtToken}` } })
-      .then((response) => {
-        setCurrentProject(response.data)
+  const sendPVSBackendRequest = async (method, url, jwt) => {
+    const baseURL = 'http://localhost:9100/pvs-api';
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      headers: {...(jwt && {'Authorization': jwt})}
+    };
+    return (await Axios.request(requestConfig))?.data;
+  };
+
+  const loadInitialProjectInfo = () => {
+    sendPVSBackendRequest('GET', `/project/1/${projectId}`)
+      .then((responseData) => {
+        if (responseData) {
+          setCurrentProject(responseData)
+        }
       })
       .catch((e) => {
         alert(e)
         console.error(e)
       })
+  }
+
+  useEffect(() => {
+    loadInitialProjectInfo() // <<-- Now it has a name, so we can easily know what is its purpose ...
   }, [])
 
   const getCommitFromDBLeft = (branch) => {
@@ -93,11 +109,12 @@ function ComparisonPage(prop) {
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
       // todo need refactor with async
-      Axios.get(`http://localhost:9100/pvs-api/github/commits/${query}/${branch}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setCommitListDataLeft(response.data)
-          setLoading(false)
+      sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
+        .then((responseData) => {
+          if(responseData){
+            setCommitListDataLeft(responseData)
+            setLoading(false)
+          }
         })
         .catch((e) => {
           alert(e)
@@ -107,11 +124,12 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      Axios.get(`http://localhost:9100/pvs-api/gitlab/commits/${query}/${branch}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setCommitListDataLeft(response.data)
-          setLoading(false)
+      sendPVSBackendRequest('GET', `gitlab/commits/${query}/${branch}`)
+        .then((responseData) => {
+          if(responseData) {
+            setCommitListDataLeft(responseData)
+            setLoading(false)
+          }
         })
         .catch((e) => {
           alert(e)
@@ -127,11 +145,12 @@ function ComparisonPage(prop) {
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
       // todo need refactor with async
-      Axios.get(`http://localhost:9100/pvs-api/github/commits/${query}/${branch}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setCommitListDataRight(response.data)
-          setLoading(false)
+      sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
+        .then((responseData) => {
+          if(responseData) {
+            setCommitListDataRight(responseData)
+            setLoading(false)
+          }
         })
         .catch((e) => {
           alert(e)
@@ -141,11 +160,12 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      Axios.get(`http://localhost:9100/pvs-api/gitlab/commits/${query}/${branch}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setCommitListDataRight(response.data)
-          setLoading(false)
+      sendPVSBackendRequest('GET', `/gitlab/commits/${query}/${branch}`)
+        .then((responseData) => {
+          if(responseData) {
+            setCommitListDataRight(responseData)
+            setLoading(false)
+          }
         })
         .catch((e) => {
           alert(e)
@@ -160,10 +180,11 @@ function ComparisonPage(prop) {
 
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
-      Axios.get(`http://localhost:9100/pvs-api/github/commits/branchList/${query}`, "",
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setBranchList(response.data)
+      sendPVSBackendRequest('GET', `/github/commits/branchList/${query}`)
+        .then((responseData) => {
+          if(responseData) {
+            setBranchList(responseData)
+          }
         })
         .catch((e) => {
           alert(e)
@@ -173,10 +194,11 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      Axios.get(`http://localhost:9100/pvs-api/gitlab/commits/branchList/${query}`, "",
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setBranchList(response.data)
+      sendPVSBackendRequest('GET', `/gitlab/commits/branchList/${query}`)
+        .then((responseData) => {
+          if(responseData) {
+            setBranchList(responseData)
+          }
         })
         .catch((e) => {
           alert(e)
