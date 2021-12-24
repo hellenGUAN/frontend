@@ -22,10 +22,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function IssuesPage(prop) {
+function PullRequestsPage(prop) {
   const classes = useStyles()
-  const [issueListData, setIssueListData] = useState([])
-  const [dataForIssueChart, setDataForIssueChart] = useState({labels: [], data: {created: [], closed: []}})
+  const [pullRequestListData, setPullRequestListData] = useState([])
+  const [dataForPullRequestChart, setDataForPullRequestChart] = useState({labels: [], data: {opened: [], closed: [], merged: []}})
 
   const [currentProject, setCurrentProject] = useState({})
 
@@ -59,11 +59,12 @@ function IssuesPage(prop) {
       const query = githubRepo.url.split("github.com/")[1]
 
       // todo need reafctor with async
-      Axios.get(`http://localhost:9100/pvs-api/github/issues/${query}`,
+      Axios.get(`http://localhost:9100/pvs-api/github/pullRequests/${query}`,
         {headers: {"Authorization": `${jwtToken}`}})
         .then((response) => {
-          console.log(response.data)
-          setIssueListData(response.data)
+          if(response.data !== undefined) {
+            setPullRequestListData(response.data)
+          }
           handleClose()
         })
         .catch((e) => {
@@ -75,32 +76,70 @@ function IssuesPage(prop) {
 
   useEffect(() => {
     const {endMonth} = prop
-    let chartDataset = {labels: [], data: {created: [], closed: []}}
-    let issueListDataSortedByCreatedAt = issueListData
-    let issueListDataSortedByClosedAt = issueListData
+    let chartDataset = {labels: [], data: {merged: [], closed: [], opened: []}}
+    const closedPullRequestListData = []
+    const mergedPullRequestListData = []
+    for(const pr in pullRequestListData) {
+      if(pr !== null) {
+        console.log(pr)
+        closedPullRequestListData.push(pr)
+      }
+      if(pr.mergedAt !== null) {
+        mergedPullRequestListData.push(pr)
+      }
+    }
 
-    issueListDataSortedByCreatedAt.sort((a, b) => a.createdAt - b.createdAt)
-    issueListDataSortedByClosedAt.sort((a, b) => a.closedAt - b.closedAt)
+    pullRequestListData.sort((a, b) => a.createdAt - b.createdAt)
+    closedPullRequestListData.sort((a, b) => a.closedAt - b.closedAt)
+    mergedPullRequestListData.sort((a, b) => a.mergedAt - b.mergedAt)
 
-    if (issueListDataSortedByCreatedAt.length > 0) {
-      for (let month = moment(issueListDataSortedByCreatedAt[0].createdAt); month <= moment(endMonth).add(1, 'months'); month = month.add(1, 'months')) {
+    console.log(closedPullRequestListData)
+
+    if (pullRequestListData.length > 0) {
+      for (let month = moment(pullRequestListData[0].createdAt); month < moment(endMonth).add(1, 'months'); month = month.add(1, 'months')) {
         let index
         chartDataset.labels.push(month.format("YYYY-MM"))
 
-        index = issueListDataSortedByCreatedAt.findIndex(issue => {
-          return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
+        index = pullRequestListData.findIndex(pullRequest => {
+          return moment(pullRequest.createdAt).format("YYYY-MM") === month.format("YYYY-MM")
         })
-        chartDataset.data.created.push(index === -1 ? issueListData.length : index)
+        chartDataset.data.opened.push(index === pullRequestListData.length ? 0 : index)
 
-        index = issueListDataSortedByClosedAt.findIndex(issue => {
-          return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
+        index = closedPullRequestListData.findIndex(pullRequest => {
+          return moment(pullRequest.closedAt).format("YYYY-MM") === month.format("YYYY-MM")
         })
-        chartDataset.data.closed.push(index === -1 ? issueListData.length : index)
+        chartDataset.data.closed.push(index === -1 ? pullRequestListData.length : index)
+
+        index = mergedPullRequestListData.findIndex(pullRequest => {
+          return moment(pullRequest.mergedAt).format("YYYY-MM") === month.format("YYYY-MM")
+        })
+        chartDataset.data.merged.push(index === -1 ? pullRequestListData.length : index)
       }
     }
-    console.log(chartDataset)
-    setDataForIssueChart(chartDataset)
-  }, [issueListData])
+
+//     for (let month = moment(pullRequestListData[0].createdAt); month <= moment(endMonth).add(1, 'months'); month = month.add(1, 'months')) {
+//       let index
+//       chartDataset.labels.push(month.format("YYYY-MM"))
+//
+//       index = pullRequestListData.findIndex(pullRequest => {
+//         return moment(pullRequest.createdAt).year() >= month.year() && moment(pullRequest.createdAt).month() > month.month()
+//       })
+//       chartDataset.data.opened.push(index === -1 ? pullRequestListData.length : index)
+//
+//       index = pullRequestListData.findIndex(pullRequest => {
+//         return pullRequest.closedAt != null && (moment(pullRequest.closedAt).year() > month.year() || moment(pullRequest.closedAt).year() === month.year()) && moment(pullRequest.closedAt).month() > month.month()
+//       })
+//       chartDataset.data.closed.push(index === -1 ? pullRequestListData.length : index)
+//
+//       index = pullRequestListData.findIndex(pullRequest => {
+//         return pullRequest.mergedAt != null && (moment(pullRequest.mergedAt).year() > month.year() || moment(pullRequest.mergedAt).year() === month.year()) && moment(pullRequest.mergedAt).month() > month.month()
+//       })
+//       chartDataset.data.merged.push(index === -1 ? pullRequestListData.length : index)
+//     }
+
+    console.log(pullRequestListData)
+    setDataForPullRequestChart(chartDataset)
+  }, [pullRequestListData, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
@@ -122,7 +161,7 @@ function IssuesPage(prop) {
           <div>
             <h1>Team</h1>
             <div>
-              <DrawingBoard data={dataForIssueChart} color='skyblue' id="team-issue-chart" isIssue={true}/>
+              <DrawingBoard data={dataForPullRequestChart} color='skyblue' id="team-issue-chart" isIssue={true}/>
             </div>
           </div>
         </div>
@@ -137,4 +176,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(IssuesPage);
+export default connect(mapStateToProps)(PullRequestsPage);

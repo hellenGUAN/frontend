@@ -10,7 +10,6 @@ import {
   ExpandMore,
   Code,
   GpsFixed
-//   Merge
 } from '@material-ui/icons'
 import {
   Drawer,
@@ -31,7 +30,7 @@ import {GoIssueOpened} from 'react-icons/go'
 import {HiDocumentDuplicate} from 'react-icons/hi'
 import {SiGithub, SiSonarqube} from 'react-icons/si'
 import {RiDashboardFill} from 'react-icons/ri'
-// import MergeIcon from '@mui/icons-material/Merge';
+import {BiGitPullRequest} from 'react-icons/bi'
 import clsx from 'clsx'
 import {MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
@@ -178,7 +177,7 @@ function Sidebar(prop) {
 
                 <ListItem button className={classes.nested} onClick={goToPullRequest}>
                   <ListItemIcon>
-                    <GoIssueOpened size={24.5}/>
+                    <BiGitPullRequest size={24.5}/>
                   </ListItemIcon>
                   <ListItemText primary="Pull Request"/>
                 </ListItem>
