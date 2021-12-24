@@ -72,15 +72,15 @@ function ComparisonPage(prop) {
   };
 
   const projectId = localStorage.getItem("projectId")
-  //   const jwtToken = localStorage.getItem("jwtToken")
+  const jwtToken = localStorage.getItem("jwtToken")
 
-  const sendPVSBackendRequest = async (method, url, jwt) => {
+  const sendPVSBackendRequest = async (method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api';
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers: { ...(jwt && { 'Authorization': jwt }) }
+      headers: { ...(jwtToken && { 'Authorization': jwtToken }) }
     };
     return (await Axios.request(requestConfig))?.data;
   };
@@ -99,7 +99,7 @@ function ComparisonPage(prop) {
   }
 
   useEffect(() => {
-    loadInitialProjectInfo() // <<-- Now it has a name, so we can easily know what is its purpose ...
+    loadInitialProjectInfo()
   }, [])
 
   const getCommitFromDBLeft = (branch) => {
