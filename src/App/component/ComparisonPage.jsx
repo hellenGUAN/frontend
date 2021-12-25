@@ -72,15 +72,13 @@ function ComparisonPage(prop) {
   };
 
   const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
 
   const sendPVSBackendRequest = async (method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api';
     const requestConfig = {
       baseURL,
       url,
-      method,
-      headers: { ...(jwtToken && { 'Authorization': jwtToken }) }
+      method
     };
     return (await Axios.request(requestConfig))?.data;
   };
