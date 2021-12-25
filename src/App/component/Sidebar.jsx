@@ -371,7 +371,7 @@ function Sidebar(prop) {
       >
         <div className={classes.drawerContent} />
         <Divider />
-        {list()}
+        {buildSidebarList()}
       </Drawer>
       <main className={classes.content}>
         <div className={classes.drawerContent} />
