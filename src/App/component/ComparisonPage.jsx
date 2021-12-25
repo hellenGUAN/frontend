@@ -303,6 +303,7 @@ function ComparisonPage(prop) {
     setDataForTeamCommitChart(chartDataset)
   }, [commitListDataRight, prop.startMonth, prop.endMonth])
 
+  // in case there is no projectId
   if (!projectId) {
     return (
       <Redirect to="/select" />
