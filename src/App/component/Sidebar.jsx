@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import logo_p from '../../assets/p.png'
 import logo_v from '../../assets/v.png'
@@ -31,6 +32,7 @@ import { GoIssueOpened } from 'react-icons/go'
 import { HiDocumentDuplicate } from 'react-icons/hi'
 import { SiGithub, SiSonarqube, SiGitlab, SiTrello } from 'react-icons/si'
 import { RiDashboardFill } from 'react-icons/ri'
+import { HiChartPie } from 'react-icons/hi'
 import clsx from 'clsx'
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
@@ -183,6 +185,7 @@ function Sidebar(prop) {
                     {buildSmallListItem("Issues", GoIssueOpened, goToIssue)}
                     {buildSmallListItem("Code Base", Code, goToCodeBase)}
                     {buildSmallListItem("Comparison", Compare, goToComparison)}
+                    {buildSmallListItem("Contribution", HiChartPie, goToContribution)}
                   </List>
                   <Divider />
                 </Collapse>
@@ -202,6 +205,7 @@ function Sidebar(prop) {
                     {buildSmallListItem("Issues", GoIssueOpened, goToIssue)}
                     {buildSmallListItem("Code Base", Code, goToCodeBase)}
                     {buildSmallListItem("Comparison", Compare, goToComparison)}
+                    {buildSmallListItem("Contribution", HiChartPie, goToContribution)}
                   </List>
                   <Divider />
                 </Collapse>
@@ -275,6 +279,10 @@ function Sidebar(prop) {
 
   const goToComparison = () => {
     history.push("/comparison")
+  }
+
+  const goToContribution = () => {
+    history.push("/contribution")
   }
 
   const goToCodeCoverage = () => {
