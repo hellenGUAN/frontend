@@ -1,12 +1,11 @@
-import {useEffect, useState} from 'react'
-import {makeStyles} from '@material-ui/core/styles'
+import { useEffect, useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import ProjectAvatar from './ProjectAvatar'
 import DrawingBoard from './DrawingBoard'
 import Axios from 'axios'
 import moment from 'moment'
-import {Backdrop, CircularProgress} from '@material-ui/core'
-import {connect} from 'react-redux';
-
+import { Backdrop, CircularProgress } from '@material-ui/core'
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
     minWidth: '30px',
+    alignItems: 'center'
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 function IssuesPage(prop) {
   const classes = useStyles()
   const [issueListData, setIssueListData] = useState([])
-  const [dataForIssueChart, setDataForIssueChart] = useState({labels: [], data: {created: [], closed: []}})
+  const [dataForIssueChart, setDataForIssueChart] = useState({ labels: [], data: { created: [], closed: [] } })
 
   const [currentProject, setCurrentProject] = useState({})
 
@@ -42,40 +42,66 @@ function IssuesPage(prop) {
 
   useEffect(() => {
     Axios.get(`http://localhost:9100/pvs-api/project/1/${projectId}`,
-      {headers: {"Authorization": `${jwtToken}`}})
+      { headers: { "Authorization": `${jwtToken}` } })
       .then((response) => {
         setCurrentProject(response.data)
       })
       .catch((e) => {
-        alert(e.response.status)
+        alert(e.response?.status)
         console.error(e)
       })
   }, [])
 
-  useEffect(() => {
-    if (Object.keys(currentProject).length !== 0) {
-      handleToggle()
-      const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
+  const getIssueFromGitHub = () => {
+    const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
+    if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
 
       // todo need reafctor with async
       Axios.get(`http://localhost:9100/pvs-api/github/issues/${query}`,
-        {headers: {"Authorization": `${jwtToken}`}})
+        { headers: { "Authorization": `${jwtToken}` } })
         .then((response) => {
-          console.log(response.data)
           setIssueListData(response.data)
-          handleClose()
         })
         .catch((e) => {
-          alert(e.response.status);
+          alert(e);
           console.error(e)
         })
+    }
+  }
+
+  const getIssueFromGitLab = () => {
+    const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
+    if (gitlabRepo !== undefined) {
+      const query = gitlabRepo.url.split("gitlab.com/")[1]
+
+      // todo need refactor with async
+      Axios.get(`http://localhost:9100/pvs-api/gitlab/issues/${query}`,
+        { headers: { "Authorization": `${jwtToken}` } })
+        .then((response) => {
+          if (response?.data) {
+            setIssueListData(prevArray => ([...prevArray, ...response.data]))
+          }
+        })
+        .catch((e) => {
+          alert(e);
+          console.error(e)
+        })
+    }
+  }
+
+  useEffect(() => {
+    if (Object.keys(currentProject).length !== 0) {
+      handleToggle()
+      getIssueFromGitHub()
+      getIssueFromGitLab()
+      handleClose()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
   useEffect(() => {
-    const {endMonth} = prop
-    let chartDataset = {labels: [], data: {created: [], closed: []}}
+    const { endMonth } = prop
+    let chartDataset = { labels: [], data: { created: [], closed: [] } }
     let issueListDataSortedByCreatedAt = issueListData
     let issueListDataSortedByClosedAt = issueListData
 
@@ -98,14 +124,13 @@ function IssuesPage(prop) {
         chartDataset.data.closed.push(index === -1 ? issueListData.length : index)
       }
     }
-    console.log(chartDataset)
     setDataForIssueChart(chartDataset)
   }, [issueListData])
 
   return (
-    <div style={{marginLeft: "10px"}}>
+    <div style={{ marginLeft: "10px" }}>
       <Backdrop className={classes.backdrop} open={open}>
-        <CircularProgress color="inherit"/>
+        <CircularProgress color="inherit" />
       </Backdrop>
       <div className={classes.root}>
         <ProjectAvatar
@@ -118,11 +143,11 @@ function IssuesPage(prop) {
         </p>
       </div>
       <div className={classes.root}>
-        <div style={{width: "67%"}}>
+        <div style={{ width: "67%" }}>
           <div>
             <h1>Team</h1>
             <div>
-              <DrawingBoard data={dataForIssueChart} color='skyblue' id="team-issue-chart" isIssue={true}/>
+              <DrawingBoard data={dataForIssueChart} color='skyblue' id="team-issue-chart" isIssue={true} />
             </div>
           </div>
         </div>

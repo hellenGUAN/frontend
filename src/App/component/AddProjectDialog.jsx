@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import Axios from 'axios'
 
 import {
@@ -11,7 +11,7 @@ import {
   TextField,
 } from '@material-ui/core'
 
-export default function AddProjectDialog({open, reloadProjects, handleClose}) {
+export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
   const [projectName, setProjectName] = useState("")
   const jwtToken = localStorage.getItem("jwtToken")
 
@@ -24,12 +24,14 @@ export default function AddProjectDialog({open, reloadProjects, handleClose}) {
     const payload = {
       projectName,
       githubRepositoryURL: "",
-      sonarRepositoryURL: ""
+      gitlabRepositoryURL: "",
+      sonarRepositoryURL: "",
+      trelloBoardURL: ""
     }
 
     const config = {
       headers: {
-        ...(jwtToken && {"Authorization": jwtToken})
+        ...(jwtToken && { "Authorization": jwtToken })
       }
     }
 

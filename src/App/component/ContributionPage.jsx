@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import ProjectAvatar from './ProjectAvatar'
-import DrawingBoard from './DrawingBoard'
 import Axios from 'axios'
-import moment from 'moment'
-import { Backdrop, CircularProgress, MenuItem, Select } from '@material-ui/core'
+import { Backdrop, CircularProgress } from '@material-ui/core'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
+import Chart from 'react-google-charts'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,15 +32,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-function CommitsPage(prop) {
+function ContributionPage(prop) {
 
   const classes = useStyles()
   const [commitListData, setCommitListData] = useState([])
-  const [dataForTeamCommitChart, setDataForTeamCommitChart] = useState({ labels: [], data: { team: [] } })
-  const [dataForMemberCommitChart, setDataForMemberCommitChart] = useState({ labels: [], data: {} })
+  const [dataForMemberCommitPieChart, setDataForMemberCommitPieChart] = useState({ data: [] })
   const [currentProject, setCurrentProject] = useState({})
-
-  const [numberOfMember, setNumberOfMember] = useState(5)
 
   const [open, setOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -126,9 +122,7 @@ function CommitsPage(prop) {
       Axios.get(`http://localhost:9100/pvs-api/gitlab/commits/${query}`,
         { headers: { "Authorization": `${jwtToken}` } })
         .then((response) => {
-          if (response?.data) {
-            setCommitListData(previousArray => [...previousArray, ...response.data])
-          }
+          setCommitListData(previousArray => [...previousArray, ...response.data])
         })
         .catch((e) => {
           alert(e.response?.status)
@@ -163,50 +157,24 @@ function CommitsPage(prop) {
     }
   }, [isLoading]);
 
+  // Generate commits pie chart
   useEffect(() => {
-    const { startMonth, endMonth } = prop
-
-    let chartDataset = { labels: [], data: { team: [] } }
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      chartDataset.data.team.push(commitListData.filter(commit => {
-        return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-      }).length)
-    }
-
-    setDataForTeamCommitChart(chartDataset)
-  }, [commitListData, prop.startMonth, prop.endMonth])
-
-  useEffect(() => {
-    const { startMonth, endMonth } = prop
-
     let chartDataset = {
       labels: [],
       data: {}
     }
     new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
-      chartDataset.data[author] = []
+      chartDataset.data[author] = 0
+      chartDataset.labels.push(author)
     })
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      for (const key in chartDataset.data) {
-        chartDataset.data[key].push(0)
-      }
-      commitListData.forEach(commitData => {
-        if (moment(commitData.committedDate).format("YYYY-MM") === month.format("YYYY-MM")) {
-          chartDataset.data[commitData.authorName][chartDataset.labels.length - 1] += 1
-        }
-      })
-    }
-    let temp = Object.keys(chartDataset.data).map(key => [key, chartDataset.data[key]])
-    temp.sort((first, second) => second[1].reduce((a, b) => a + b) - first[1].reduce((a, b) => a + b))
-    let result = {}
-    temp.slice(0, numberOfMember).forEach(x => {
-      result[x[0]] = x[1]
+    commitListData.forEach(commitData => {
+      chartDataset.data[commitData.authorName] += 1
     })
-    chartDataset.data = result
-    setDataForMemberCommitChart(chartDataset)
-  }, [commitListData, prop.startMonth, prop.endMonth, numberOfMember])
+    setDataForMemberCommitPieChart([["Member", "Numbers of commits"]])
+    chartDataset.labels.forEach(member => {
+      setDataForMemberCommitPieChart(previousArray => [...previousArray, [member.replace("\"", "").replace("\"", ""), chartDataset.data[member]]])
+    })
+  }, [commitListData])
 
   if (!projectId) {
     return (
@@ -228,7 +196,6 @@ function CommitsPage(prop) {
             size="small"
             project={currentProject}
           />
-
           {/* Project Name */}
           <p style={{ margin: "0 1em" }}>
             <h2>{currentProject ? currentProject.projectName : ""}</h2>
@@ -244,30 +211,21 @@ function CommitsPage(prop) {
         </Button>
       </div>
 
+      {/* Commit Pie Chart */}
       <div className={classes.root}>
         <div style={{ width: "67%" }}>
-          <div>
-            <h1>Team</h1>
-            <div>
-              <DrawingBoard data={dataForTeamCommitChart} id="team-commit-chart" />
-            </div>
-            <div className={classes.root}>
-              <h1>Member</h1>
-              <Select
-                labelId="number-of-member-label"
-                id="number-of-member"
-                value={numberOfMember}
-                onChange={(e) => setNumberOfMember(e.target.value)}
-              >
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={15}>15</MenuItem>
-              </Select>
-            </div>
-            <div>
-              <DrawingBoard data={dataForMemberCommitChart} id="member-commit-chart" />
-            </div>
-          </div>
+          <h1>Commit Number of Each Member</h1>
+          <Chart
+            chartType="PieChart"
+            loader={<div>Loading Chart</div>}
+            data={dataForMemberCommitPieChart}
+            options={{
+              // title: "Commit Number",
+              is3D: true, // 3D chart style
+              backgroundColor: 'transparent',
+              height: '300px',
+            }}
+          />
         </div>
       </div>
     </div>
@@ -281,4 +239,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(CommitsPage);
+export default connect(mapStateToProps)(ContributionPage);
