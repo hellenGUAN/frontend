@@ -209,54 +209,12 @@ function ComparisonPage(prop) {
     setLeftBranchSelected(e)
     getCommitFromDBLeft(e)
     setSelectedBranchList([leftBranchSelected, rightBranchSelected])
-    const { startMonth, endMonth } = prop
-    let chartDataset = { labels: [], data: {} }
-    new Set(selectedBranchList).forEach(branch => {
-      chartDataset.data[branch] = []
-    })
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      for (const branch in chartDataset.data) {
-        if (branch === leftBranchSelected) {
-          chartDataset.data[branch].push(commitListDataLeft.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-        else if (branch === rightBranchSelected) {
-          chartDataset.data[branch].push(commitListDataRight.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-      }
-    }
-    setDataForTeamCommitChart(chartDataset)
   }
 
   const rightDiagramUpdate = (e) => {
     setRightBranchSelected(e)
     getCommitFromDBRight(e)
     setSelectedBranchList([leftBranchSelected, rightBranchSelected])
-    const { startMonth, endMonth } = prop
-    let chartDataset = { labels: [], data: {} }
-    new Set(selectedBranchList).forEach(branch => {
-      chartDataset.data[branch] = []
-    })
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      for (const branch in chartDataset.data) {
-        if (branch === leftBranchSelected) {
-          chartDataset.data[branch].push(commitListDataLeft.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-        else if (branch === rightBranchSelected) {
-          chartDataset.data[branch].push(commitListDataRight.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-      }
-    }
-    setDataForTeamCommitChart(chartDataset)
   }
 
   const handleClick = () => setLoading(true);
@@ -287,21 +245,24 @@ function ComparisonPage(prop) {
     })
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       chartDataset.labels.push(month.format("YYYY-MM"))
-      for (const branch in chartDataset.data) {
-        if (branch === leftBranchSelected) {
-          chartDataset.data[branch].push(commitListDataLeft.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-        else if (branch === rightBranchSelected) {
-          chartDataset.data[branch].push(commitListDataRight.filter(commit => {
-            return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-          }).length)
-        }
-      }
+          for (const branch in chartDataset.data) {
+            if (branch !== "") {
+                if (branch === leftBranchSelected) {
+                  chartDataset.data[branch].push(commitListDataLeft.filter(commit => {
+                    return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+                  }).length)
+                }
+                else if (branch === rightBranchSelected) {
+                  chartDataset.data[branch].push(commitListDataRight.filter(commit => {
+                    return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+                  }).length)
+                }
+            }
+          }
     }
+    console.log(leftBranchSelected, rightBranchSelected)
     setDataForTeamCommitChart(chartDataset)
-  }, [commitListDataRight, prop.startMonth, prop.endMonth])
+  }, [commitListDataRight, prop.startMonth, prop.endMonth, leftBranchSelected, rightBranchSelected])
 
   // in case there is no projectId
   if (!projectId) {
@@ -347,7 +308,6 @@ function ComparisonPage(prop) {
                   labelId="list-of-branches-label"
                   id="list-of-branches"
                   value={leftBranchSelected}
-                  defaultValue={branchList[0]}
                   onChange={(e) => leftDiagramUpdate(e.target.value)}
                 >
                   {branchList.map((name) => (
@@ -364,7 +324,6 @@ function ComparisonPage(prop) {
                   labelId="list-of-branches-label"
                   id="list-of-branches"
                   value={rightBranchSelected}
-                  defaultValue={branchList[0]}
                   onChange={(e) => rightDiagramUpdate(e.target.value)}
                 >
                   {branchList.map((name) => (
