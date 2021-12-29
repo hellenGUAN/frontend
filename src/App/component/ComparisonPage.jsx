@@ -193,7 +193,7 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      sendPVSBackendRequest('GET', `/gitlab/commits/branchList/${query}`)
+      sendPVSBackendRequest('GET', `/gitlab/branchList/${query}`)
         .then((responseData) => {
           if (responseData) {
             setBranchList(responseData)
