@@ -183,7 +183,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         <Button onClick={close} color="secondary">
           Cancel
         </Button>
-        <Button onClick={add} color="primary" id="AddRepositoryBtn">
+        <Button onClick={addRepository} color="primary" id="AddRepositoryBtn">
           Create
         </Button>
       </DialogActions>
