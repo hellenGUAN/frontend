@@ -181,7 +181,6 @@ function ComparisonPage(prop) {
       sendPVSBackendRequest('GET', `/github/branchList/${query}`)
         .then((responseData) => {
           if (responseData) {
-            console.log("get")
             setBranchList(responseData)
           }
         })
