@@ -178,9 +178,10 @@ function ComparisonPage(prop) {
 
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
-      sendPVSBackendRequest('GET', `/github/commits/branchList/${query}`)
+      sendPVSBackendRequest('GET', `/github/branchList/${query}`)
         .then((responseData) => {
           if (responseData) {
+            console.log("get")
             setBranchList(responseData)
           }
         })
