@@ -49,7 +49,7 @@ function SelectProject({setCurrentProjectId}) {
         setProjects(response.data)
       })
       .catch((e) => {
-        alert(e.response);
+        alert(e.response.status);
         console.error(e)
       })
   }
