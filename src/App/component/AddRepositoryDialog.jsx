@@ -163,8 +163,8 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         <FormControl component="fieldset">
           <FormLabel component="legend" />
           <RadioGroup row aria-label="repositoryType" name="row-radio-buttons-group">
-            <FormControlLabel value="github" disabled={hasGitRepo ? true : false} control={<Radio />} onChange={selected} label="GitHub" />
-            <FormControlLabel value="gitlab" disabled={hasGitRepo ? true : false} control={<Radio />} onChange={selected} label="GitLab" />
+            <FormControlLabel value="github" disabled={hasGitRepo} control={<Radio />} onChange={selected} label="GitHub" />
+            <FormControlLabel value="gitlab" disabled={hasGitRepo} control={<Radio />} onChange={selected} label="GitLab" />
             <FormControlLabel value="sonar"  control={<Radio />} onChange={selected} label="SonarQube" />
             <FormControlLabel value="trello" control={<Radio />} onChange={selected} label="Trello" />
             <FormControlLabel
