@@ -46,10 +46,6 @@ function ProjectAvatar(props) {
   const history = useHistory()
 
   const [addRepoDialogOpen, setAddRepoDialogOpen] = useState(false)
-<<<<<<< HEAD
-=======
-//   const [wantedRepoType, setWantedRepoType] = useState("")
->>>>>>> 0b1156d (add radio button)
   const [hasGithubRepo, setHasGithubRepo] = useState(false)
   const [hasGitlabRepo, setHasGitlabRepo] = useState(false)
   const [hasSonarRepo, setHasSonarRepo] = useState(false)
@@ -64,18 +60,10 @@ function ProjectAvatar(props) {
       const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
       const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
 
-<<<<<<< HEAD
       setHasGithubRepo(getGithubRepo !== undefined)
       setHasGitlabRepo(getGitlabRepo !== undefined)
       setHasSonarRepo(getSonarRepo !== undefined)
       setHasTrelloBoard(getTrelloBoard !== undefined)
-=======
-//       if (githubRepo !== undefined) {
-//         setWantedRepoType("sonar")
-//       } else if (sonarRepo !== undefined) {
-//         setWantedRepoType("github")
-//       }
->>>>>>> 0b1156d (add radio button)
     }
   }, [props.project])
 
@@ -195,10 +183,6 @@ function ProjectAvatar(props) {
         reloadProjects={props.reloadProjects}
         handleClose={() => setAddRepoDialogOpen(false)}
         projectId={props.project.projectId}
-<<<<<<< HEAD
-=======
-//         repoType={wantedRepoType}
->>>>>>> 0b1156d (add radio button)
       />
     </div>
   )
