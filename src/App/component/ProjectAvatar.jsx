@@ -112,7 +112,7 @@ function ProjectAvatar(props) {
   }
 
   return (
-    <div>
+    <span>
       <Box className={props.size === 'large' ? classes.large : classes.small}>
       {props.size === 'large' &&
       <Button onClick={toggleDeletionAlertDialog}>X</Button>
@@ -185,7 +185,7 @@ function ProjectAvatar(props) {
         projectId={props.project.projectId}
         hasGitRepo={hasGithubRepo || hasGitlabRepo}
       />
-    </div>
+    </span>
   )
 }
 
