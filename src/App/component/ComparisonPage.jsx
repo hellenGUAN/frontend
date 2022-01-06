@@ -120,23 +120,11 @@ function ComparisonPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    if (githubRepo !== undefined) {
-      const query = githubRepo.url.split("github.com/")[1]
-      sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/github/commits/${query}`)
-        .then(() => {
-          getCommitFromDBLeft(leftBranchSelected)
-          getCommitFromDBRight(rightBranchSelected)
-          setLoading(false)
-        })
-        .catch((e) => {
-          alert(e.response?.status)
-          console.error(e)
-        })
-    }
-
-    if (gitlabRepo !== undefined) {
-      const query = gitlabRepo.url.split("gitlab.com/")[1]
-       sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/gitlab/commits/${query}`)
+    // Only github & gitlab repo has comparison page, so repo could only be github or gitlab
+    const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+    if (repo !== undefined) {
+      const query = repo.url.split(repo.type + ".com/")[1]
+      sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
         .then(() => {
           getCommitFromDBLeft(leftBranchSelected)
           getCommitFromDBRight(rightBranchSelected)
