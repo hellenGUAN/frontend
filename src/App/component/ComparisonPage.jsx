@@ -120,7 +120,7 @@ function ComparisonPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    // Only github & gitlab repo has comparison page, so repo could only be github or gitlab
+    // Only GitHub & GitLab repo has comparison page, so repo could only be GitHub or GitLab
     const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
     if (repo !== undefined) {
       const query = repo.url.split(repo.type + ".com/")[1]
