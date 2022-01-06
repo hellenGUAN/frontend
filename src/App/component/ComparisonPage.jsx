@@ -116,18 +116,51 @@ function ComparisonPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
+  const updateCommits = () => {
+    const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
+    const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
+
+    if (githubRepo !== undefined) {
+      const query = githubRepo.url.split("github.com/")[1]
+      sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/github/commits/${query}`)
+        .then(() => {
+          getCommitFromDBLeft(leftBranchSelected)
+          getCommitFromDBRight(rightBranchSelected)
+          setLoading(false)
+        })
+        .catch((e) => {
+          alert(e.response?.status)
+          console.error(e)
+        })
+    }
+
+    if (gitlabRepo !== undefined) {
+      const query = gitlabRepo.url.split("gitlab.com/")[1]
+       sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/gitlab/commits/${query}`)
+        .then(() => {
+          getCommitFromDBLeft(leftBranchSelected)
+          getCommitFromDBRight(rightBranchSelected)
+          setLoading(false)
+        })
+        .catch((e) => {
+          alert(e.response?.status)
+          console.error(e)
+        })
+    }
+  }
+
   const getCommitFromDBLeft = (branch) => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
-      // todo need refactor with async
-      sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
+      const repoOwner = query.split("/")[0]
+      const repoName = query.split("/")[1]
+      sendPVSBackendRequest('GET', `/github/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
           if (responseData) {
             setCommitListDataLeft(responseData)
-            setLoading(false)
           }
         })
         .catch((e) => {
@@ -138,11 +171,12 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      sendPVSBackendRequest('GET', `gitlab/commits/${query}/${branch}`)
+      const repoOwner = query.split("/")[0]
+      const repoName = query.split("/")[1]
+      sendPVSBackendRequest('GET', `gitlab/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
           if (responseData) {
             setCommitListDataLeft(responseData)
-            setLoading(false)
           }
         })
         .catch((e) => {
@@ -158,12 +192,12 @@ function ComparisonPage(prop) {
 
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
-      // todo need refactor with async
-      sendPVSBackendRequest('GET', `/github/commits/${query}/${branch}`)
+      const repoOwner = query.split("/")[0]
+      const repoName = query.split("/")[1]
+      sendPVSBackendRequest('GET', `/github/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
           if (responseData) {
             setCommitListDataRight(responseData)
-            setLoading(false)
           }
         })
         .catch((e) => {
@@ -174,11 +208,12 @@ function ComparisonPage(prop) {
 
     if (gitlabRepo !== undefined) {
       const query = gitlabRepo.url.split("gitlab.com/")[1]
-      sendPVSBackendRequest('GET', `/gitlab/commits/${query}/${branch}`)
+      const repoOwner = query.split("/")[0]
+      const repoName = query.split("/")[1]
+      sendPVSBackendRequest('GET', `/gitlab/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
           if (responseData) {
             setCommitListDataRight(responseData)
-            setLoading(false)
           }
         })
         .catch((e) => {
@@ -248,10 +283,9 @@ function ComparisonPage(prop) {
 
   useEffect(() => {
     if (isLoading) {
-      getCommitFromDBLeft(leftBranchSelected)
-      getCommitFromDBRight(rightBranchSelected)
+      updateCommits()
     }
-  }, [currentProject, prop.startMonth, prop.endMonth, leftBranchSelected, rightBranchSelected, isLoading])
+  }, [isLoading])
 
   useEffect(() => {
     const { startMonth, endMonth } = prop
