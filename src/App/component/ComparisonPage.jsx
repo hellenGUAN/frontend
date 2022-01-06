@@ -340,7 +340,7 @@ function ComparisonPage(prop) {
             disabled={isLoading}
             onClick={!isLoading ? handleClick : null}
           >
-            {isLoading ? 'Loading…' : 'reload commits'}
+            {isLoading ? 'Loading…' : 'Reload'}
           </Button>
         </div>
       </header>
