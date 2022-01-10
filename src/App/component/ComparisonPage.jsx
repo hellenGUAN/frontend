@@ -83,24 +83,24 @@ function ComparisonPage(prop) {
   const [open, setOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const handleToggle = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
   const projectId = localStorage.getItem("projectId")
   const memberId = localStorage.getItem("memberId")
 
   const sendPVSBackendRequest = async (method, url) => {
-    const baseURL = 'http://localhost:9100/pvs-api';
+    const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method
-    };
-    return (await Axios.request(requestConfig))?.data;
-  };
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
 
   const loadInitialProjectInfo = async () => {
     try {

@@ -32,58 +32,80 @@ function BugsPage(prop) {
   const [open, setOpen] = useState(false)
   const handleClose = () => {
     setOpen(false)
-  };
+  }
   const handleToggle = () => {
     setOpen(!open)
-  };
+  }
 
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
   //TODO 這邊寫死的記得要改唷!!!! >////<
 
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const loadInitialProjectInfo = async () => {
+    try {
+      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
+      setCurrentProject(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
+
   useEffect(() => {
-    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(response => {
-        setCurrentProject(response.data)
-      })
-      .catch(e => {
-        alert(e.response.status)
-        console.error(e)
-      })
+    loadInitialProjectInfo()
   }, [])
+
+  const getBugData = async () => {
+    let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
+    let sonarComponent = repositoryDTO.url.split("id=")[1]
+    setBugUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=BUG`)
+    try {
+      const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/bug`)
+      setBugList(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
 
   useEffect(() => {
     handleToggle()
     if (currentProject !== undefined) {
-      let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-      let sonarComponent = repositoryDTO.url.split("id=")[1]
-      setBugUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=BUG`)
-      Axios.get(`http://localhost:9100/pvs-api/sonar/${sonarComponent}/bug`,
-        {headers: {"Authorization": `${jwtToken}`}})
-        .then((response) => {
-          setBugList(response.data)
-        })
-        .catch((e) => {
-          alert(e.response.status)
-          console.error(e)
-        })
+      getBugData()
     }
   }, [currentProject])
 
+  const getDatasetForChart = () => {
+    let dataset = {labels: [], data: {bug: []}}
+    bugList.forEach(bug => {
+      dataset.labels.push(moment(bug.date).format("YYYY-MM-DD HH:mm:ss"))
+      dataset.data.bug.push(bug.value)
+    })
+    return dataset
+  }
 
   useEffect(() => {
-    let chartDataset = {labels: [], data: {bug: []}}
-
-    bugList.forEach(bug => {
-      chartDataset.labels.push(moment(bug.date).format("YYYY-MM-DD HH:mm:ss"))
-      chartDataset.data.bug.push(bug.value)
-    })
-
+    const chartDataset = getDatasetForChart()
     setDataForBugChart(chartDataset)
     handleClose()
-
   }, [bugList, prop.startMonth, prop.endMonth])
 
   return (

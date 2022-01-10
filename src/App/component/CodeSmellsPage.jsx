@@ -35,52 +35,75 @@ function CodeSmellsPage(prop) {
   const [open, setOpen] = useState(false)
   const handleClose = () => {
     setOpen(false)
-  };
+  }
   const handleToggle = () => {
     setOpen(!open)
-  };
+  }
+
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const loadInitialProjectInfo = async () => {
+    try {
+      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
+      setCurrentProject(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
 
   useEffect(() => {
-    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(response => {
-        setCurrentProject(response.data)
-      })
-      .catch(e => {
-        alert(e.response.status)
-        console.error(e)
-      })
+    loadInitialProjectInfo()
   }, [])
+
+  const getCodeSmellData = async () => {
+    let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
+    let sonarComponent = repositoryDTO.url.split("id=")[1]
+    setCodeSmellUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=CODE_SMELL`)
+    try {
+      const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/code_smell`)
+      setCodeSmellList(response.data)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
 
   useEffect(() => {
     handleToggle()
     if (currentProject !== undefined) {
-      let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-      let sonarComponent = repositoryDTO.url.split("id=")[1]
-      setCodeSmellUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=CODE_SMELL`)
-      Axios.get(`http://localhost:9100/pvs-api/sonar/${sonarComponent}/code_smell`,
-        {headers: {"Authorization": `${jwtToken}`}})
-        .then((response) => {
-          setCodeSmellList(response.data)
-        })
-        .catch((e) => {
-          alert(e.response.status)
-          console.error(e)
-        })
+      getCodeSmellData()
     }
   }, [currentProject])
 
-  useEffect(() => {
-    let chartDataset = {labels: [], data: {codeSmell: []}}
-
+  const getDatasetForChart = () => {
+    let dataset = {labels: [], data: {codeSmell: []}}
     codeSmellList.forEach(codeSmell => {
-      chartDataset.labels.push(moment(codeSmell.date).format("YYYY-MM-DD HH:mm:ss"))
-      chartDataset.data.codeSmell.push(codeSmell.value)
+      dataset.labels.push(moment(codeSmell.date).format("YYYY-MM-DD HH:mm:ss"))
+      dataset.data.codeSmell.push(codeSmell.value)
     })
+    return dataset
+  }
 
+  useEffect(() => {
+    const chartDataset = getDatasetForChart()
     setDataForCodeSmellChart(chartDataset)
     handleClose()
-
   }, [codeSmellList, prop.startMonth, prop.endMonth])
 
   return (

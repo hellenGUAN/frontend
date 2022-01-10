@@ -28,6 +28,23 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
 
   let repositoryURL = ""
 
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
   const addRepository = () => {
     let checker = []
     if (repositoryURL.trim() === "") {
@@ -37,23 +54,21 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
       checker.push(checkRepositoryURL(repositoryURL));
 
       Promise.all(checker)
-        .then((response) => {
+        .then(async (response) => {
           if (response.includes(false) === false) {
             let payload = {
               projectId,
               repositoryURL
             }
 
-            Axios.post(`http://localhost:9100/pvs-api/project/${projectId}/repository/${repoType}`, payload,
-              { headers: { "Authorization": `${jwtToken}` } })
-              .then(() => {
-                reloadProjects()
-                handleClose()
-              })
-              .catch((e) => {
-                alert(e.response?.status)
-                console.error(e)
-              })
+            try {
+              await Axios.post(`http://localhost:9100/pvs-api/project/${projectId}/repository/${repoType}`, payload, config)
+              reloadProjects()
+              handleClose()
+            } catch (e) {
+              alert(e?.response?.status)
+              console.error(e)
+            }
           }
         }).catch((e) => {
           alert(e.response?.status)
@@ -65,45 +80,41 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
   const checkRepositoryURL = async (url) => {
     if (repoType === "github") {
       try {
-        await Axios.get(`http://localhost:9100/pvs-api/repository/github/check?url=${url}`,
-          { headers: { "Authorization": `${jwtToken}` } });
-        return true;
+        await sendPVSBackendRequest('GET', `/repository/github/check?url=${url}`)
+        return true
       } catch (e) {
-        alert("github error");
-        return false;
+        alert("github error")
+        return false
       }
     }
 
     if (repoType === "gitlab") {
       try {
-        await Axios.get(`http://localhost:9100/pvs-api/repository/gitlab/check?url=${url}`,
-          { headers: { "Authorization": `${jwtToken}` } });
-        return true;
+        await sendPVSBackendRequest('GET', `/repository/gitlab/check?url=${url}`)
+        return true
       } catch (e) {
-        alert("gitlab error");
-        return false;
+        alert("gitlab error")
+        return false
       }
     }
 
     if (repoType === "sonar") {
       try {
-        await Axios.get(`http://localhost:9100/pvs-api/repository/sonar/check?url=${url}`,
-          { headers: { "Authorization": `${jwtToken}` } });
-        return true;
+        await sendPVSBackendRequest('GET', `/repository/sonar/check?url=${url}`)
+        return true
       } catch (e) {
-        alert("sonar error");
-        return false;
+        alert("sonar error")
+        return false
       }
     }
 
     if (repoType === "trello") {
       try {
-        await Axios.get(`http://localhost:9100/pvs-api/repository/trello/check?url=${url}`,
-          { headers: { "Authorization": `${jwtToken}` } });
-        return true;
+        await sendPVSBackendRequest('GET', `/repository/trello/check?url=${url}`)
+        return true
       } catch (e) {
-        alert("trello error");
-        return false;
+        alert("trello error")
+        return false
       }
     }
   }
