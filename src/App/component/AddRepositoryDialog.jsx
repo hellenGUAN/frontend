@@ -83,7 +83,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         await sendPVSBackendRequest('GET', `/repository/github/check?url=${url}`)
         return true
       } catch (e) {
-        alert("github error")
+        alert("Invalid GitHub URL")
         return false
       }
     }
@@ -93,7 +93,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         await sendPVSBackendRequest('GET', `/repository/gitlab/check?url=${url}`)
         return true
       } catch (e) {
-        alert("gitlab error")
+        alert("Invalid GitLab URL")
         return false
       }
     }
@@ -103,7 +103,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         await sendPVSBackendRequest('GET', `/repository/sonar/check?url=${url}`)
         return true
       } catch (e) {
-        alert("sonar error")
+        alert("Invalid SonarQube URL")
         return false
       }
     }
@@ -113,7 +113,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         await sendPVSBackendRequest('GET', `/repository/trello/check?url=${url}`)
         return true
       } catch (e) {
-        alert("trello error")
+        alert("Invalid Trello URL")
         return false
       }
     }

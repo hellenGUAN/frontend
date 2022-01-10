@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
 function CommitsPage(prop) {
 
   const classes = useStyles()
+  const { startMonth, endMonth } = prop
   const [commitListData, setCommitListData] = useState([])
   const [dataForTeamCommitChart, setDataForTeamCommitChart] = useState({ labels: [], data: { team: [] } })
   const [dataForMemberCommitChart, setDataForMemberCommitChart] = useState({ labels: [], data: {} })
@@ -168,48 +169,50 @@ function CommitsPage(prop) {
     }
   }, [isLoading]);
 
-  useEffect(() => {
-    const { startMonth, endMonth } = prop
-
-    let chartDataset = { labels: [], data: { team: [] } }
+  const getDatasetForCommitChart = () => {
+    let dataset = { labels: [], data: { team: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      chartDataset.data.team.push(commitListData.filter(commit => {
+      dataset.labels.push(month.format("YYYY-MM"))
+      dataset.data.team.push(commitListData.filter(commit => {
         return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
       }).length)
     }
+    return dataset
+  }
 
+  useEffect(() => {
+    const chartDataset = getDatasetForCommitChart()
     setDataForTeamCommitChart(chartDataset)
   }, [commitListData, prop.startMonth, prop.endMonth])
 
-  useEffect(() => {
-    const { startMonth, endMonth } = prop
-
-    let chartDataset = {
-      labels: [],
-      data: {}
-    }
+  const getDatasetForMemberChart = () => {
+    let dataset = { labels: [], data: {} }
     new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
-      chartDataset.data[author] = []
+      dataset.data[author] = []
     })
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-      for (const key in chartDataset.data) {
-        chartDataset.data[key].push(0)
+      dataset.labels.push(month.format("YYYY-MM"))
+      for (const key in dataset.data) {
+        dataset.data[key].push(0)
       }
       commitListData.forEach(commitData => {
         if (moment(commitData.committedDate).format("YYYY-MM") === month.format("YYYY-MM")) {
-          chartDataset.data[commitData.authorName][chartDataset.labels.length - 1] += 1
+          dataset.data[commitData.authorName][dataset.labels.length - 1] += 1
         }
       })
     }
-    let temp = Object.keys(chartDataset.data).map(key => [key, chartDataset.data[key]])
+    let temp = Object.keys(dataset.data).map(key => [key, dataset.data[key]])
     temp.sort((first, second) => second[1].reduce((a, b) => a + b) - first[1].reduce((a, b) => a + b))
     let result = {}
     temp.slice(0, numberOfMember).forEach(x => {
       result[x[0]] = x[1]
     })
-    chartDataset.data = result
+    dataset.data = result
+    return dataset
+  }
+
+  useEffect(() => {
+    const chartDataset = getDatasetForMemberChart()
     setDataForMemberCommitChart(chartDataset)
   }, [commitListData, prop.startMonth, prop.endMonth, numberOfMember])
 
@@ -240,7 +243,7 @@ function CommitsPage(prop) {
             disabled={isLoading}
             onClick={!isLoading ? handleClick : null}
           >
-            {isLoading ? 'Loading…' : 'reload commits'}
+            {isLoading ? 'Loading…' : 'Reload commits'}
           </Button>
         </div>
       </header>
