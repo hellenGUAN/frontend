@@ -209,7 +209,7 @@ function ComparisonPage(prop) {
 
   const handleClick = () => setLoading(true);
 
-  const getDataForChart = () => {
+  const setComparisonChart = () => {
     let dataset = { labels: [], data: {} }
     new Set(selectedBranchList).forEach(branch => {
       dataset.data[branch] = []
@@ -232,7 +232,7 @@ function ComparisonPage(prop) {
         }
       }
     }
-    return dataset
+    setDataForTeamCommitChart(dataset)
   }
 
   useEffect(() => {
@@ -253,8 +253,7 @@ function ComparisonPage(prop) {
   }, [isLoading])
 
   useEffect(() => {
-    const chartDataset = getDataForChart()
-    setDataForTeamCommitChart(chartDataset)
+    setComparisonChart()
   }, [commitListDataLeft, commitListDataRight, prop.startMonth, prop.endMonth, leftBranchSelected, rightBranchSelected])
 
   // in case there is no projectId

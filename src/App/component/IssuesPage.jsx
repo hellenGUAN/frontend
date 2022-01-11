@@ -120,8 +120,7 @@ function IssuesPage(prop) {
   }, [currentProject, prop.startMonth, prop.endMonth])
 
   useEffect(() => {
-    const chartDataset = generateIssueChartDataset()
-    setDataForIssueChart(chartDataset)
+    generateIssueChartDataset()
   }, [issueListData])
 
   const generateIssueChartDataset = () => {
@@ -132,7 +131,7 @@ function IssuesPage(prop) {
     chartDataset.data.created = getIssueCreatedCountArray()
     chartDataset.data.closed = getIssueClosedCountArray()
 
-    return chartDataset
+    setDataForIssueChart(chartDataset)
   }
 
   const getIssueCreatedCountArray = () => {

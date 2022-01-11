@@ -169,7 +169,7 @@ function CommitsPage(prop) {
     }
   }, [isLoading]);
 
-  const getDatasetForCommitChart = () => {
+  const setCommitChart = () => {
     let dataset = { labels: [], data: { team: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       dataset.labels.push(month.format("YYYY-MM"))
@@ -177,15 +177,14 @@ function CommitsPage(prop) {
         return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
       }).length)
     }
-    return dataset
+    setDataForTeamCommitChart(dataset)
   }
 
   useEffect(() => {
-    const chartDataset = getDatasetForCommitChart()
-    setDataForTeamCommitChart(chartDataset)
+    setCommitChart()
   }, [commitListData, prop.startMonth, prop.endMonth])
 
-  const getDatasetForMemberChart = () => {
+  const setMemberCommitChart = () => {
     let dataset = { labels: [], data: {} }
     new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
       dataset.data[author] = []
@@ -208,12 +207,11 @@ function CommitsPage(prop) {
       result[x[0]] = x[1]
     })
     dataset.data = result
-    return dataset
+    setDataForMemberCommitChart(dataset)
   }
 
   useEffect(() => {
-    const chartDataset = getDatasetForMemberChart()
-    setDataForMemberCommitChart(chartDataset)
+    setMemberCommitChart()
   }, [commitListData, prop.startMonth, prop.endMonth, numberOfMember])
 
   if (!projectId) {

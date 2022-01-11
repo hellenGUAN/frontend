@@ -53,17 +53,21 @@ function ProjectAvatar(props) {
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
   const jwt = localStorage.getItem("jwtToken")
 
+  const checkExistedRepo = () => {
+    const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
+    const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
+    const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
+    const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
+
+    setHasGithubRepo(getGithubRepo !== undefined)
+    setHasGitlabRepo(getGitlabRepo !== undefined)
+    setHasSonarRepo(getSonarRepo !== undefined)
+    setHasTrelloBoard(getTrelloBoard !== undefined)
+  }
+
   useEffect(() => {
     if (props.size === 'large') {
-      const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
-      const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
-      const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
-      const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
-
-      setHasGithubRepo(getGithubRepo !== undefined)
-      setHasGitlabRepo(getGitlabRepo !== undefined)
-      setHasSonarRepo(getSonarRepo !== undefined)
-      setHasTrelloBoard(getTrelloBoard !== undefined)
+      checkExistedRepo()
     }
   }, [props.project])
 

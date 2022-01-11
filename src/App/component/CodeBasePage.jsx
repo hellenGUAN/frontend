@@ -184,19 +184,18 @@ function CodeBasePage(prop) {
       }, 0))
   }
 
-  const getDatasetForChart = () => {
+  const setCodeBaseChart = () => {
     let dataset = { labels: [], data: { additions: [], deletions: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       dataset.labels.push(month.format("YYYY-MM"))
       pushAdditionsData(month, dataset)
       pushDeletionsData(month, dataset)
     }
-    return dataset
+    setDataForCodeBaseChart(dataset)
   }
 
   useEffect(() => {
-    const chartDataset = getDatasetForChart()
-    setDataForCodeBaseChart(chartDataset)
+    setCodeBaseChart()
   }, [commitListData, prop.startMonth, prop.endMonth])
 
   return (
