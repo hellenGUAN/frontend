@@ -226,11 +226,9 @@ function CodeBasePage(prop) {
 
       <div className={classes.chartContainer}>
         <div className={classes.chart}>
+          <h1>Team</h1>
           <div>
-            <h1>Team</h1>
-            <div>
-              <DrawingBoard data={dataForCodeBaseChart} isCodeBase={true} id="team-codebase-chart" />
-            </div>
+            <DrawingBoard data={dataForCodeBaseChart} isCodeBase={true} id="team-codebase-chart" />
           </div>
         </div>
       </div>

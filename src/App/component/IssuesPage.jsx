@@ -183,11 +183,9 @@ function IssuesPage(prop) {
       </header>
       <div className={classes.chartContainer}>
         <div className={classes.chart}>
+          <h1>Team</h1>
           <div>
-            <h1>Team</h1>
-            <div>
-              <DrawingBoard data={dataForIssueChart} color='skyblue' id="team-issue-chart" isIssue={true} />
-            </div>
+            <DrawingBoard data={dataForIssueChart} color='skyblue' id="team-issue-chart" isIssue={true} />
           </div>
         </div>
       </div>

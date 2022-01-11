@@ -218,11 +218,9 @@ function PullRequestsPage(prop) {
       {/* Pull-Request Chart */}
       <div className={classes.chartContainer}>
         <div className={classes.chart}>
+          <h1>Team</h1>
           <div>
-            <h1>Team</h1>
-            <div>
-              <DrawingBoard data={dataForPullRequestChart} color='skyblue' id="team-pull-request-chart" isIssue={true} />
-            </div>
+            <DrawingBoard data={dataForPullRequestChart} color='skyblue' id="team-pull-request-chart" isIssue={true} />
           </div>
         </div>
       </div>
