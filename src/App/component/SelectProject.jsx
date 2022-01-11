@@ -12,6 +12,7 @@ import {useEffect} from 'react';
 import AddProjectDialog from './AddProjectDialog';
 import {connect} from 'react-redux';
 import {setCurrentProjectId} from '../../redux/action';
+import {randomHash} from "../../utils";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -71,7 +72,7 @@ function SelectProject({setCurrentProjectId}) {
 
   useEffect(() => {
     setCurrentProjectId(0)
-    loadProjects();
+    loadProjects()
   }, [])
 
   return (
@@ -80,7 +81,7 @@ function SelectProject({setCurrentProjectId}) {
 
       <div className={classes.root}>
         {projects.map(project =>
-          <ProjectAvatar key={project.toString()} size="large" project={project} reloadProjects={loadProjects}/>
+          <ProjectAvatar key={randomHash()} size="large" project={project} reloadProjects={loadProjects}/>
         )}
         <Card id="create-project-card" className={classes.createProjectCard}>
           <CardActionArea onClick={() => setAddRepoDialogOpen(true)}>

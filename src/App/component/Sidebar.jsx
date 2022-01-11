@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function Sidebar(prop) {
-  //todo seperate sidebar and appbar~~~
+  //todo separate sidebar and appbar~~~
 
   const open = useState(true)[0]
   const history = useHistory()
