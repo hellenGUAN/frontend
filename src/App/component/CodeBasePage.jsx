@@ -135,9 +135,11 @@ function CodeBasePage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
         setCommitListData(response)
+        loadingCommitsEnd()
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
+        loadingCommitsEnd()
       }
     }
   }
@@ -149,7 +151,6 @@ function CodeBasePage(prop) {
     if (Object.keys(currentProject).length !== 0) {
       loadingCommitsStart()
       getCommitFromDB()
-      loadingCommitsEnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 

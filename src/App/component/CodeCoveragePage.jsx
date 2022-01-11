@@ -31,83 +31,58 @@ function CodeCoveragePage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [isLoading, setLoading] = useState(false)
-  const loadingCoverageEnd = () => {
-    setLoading(false)
-  }
-  const loadingCoverageStart = () => {
-    setLoading(!isLoading)
-  }
-
-  const config = {
-    headers: {
-      ...(jwtToken && { "Authorization": jwtToken })
-    }
-  }
-
-  const sendPVSBackendRequest = async (method, url) => {
-    const baseURL = 'http://localhost:9100/pvs-api'
-    const requestConfig = {
-      baseURL,
-      url,
-      method,
-      config
-    }
-    return (await Axios.request(requestConfig))?.data
-  }
-
-  const loadInitialProjectInfo = async () => {
-    try {
-      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
-      setCurrentProject(response)
-    } catch (e) {
-      alert(e.response?.status)
-      console.error(e)
-    }
-  }
+  const [open, setOpen] = useState(false)
+  const handleClose = () => {
+    setOpen(false)
+  };
+  const handleToggle = () => {
+    setOpen(!open)
+  };
 
   useEffect(() => {
-    loadInitialProjectInfo()
+    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
+      {headers: {"Authorization": `${jwtToken}`}})
+      .then(response => {
+        setCurrentProject(response.data)
+      })
+      .catch(e => {
+        alert(e.response.status)
+        console.error(e)
+      })
   }, [])
 
-  const getCoverageData = async () => {
-    let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-    let sonarComponent = repositoryDTO.url.split("id=")[1]
-    setCoverageUrl(`https://sonarcloud.io/component_measures?id=${sonarComponent}&metric=Coverage&view=list`)
-    try {
-      const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/coverage`)
-      setCoverageList(response)
-    } catch (e) {
-      alert(e.response?.status)
-      console.error(e)
-    }
-  }
-
   useEffect(() => {
-    loadingCoverageStart()
+    handleToggle()
     if (currentProject !== undefined) {
-      getCoverageData()
+      let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
+      let sonarComponent = repositoryDTO.url.split("id=")[1]
+      setCoverageUrl(`https://sonarcloud.io/component_measures?id=${sonarComponent}&metric=Coverage&view=list`)
+      Axios.get(`http://localhost:9100/pvs-api/sonar/${sonarComponent}/coverage`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then((response) => {
+          setCoverageList(response.data)
+        })
+        .catch((e) => {
+          alert(e.response.status)
+          console.error(e)
+        })
     }
   }, [currentProject])
 
-  const getDatasetForChart = () => {
-    let dataset = {labels: [], data: {coverage: []}}
-    coverageList.forEach(coverage => {
-      dataset.labels.push(moment(coverage.date).format("YYYY-MM-DD HH:mm:ss"))
-      dataset.data.coverage.push(coverage.value)
-    })
-    return dataset
-  }
-
   useEffect(() => {
-    const chartDataset = getDatasetForChart()
+    let chartDataset = {labels: [], data: {coverage: []}}
+
+    coverageList.forEach(coverage => {
+      chartDataset.labels.push(moment(coverage.date).format("YYYY-MM-DD HH:mm:ss"))
+      chartDataset.data.coverage.push(coverage.value)
+    })
     setDataForCoverageChart(chartDataset)
-    loadingCoverageEnd()
+    handleClose()
   }, [coverageList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={isLoading}>
+      <Backdrop className={classes.backdrop} open={open}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>

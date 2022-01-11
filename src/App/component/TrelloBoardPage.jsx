@@ -1,5 +1,6 @@
-import {useEffect, useState} from 'react'
-import {makeStyles} from '@material-ui/core/styles'
+import { useEffect, useState } from 'react'
+import { Backdrop, CircularProgress } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import Axios from 'axios'
 
 import Board from "react-trello";
@@ -32,6 +33,14 @@ function TrelloBoardPage() {
   const projectId = localStorage.getItem("projectId")
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
+
+  const [isLoading, setLoading] = useState(false);
+  const loadingBoardEnd = () => {
+    setLoading(false)
+  }
+  const loadingBoardStart = () => {
+    setLoading(true)
+  }
 
   const config = {
     headers: {
@@ -71,9 +80,11 @@ function TrelloBoardPage() {
         const response = await sendPVSBackendRequest('GET', `/trello/board?url=${trelloBoard.url}`)
         setBoardData(response)
         setHasBoardData(true)
+        loadingBoardEnd()
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
+        loadingBoardEnd()
       }
     }
   }
@@ -96,6 +107,7 @@ function TrelloBoardPage() {
   }
 
   useEffect(() => {
+    loadingBoardStart()
     if (Object.keys(currentProject).length !== 0) {
       getTrelloData()
     }
@@ -103,6 +115,9 @@ function TrelloBoardPage() {
 
   return (
     <div className={classes.root}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div className={classes.boardContainer}>
         {hasBoardData &&
         <Board

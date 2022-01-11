@@ -11,13 +11,16 @@ const useStyles = makeStyles((theme) => ({
   root: {
     marginLeft: '10px'
   },
-  chart: {
+  chartContainer: {
     display: 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
     minWidth: '30px',
     alignItems: 'center'
+  },
+  chart: {
+    width: '67%',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -100,9 +103,11 @@ function IssuesPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/issues/${query}`)
         setIssueListData(response)
+        loadingIssuesEnd()
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
+        loadingIssuesEnd()
       }
     }
   }
@@ -111,7 +116,6 @@ function IssuesPage(prop) {
     if (Object.keys(currentProject).length !== 0) {
       loadingIssuesStart()
       getIssue()
-      loadingIssuesEnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
@@ -177,8 +181,8 @@ function IssuesPage(prop) {
         />
         <h2 className={classes.title}>{currentProject ? currentProject.projectName : ""}</h2>
       </header>
-      <div className={classes.chart}>
-        <div style={{ width: "67%" }}>
+      <div className={classes.chartContainer}>
+        <div className={classes.chart}>
           <div>
             <h1>Team</h1>
             <div>

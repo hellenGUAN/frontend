@@ -32,83 +32,60 @@ function CodeSmellsPage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [isLoading, setLoading] = useState(false)
-  const loadingCodeSmellEnd = () => {
-    setLoading(false)
-  }
-  const loadingCodeSmellStart = () => {
-    setLoading(!isLoading)
-  }
-
-  const config = {
-    headers: {
-      ...(jwtToken && { "Authorization": jwtToken })
-    }
-  }
-
-  const sendPVSBackendRequest = async (method, url) => {
-    const baseURL = 'http://localhost:9100/pvs-api'
-    const requestConfig = {
-      baseURL,
-      url,
-      method,
-      config
-    }
-    return (await Axios.request(requestConfig))?.data
-  }
-
-  const loadInitialProjectInfo = async () => {
-    try {
-      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
-      setCurrentProject(response)
-    } catch (e) {
-      alert(e.response?.status)
-      console.error(e)
-    }
-  }
+  const [open, setOpen] = useState(false)
+  const handleClose = () => {
+    setOpen(false)
+  };
+  const handleToggle = () => {
+    setOpen(!open)
+  };
 
   useEffect(() => {
-    loadInitialProjectInfo()
+    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
+      {headers: {"Authorization": `${jwtToken}`}})
+      .then(response => {
+        setCurrentProject(response.data)
+      })
+      .catch(e => {
+        alert(e.response.status)
+        console.error(e)
+      })
   }, [])
 
-  const getCodeSmellData = async () => {
-    let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-    let sonarComponent = repositoryDTO.url.split("id=")[1]
-    setCodeSmellUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=CODE_SMELL`)
-    try {
-      const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/code_smell`)
-      setCodeSmellList(response.data)
-    } catch (e) {
-      alert(e.response?.status)
-      console.error(e)
-    }
-  }
-
   useEffect(() => {
-    loadingCodeSmellStart()
+    handleToggle()
     if (currentProject !== undefined) {
-      getCodeSmellData()
+      let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
+      let sonarComponent = repositoryDTO.url.split("id=")[1]
+      setCodeSmellUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=CODE_SMELL`)
+      Axios.get(`http://localhost:9100/pvs-api/sonar/${sonarComponent}/code_smell`,
+        {headers: {"Authorization": `${jwtToken}`}})
+        .then((response) => {
+          setCodeSmellList(response.data)
+        })
+        .catch((e) => {
+          alert(e.response.status)
+          console.error(e)
+        })
     }
   }, [currentProject])
 
-  const getDatasetForChart = () => {
-    let dataset = {labels: [], data: {codeSmell: []}}
-    codeSmellList.forEach(codeSmell => {
-      dataset.labels.push(moment(codeSmell.date).format("YYYY-MM-DD HH:mm:ss"))
-      dataset.data.codeSmell.push(codeSmell.value)
-    })
-    return dataset
-  }
-
   useEffect(() => {
-    const chartDataset = getDatasetForChart()
+    let chartDataset = {labels: [], data: {codeSmell: []}}
+
+    codeSmellList.forEach(codeSmell => {
+      chartDataset.labels.push(moment(codeSmell.date).format("YYYY-MM-DD HH:mm:ss"))
+      chartDataset.data.codeSmell.push(codeSmell.value)
+    })
+
     setDataForCodeSmellChart(chartDataset)
-    loadingCodeSmellEnd()
+    handleClose()
+
   }, [codeSmellList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={isLoading}>
+      <Backdrop className={classes.backdrop} open={open}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>

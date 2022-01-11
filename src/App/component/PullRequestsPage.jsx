@@ -99,9 +99,11 @@ function PullRequestsPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/github/pullRequests/${query}`)
         setPullRequestListData(response)
+        loadingPREnd()
       } catch (e) {
         alert(e.response?.status);
         console.error(e)
+        loadingPREnd()
       }
     }
   }
@@ -110,7 +112,6 @@ function PullRequestsPage(prop) {
     if (Object.keys(currentProject).length !== 0) {
       loadingPRStart()
       getPullRequestsFromGitHub()
-      loadingPREnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
