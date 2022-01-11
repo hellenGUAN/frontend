@@ -65,10 +65,10 @@ function CodeBasePage(prop) {
 
   const [open, setOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const handleClose = () => {
+  const loadingCommitsEnd = () => {
     setOpen(false)
   }
-  const handleToggle = () => {
+  const loadingCommitsStart = () => {
     setOpen(!open)
   }
 
@@ -147,9 +147,9 @@ function CodeBasePage(prop) {
   // Default get commits from database
   useEffect(() => {
     if (Object.keys(currentProject).length !== 0) {
-      handleToggle()
+      loadingCommitsStart()
       getCommitFromDB()
-      handleClose()
+      loadingCommitsEnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 

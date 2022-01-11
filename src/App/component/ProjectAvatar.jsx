@@ -99,16 +99,32 @@ function ProjectAvatar(props) {
     setDeletionAlertDialog(!deletionAlertDialog)
   }
 
-  const deleteProject = () => {
-    Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`,
-      {headers: {...(jwt && {"Authorization": jwt})}})  // If jwt is null, it will return {} to headers. Otherwise it will return {"Authorization": jwt}
-      .then(() => {
-        toggleDeletionAlertDialog()
-        props.reloadProjects()
-      })
-      .catch((e) => {
-        console.error(e)
-      })
+  const config = {
+    headers: {
+      ...(jwt && { "Authorization": jwt })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const deleteProject = async () => {
+    try {
+      await sendPVSBackendRequest('DELETE', `/project/remove/${props.project.projectId}`)
+      toggleDeletionAlertDialog()
+      props.reloadProjects()
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
   }
 
   return (
@@ -131,8 +147,10 @@ function ProjectAvatar(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleDeletionAlertDialog}>Back</Button>
-          <Button onClick={deleteProject} autoFocus>
+          <Button onClick={toggleDeletionAlertDialog} color="secondary">
+            Back
+          </Button>
+          <Button onClick={deleteProject} color="primary" autoFocus>
             Delete
           </Button>
         </DialogActions>

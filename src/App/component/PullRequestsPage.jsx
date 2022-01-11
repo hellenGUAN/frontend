@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 function PullRequestsPage(prop) {
   const classes = useStyles()
+  const { startMonth, endMonth } = prop
   const [pullRequestListData, setPullRequestListData] = useState([])
   const [dataForPullRequestChart, setDataForPullRequestChart] = useState({ labels: [], data: { opened: [], closed: [], merged: [] } })
 
@@ -52,19 +53,35 @@ function PullRequestsPage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [loading, setLoading] = useState(false);
-  const loadingEnd = () => {
-    setLoading(false);
-  };
-  const isLoading = () => {
-    setLoading(true);
-  };
+  const [isLoading, setLoading] = useState(false);
+  const loadingPREnd = () => {
+    setLoading(false)
+  }
+  const loadingPRStart = () => {
+    setLoading(true)
+  }
 
-  const fetchCurrentProject = async () => {
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const loadInitialProjectInfo = async () => {
     try {
-      const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      { headers: { "Authorization": `${jwtToken}` } })
-      setCurrentProject(response.data)
+      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
+      setCurrentProject(response)
     } catch (e) {
       alert(e.response?.status)
       console.error(e)
@@ -72,7 +89,7 @@ function PullRequestsPage(prop) {
   }
 
   useEffect(() => {
-    fetchCurrentProject()
+    loadInitialProjectInfo()
   }, [])
 
   const getPullRequestsFromGitHub = async () => {
@@ -80,9 +97,8 @@ function PullRequestsPage(prop) {
     if (githubRepo !== undefined) {
       const query = githubRepo.url.split("github.com/")[1]
       try {
-        const response = await Axios.get(`http://localhost:9100/pvs-api/github/pullRequests/${query}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        setPullRequestListData(response.data)
+        const response = await sendPVSBackendRequest('GET', `/github/pullRequests/${query}`)
+        setPullRequestListData(response)
       } catch (e) {
         alert(e.response?.status);
         console.error(e)
@@ -92,9 +108,9 @@ function PullRequestsPage(prop) {
 
   useEffect(() => {
     if (Object.keys(currentProject).length !== 0) {
-      isLoading()
+      loadingPRStart()
       getPullRequestsFromGitHub()
-      loadingEnd()
+      loadingPREnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
@@ -102,7 +118,6 @@ function PullRequestsPage(prop) {
   const getPRListSortedBy = (prList, key) => prList.sort((prev, curr) => prev[key] - curr[key])
 
   const generateChartDataset = () => {
-    const { startMonth, endMonth } = prop
     let chartDataset = { labels: [], data: { merged: [], closed: [], created: [] } };
 
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
@@ -123,7 +138,6 @@ function PullRequestsPage(prop) {
   }, [pullRequestListData, prop.startMonth, prop.endMonth])
 
   const getPRCreatedCountArray = () => {
-    const { startMonth, endMonth } = prop
     const prListSortedByCreatedAt = getPRListSortedBy([].slice.call(pullRequestListData), 'createdAt')
     const created = []
 
@@ -141,7 +155,6 @@ function PullRequestsPage(prop) {
   }
 
   const getPRClosedCountArray = () => {
-    const { startMonth, endMonth } = prop
     const prListSortedByClosedAt = getPRListSortedBy([].slice.call(pullRequestListData), 'closedAt')
     const closed = []
     let noCloseCount
@@ -164,7 +177,6 @@ function PullRequestsPage(prop) {
   }
 
   const getPRMergedCountArray = () => {
-    const { startMonth, endMonth } = prop
     const prListSortedByMergedAt = getPRListSortedBy([].slice.call(pullRequestListData), 'mergedAt')
     const merged = []
     let noMergeCount
@@ -188,7 +200,7 @@ function PullRequestsPage(prop) {
 
   return (
     <div className={classes.root}>
-      <Backdrop className={classes.backdrop} open={loading}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <header className={classes.header}>

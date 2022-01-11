@@ -31,12 +31,12 @@ function CodeCoveragePage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [open, setOpen] = useState(false)
-  const handleClose = () => {
-    setOpen(false)
+  const [isLoading, setLoading] = useState(false)
+  const loadingCoverageEnd = () => {
+    setLoading(false)
   }
-  const handleToggle = () => {
-    setOpen(!open)
+  const loadingCoverageStart = () => {
+    setLoading(!isLoading)
   }
 
   const config = {
@@ -84,7 +84,7 @@ function CodeCoveragePage(prop) {
   }
 
   useEffect(() => {
-    handleToggle()
+    loadingCoverageStart()
     if (currentProject !== undefined) {
       getCoverageData()
     }
@@ -102,12 +102,12 @@ function CodeCoveragePage(prop) {
   useEffect(() => {
     const chartDataset = getDatasetForChart()
     setDataForCoverageChart(chartDataset)
-    handleClose()
+    loadingCoverageEnd()
   }, [coverageList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>

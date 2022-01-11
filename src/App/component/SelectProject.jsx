@@ -42,16 +42,31 @@ function SelectProject({setCurrentProjectId}) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const loadProjects = () => {
-    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/active`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then((response) => {
-        setProjects(response.data)
-      })
-      .catch((e) => {
-        alert(e.response?.status);
-        console.error(e)
-      })
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const loadProjects = async () => {
+    try {
+      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/active`)
+      setProjects(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
   }
 
   useEffect(() => {

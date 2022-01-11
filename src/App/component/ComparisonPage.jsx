@@ -82,10 +82,10 @@ function ComparisonPage(prop) {
 
   const [open, setOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const handleClose = () => {
+  const loadingCommitsEnd = () => {
     setOpen(false)
   }
-  const handleToggle = () => {
+  const loadingCommitsStart = () => {
     setOpen(!open)
   }
 
@@ -237,12 +237,12 @@ function ComparisonPage(prop) {
 
   useEffect(() => {
     if (Object.keys(currentProject).length !== 0) {
-      handleToggle()
+      loadingCommitsStart()
       getBranches()
       getCommitFromDBLeft(leftBranchSelected)
       getCommitFromDBRight(rightBranchSelected)
       setSelectedBranchList([leftBranchSelected, rightBranchSelected])
-      handleClose()
+      loadingCommitsEnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth, leftBranchSelected, rightBranchSelected])
 

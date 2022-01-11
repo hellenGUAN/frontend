@@ -312,16 +312,25 @@ function Sidebar(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const loadInitialProjectInfo = async () => {
+    try {
+      const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${prop.currentProjectId}`, config)
+      setCurrentProject(response.data)
+    } catch (e) {
+      alert(e?.response?.status)
+      console.error(e)
+    }
+  }
+
   useEffect(() => {
     if (prop.currentProjectId !== 0) {
-      Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${prop.currentProjectId}`,
-        { headers: { "Authorization": `${jwtToken}` } })
-        .then((response) => {
-          setCurrentProject(response.data)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
+      loadInitialProjectInfo()
     }
   }, [prop.currentProjectId])
 

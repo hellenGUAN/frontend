@@ -32,61 +32,83 @@ function DuplicationsPage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [open, setOpen] = useState(false)
-  const handleClose = () => {
-    setOpen(false)
-  };
-  const handleToggle = () => {
-    setOpen(!open)
-  };
+  const [isLoading, setLoading] = useState(false)
+  const loadingDuplicationEnd = () => {
+    setLoading(false)
+  }
+  const loadingDuplicationStart = () => {
+    setLoading(!isLoading)
+  }
 
+  const config = {
+    headers: {
+      ...(jwtToken && { "Authorization": jwtToken })
+    }
+  }
+
+  const sendPVSBackendRequest = async (method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
+    const requestConfig = {
+      baseURL,
+      url,
+      method,
+      config
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
+
+  const loadInitialProjectInfo = async () => {
+    try {
+      const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
+      setCurrentProject(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
 
   useEffect(() => {
-    Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(response => {
-        setCurrentProject(response.data)
-      })
-      .catch((e) => {
-        alert(e.response.status)
-        console.error(e)
-      })
+    loadInitialProjectInfo()
   }, [])
 
+  const getDuplicationData = async () => {
+    let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
+    let sonarComponent = repositoryDTO.url.split("id=")[1]
+    setDuplicationUrl(`https://sonarcloud.io/component_measures?id=${sonarComponent}&metric=Duplications&view=list`)
+    try {
+      const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/duplication`)
+      setDuplicationList(response)
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
+
   useEffect(() => {
-    handleToggle()
+    loadingDuplicationStart()
     if (currentProject !== undefined) {
-      let repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-      let sonarComponent = repositoryDTO.url.split("id=")[1]
-      setDuplicationUrl(`https://sonarcloud.io/component_measures?id=${sonarComponent}&metric=Duplications&view=list`)
-      Axios.get(`http://localhost:9100/pvs-api/sonar/${sonarComponent}/duplication`,
-        {headers: {"Authorization": `${jwtToken}`}})
-        .then((response) => {
-          setDuplicationList(response.data)
-        })
-        .catch((e) => {
-          alert(e.response.status)
-          console.error(e)
-        })
+      getDuplicationData()
     }
   }, [currentProject])
 
-  useEffect(() => {
-    let chartDataset = {labels: [], data: {duplication: []}}
-
+  const getDatasetForChart = () => {
+    let dataset = {labels: [], data: {duplication: []}}
     duplicationList.forEach(duplication => {
-      chartDataset.labels.push(moment(duplication.date).format("YYYY-MM-DD HH:mm:ss"))
-      chartDataset.data.duplication.push(duplication.value)
+      dataset.labels.push(moment(duplication.date).format("YYYY-MM-DD HH:mm:ss"))
+      dataset.data.duplication.push(duplication.value)
     })
+    return dataset
+  }
 
+  useEffect(() => {
+    const chartDataset = getDatasetForChart()
     setDataForDuplicationChart(chartDataset)
-    handleClose()
-
+    loadingDuplicationEnd()
   }, [duplicationList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>

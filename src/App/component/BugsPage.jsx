@@ -29,12 +29,12 @@ function BugsPage(prop) {
   const [dataForBugChart, setDataForBugChart] = useState({labels: [], data: {bug: []}})
 
   const projectId = localStorage.getItem("projectId")
-  const [open, setOpen] = useState(false)
-  const handleClose = () => {
-    setOpen(false)
+  const [isLoading, setLoading] = useState(false)
+  const loadingBugDataStart = () => {
+    setLoading(false)
   }
-  const handleToggle = () => {
-    setOpen(!open)
+  const loadingBugDataEnd = () => {
+    setLoading(!isLoading)
   }
 
   const jwtToken = localStorage.getItem("jwtToken")
@@ -87,7 +87,7 @@ function BugsPage(prop) {
   }
 
   useEffect(() => {
-    handleToggle()
+    loadingBugDataStart()
     if (currentProject !== undefined) {
       getBugData()
     }
@@ -105,12 +105,12 @@ function BugsPage(prop) {
   useEffect(() => {
     const chartDataset = getDatasetForChart()
     setDataForBugChart(chartDataset)
-    handleClose()
+    loadingBugDataEnd()
   }, [bugList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>

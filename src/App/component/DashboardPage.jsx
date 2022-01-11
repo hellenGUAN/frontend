@@ -81,13 +81,13 @@ function DashboardPage() {
   const projectId = localStorage.getItem("projectId")
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
-  const [open, setOpen] = useState(false);
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleToggle = () => {
-    setOpen(!open);
-  };
+  const [isLoading, setLoading] = useState(false);
+  const loadingDataEnd = () => {
+    setLoading(false);
+  }
+  const loadingDataStart = () => {
+    setLoading(!isLoading);
+  }
 
   const fetchCurrentProject = async () => {
     try {
@@ -110,12 +110,12 @@ function DashboardPage() {
   }, [])
   
   useEffect(() => {
-    handleToggle()
+    loadingDataStart()
     const githubRepo = currentProject.repositoryDTOList?.find(repo => repo.type === 'github')
     if (githubRepo !== undefined) {
       setHasGitHubRepo(true)
     }
-    handleClose()
+    loadingDataEnd()
   }, [currentProject])
 
   const githubMetrics = [
@@ -143,7 +143,7 @@ function DashboardPage() {
 
   return (
     <div className={classes.root}>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <div>

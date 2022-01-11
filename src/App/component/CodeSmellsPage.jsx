@@ -32,12 +32,12 @@ function CodeSmellsPage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const [open, setOpen] = useState(false)
-  const handleClose = () => {
-    setOpen(false)
+  const [isLoading, setLoading] = useState(false)
+  const loadingCodeSmellEnd = () => {
+    setLoading(false)
   }
-  const handleToggle = () => {
-    setOpen(!open)
+  const loadingCodeSmellStart = () => {
+    setLoading(!isLoading)
   }
 
   const config = {
@@ -85,7 +85,7 @@ function CodeSmellsPage(prop) {
   }
 
   useEffect(() => {
-    handleToggle()
+    loadingCodeSmellStart()
     if (currentProject !== undefined) {
       getCodeSmellData()
     }
@@ -103,12 +103,12 @@ function CodeSmellsPage(prop) {
   useEffect(() => {
     const chartDataset = getDatasetForChart()
     setDataForCodeSmellChart(chartDataset)
-    handleClose()
+    loadingCodeSmellEnd()
   }, [codeSmellList, prop.startMonth, prop.endMonth])
 
   return (
     <div style={{marginLeft: "10px"}}>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit"/>
       </Backdrop>
       <div className={classes.root}>
