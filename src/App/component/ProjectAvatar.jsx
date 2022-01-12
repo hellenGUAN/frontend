@@ -53,7 +53,7 @@ function ProjectAvatar(props) {
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
   const jwt = localStorage.getItem("jwtToken")
 
-  useEffect(() => {
+  const checkExistedRepo = () => {
     if (props.size === 'large') {
       const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
       const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
@@ -65,6 +65,10 @@ function ProjectAvatar(props) {
       setHasSonarRepo(getSonarRepo !== undefined)
       setHasTrelloBoard(getTrelloBoard !== undefined)
     }
+  }
+
+  useEffect(() => {
+    checkExistedRepo()
   }, [props.project])
 
   const goToCommit = () => {
@@ -99,16 +103,21 @@ function ProjectAvatar(props) {
     setDeletionAlertDialog(!deletionAlertDialog)
   }
 
-  const deleteProject = () => {
-    Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`,
-      {headers: {...(jwt && {"Authorization": jwt})}})  // If jwt is null, it will return {} to headers. Otherwise it will return {"Authorization": jwt}
-      .then(() => {
-        toggleDeletionAlertDialog()
-        props.reloadProjects()
-      })
-      .catch((e) => {
-        console.error(e)
-      })
+  const config = {
+    headers: {
+      ...(jwt && { "Authorization": jwt })
+    }
+  }
+
+  const deleteProject = async () => {
+    try {
+      await Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`, config)
+      toggleDeletionAlertDialog()
+      props.reloadProjects()
+    } catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
   }
 
   return (
