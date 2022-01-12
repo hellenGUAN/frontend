@@ -171,7 +171,7 @@ function CommitsPage(prop) {
   }, [isLoading]);
 
   const setCommitChart = () => {
-    let dataset = { labels: [], data: { team: [] } }
+    const dataset = { labels: [], data: { team: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       dataset.labels.push(month.format("YYYY-MM"))
       dataset.data.team.push(commitListData.filter(commit => {
