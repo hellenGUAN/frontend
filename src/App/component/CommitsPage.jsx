@@ -139,13 +139,13 @@ function CommitsPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
         setCommitListData(response)
-        loadingCommitsEnd()
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
         loadingCommitsEnd()
       }
     }
+    loadingCommitsEnd()
   }
 
   const handleClick = () => setLoading(true);
