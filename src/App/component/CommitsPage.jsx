@@ -107,7 +107,7 @@ function CommitsPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getCommit = async () => {
+  const updateCommit = async () => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
@@ -139,9 +139,11 @@ function CommitsPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
         setCommitListData(response)
+        loadingCommitsEnd()
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
+        loadingCommitsEnd()
       }
     }
   }
@@ -153,7 +155,6 @@ function CommitsPage(prop) {
     if (Object.keys(currentProject).length !== 0) {
       loadingCommitsStart()
       getCommitFromDB()
-      loadingCommitsEnd()
     }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
@@ -164,7 +165,7 @@ function CommitsPage(prop) {
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
       const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
       if (repo !== undefined) {
-        getCommit()
+        updateCommit()
       }
     }
   }, [isLoading]);
