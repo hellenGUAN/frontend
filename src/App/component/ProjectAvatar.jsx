@@ -7,7 +7,6 @@ import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import AddIcon from '@material-ui/icons/Add';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
 import AddRepositoryDialog from './AddRepositoryDialog';
 import {connect} from 'react-redux'
 import {setCurrentProjectId} from '../../redux/action'
@@ -35,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(25),
   },
+  icon: {},
   avatar: {
     width: "100%",
     height: "100%"
@@ -53,21 +53,17 @@ function ProjectAvatar(props) {
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
   const jwt = localStorage.getItem("jwtToken")
 
-  const checkExistedRepo = () => {
-    const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
-    const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
-    const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
-    const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
-
-    setHasGithubRepo(getGithubRepo !== undefined)
-    setHasGitlabRepo(getGitlabRepo !== undefined)
-    setHasSonarRepo(getSonarRepo !== undefined)
-    setHasTrelloBoard(getTrelloBoard !== undefined)
-  }
-
   useEffect(() => {
     if (props.size === 'large') {
-      checkExistedRepo()
+      const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
+      const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
+      const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
+      const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
+
+      setHasGithubRepo(getGithubRepo !== undefined)
+      setHasGitlabRepo(getGitlabRepo !== undefined)
+      setHasSonarRepo(getSonarRepo !== undefined)
+      setHasTrelloBoard(getTrelloBoard !== undefined)
     }
   }, [props.project])
 
@@ -103,41 +99,23 @@ function ProjectAvatar(props) {
     setDeletionAlertDialog(!deletionAlertDialog)
   }
 
-  const config = {
-    headers: {
-      ...(jwt && { "Authorization": jwt })
-    }
-  }
-
-  const sendPVSBackendRequest = async (method, url) => {
-    const baseURL = 'http://localhost:9100/pvs-api'
-    const requestConfig = {
-      baseURL,
-      url,
-      method,
-      config
-    }
-    return (await Axios.request(requestConfig))?.data
-  }
-
-  const deleteProject = async () => {
-    try {
-      await sendPVSBackendRequest('DELETE', `/project/remove/${props.project.projectId}`)
-      toggleDeletionAlertDialog()
-      props.reloadProjects()
-    } catch (e) {
-      alert(e.response?.status)
-      console.error(e)
-    }
+  const deleteProject = () => {
+    Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`,
+      {headers: {...(jwt && {"Authorization": jwt})}})  // If jwt is null, it will return {} to headers. Otherwise it will return {"Authorization": jwt}
+      .then(() => {
+        toggleDeletionAlertDialog()
+        props.reloadProjects()
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   }
 
   return (
     <span>
       <Box className={props.size === 'large' ? classes.large : classes.small}>
       {props.size === 'large' &&
-      <IconButton onClick={toggleDeletionAlertDialog}>
-        <AiOutlineCloseCircle/>
-      </IconButton>
+      <Button onClick={toggleDeletionAlertDialog}>X</Button>
       }
       <Dialog
       open={deletionAlertDialog}
@@ -153,10 +131,8 @@ function ProjectAvatar(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleDeletionAlertDialog} color="secondary">
-            Back
-          </Button>
-          <Button onClick={deleteProject} color="primary" autoFocus>
+          <Button onClick={toggleDeletionAlertDialog}>Back</Button>
+          <Button onClick={deleteProject} autoFocus>
             Delete
           </Button>
         </DialogActions>
