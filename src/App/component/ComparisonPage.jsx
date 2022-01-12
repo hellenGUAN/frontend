@@ -72,7 +72,7 @@ function ComparisonPage(prop) {
 
   const [commitListDataLeft, setCommitListDataLeft] = useState([])
   const [commitListDataRight, setCommitListDataRight] = useState([])
-  const [dataForTeamCommitChart, setDataForTeamCommitChart] = useState({ labels: [], data: {} })
+  const [dataForComparisonChart, setDataForComparisonChart] = useState({ labels: [], data: {} })
   const [currentProject, setCurrentProject] = useState({})
 
   const [branchList, setBranchList] = useState([])
@@ -218,21 +218,23 @@ function ComparisonPage(prop) {
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       dataset.labels.push(month.format("YYYY-MM"))
       for (const branch in dataset.data) {
-        if (branch !== "") {
-          if (branch === leftBranchSelected) {
-            dataset.data[branch].push(commitListDataLeft.filter(commit => {
-              return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-            }).length)
-          }
-          else if (branch === rightBranchSelected) {
-            dataset.data[branch].push(commitListDataRight.filter(commit => {
-              return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
-            }).length)
-          }
-        }
+        dataset.data[branch].push(getCommitCountFromSelectedBranch(branch, month))
       }
     }
-    setDataForTeamCommitChart(dataset)
+    setDataForComparisonChart(dataset)
+  }
+
+  const getCommitCountFromSelectedBranch = (branch, month) => {
+    if (branch !== "" && branch == leftBranchSelected) {
+      return commitListDataLeft.filter(commit => {
+        return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+      }).length
+    }
+    if (branch !== "" && branch == rightBranchSelected) {
+      return commitListDataRight.filter(commit => {
+        return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+      }).length
+    }
   }
 
   useEffect(() => {
@@ -321,7 +323,7 @@ function ComparisonPage(prop) {
           </div>
 
           <div>
-            <DrawingBoard data={dataForTeamCommitChart} id="branches-commit-chart" />
+            <DrawingBoard data={dataForComparisonChart} id="branches-commit-chart" />
           </div>
         </div>
       </div>
