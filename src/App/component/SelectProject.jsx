@@ -29,10 +29,12 @@ const useStyles = makeStyles((theme) => ({
   },
   large: {
     width: theme.spacing(20),
-    height: theme.spacing(25),
+    height: theme.spacing(30),
   },
   createProjectCard: {
-    height: theme.spacing(25)
+    marginTop: '3.4rem',
+    marginLeft: '2rem',
+    height: theme.spacing(30)
   }
 }));
 

@@ -7,6 +7,7 @@ import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import AddIcon from '@material-ui/icons/Add';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 import AddRepositoryDialog from './AddRepositoryDialog';
 import {connect} from 'react-redux'
 import {setCurrentProjectId} from '../../redux/action'
@@ -34,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(25),
   },
-  icon: {},
   avatar: {
     width: "100%",
     height: "100%"
@@ -135,7 +135,9 @@ function ProjectAvatar(props) {
     <span>
       <Box className={props.size === 'large' ? classes.large : classes.small}>
       {props.size === 'large' &&
-      <Button onClick={toggleDeletionAlertDialog}>X</Button>
+      <IconButton onClick={toggleDeletionAlertDialog}>
+        <AiOutlineCloseCircle/>
+      </IconButton>
       }
       <Dialog
       open={deletionAlertDialog}
