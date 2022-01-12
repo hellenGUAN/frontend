@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
   createProjectCard: {
     marginTop: '3.4rem',
-    marginLeft: '2rem',
+    marginLeft: '1rem',
     height: theme.spacing(30)
   }
 }));

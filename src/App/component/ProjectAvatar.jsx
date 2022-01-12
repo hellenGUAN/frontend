@@ -36,12 +36,22 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(25),
   },
   span: {
-    marginLeft:'1rem',
-    marginRight:'1rem',
+    marginLeft: '1rem',
+    marginRight: '1rem',
   },
   avatar: {
     width: "100%",
-    height: "100%"
+    height: "100%",
+  },
+  cancelButton: {
+    marginBlockStart: 0,
+    marginBlockEnd: 0,
+    color: "#9fddff",
+  },
+  deleteButton: {
+    marginBlockStart: 0,
+    marginBlockEnd: 0,
+    color: "#ff4444",
   }
 }))
 
@@ -137,9 +147,15 @@ function ProjectAvatar(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={toggleDeletionAlertDialog}>Back</Button>
+          <Button onClick={toggleDeletionAlertDialog}>
+            <p className={classes.cancelButton}>
+              Cancel
+            </p>
+          </Button>
           <Button onClick={deleteProject} autoFocus>
-            Delete
+            <p className={classes.deleteButton}>
+              Delete
+            </p>
           </Button>
         </DialogActions>
       </Dialog>
