@@ -3,9 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { Box, CardActionArea, Avatar, CardActions, Icon, IconButton, InputAdornment } from '@material-ui/core'
 import GitHubIcon from '@material-ui/icons/GitHub';
-import FilterDramaIcon from '@material-ui/icons/FilterDrama';
-import GpsFixedIcon from '@material-ui/icons/GpsFixed';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import { SiSonarcloud, SiGitlab, SiTrello } from 'react-icons/si';
 import AddIcon from '@material-ui/icons/Add';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { BiEditAlt } from 'react-icons/bi';
@@ -240,19 +238,19 @@ function ProjectAvatar(props) {
 
             {hasGitlabRepo &&
               <IconButton aria-label="GitLab" onClick={goToCommit}>
-                <FilterDramaIcon />
+                <SiGitlab />
               </IconButton>
             }
 
             {hasSonarRepo &&
               <IconButton aria-label="SonarQube" onClick={goToCodeCoverage}>
-                <GpsFixedIcon />
+                <SiSonarcloud />
               </IconButton>
             }
 
             {hasTrelloBoard &&
               <IconButton aria-label="Trello" onClick={goToTrelloBoard}>
-                <DashboardIcon />
+                <SiTrello />
               </IconButton>
             }
 
