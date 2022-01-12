@@ -1,15 +1,15 @@
-import {useState, useEffect} from 'react'
-import {useHistory} from 'react-router-dom'
-import {makeStyles} from '@material-ui/core/styles'
-import {Box, CardActionArea, Avatar, CardActions, IconButton} from '@material-ui/core'
+import { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
+import { Box, CardActionArea, Avatar, CardActions, IconButton } from '@material-ui/core'
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import AddIcon from '@material-ui/icons/Add';
 import AddRepositoryDialog from './AddRepositoryDialog';
-import {connect} from 'react-redux'
-import {setCurrentProjectId} from '../../redux/action'
+import { connect } from 'react-redux'
+import { setCurrentProjectId } from '../../redux/action'
 import {
   Button,
   Dialog,
@@ -123,70 +123,70 @@ function ProjectAvatar(props) {
   return (
     <span>
       <Box className={props.size === 'large' ? classes.large : classes.small}>
-      {props.size === 'large' &&
-      <Button onClick={toggleDeletionAlertDialog}>X</Button>
-      }
-      <Dialog
-      open={deletionAlertDialog}
-      onClose={toggleDeletionAlertDialog}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">
-          {"Are You Sure You Want to Delete This Project?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You cannot restore it after deleting.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={toggleDeletionAlertDialog}>Back</Button>
-          <Button onClick={deleteProject} autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+        {props.size === 'large' &&
+          <Button onClick={toggleDeletionAlertDialog}>X</Button>
+        }
+        <Dialog
+          open={deletionAlertDialog}
+          onClose={toggleDeletionAlertDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description">
+          <DialogTitle id="alert-dialog-title">
+            {"Are You Sure You Want to Delete This Project?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              You cannot restore it after deleting.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={toggleDeletionAlertDialog}>Back</Button>
+            <Button onClick={deleteProject} autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
         <CardActionArea onClick={goToDashboard}>
-          <Avatar alt="first repository" src={props.project.avatarURL} className={classes.avatar}/>
+          <Avatar alt="first repository" src={props.project.avatarURL} className={classes.avatar} />
           {props.size === 'large' &&
-          <p style={{"textAlign": "center"}}>{props.project.projectName}</p>
+            <p style={{ "textAlign": "center" }}>{props.project.projectName}</p>
           }
         </CardActionArea>
 
         {props.size === 'large' &&
-        <CardActions disableSpacing>
+          <CardActions disableSpacing>
 
-          {hasGithubRepo &&
-          <IconButton aria-label="GitHub" onClick={goToCommit}>
-            <GitHubIcon/>
-          </IconButton>
-          }
+            {hasGithubRepo &&
+              <IconButton aria-label="GitHub" onClick={goToCommit}>
+                <GitHubIcon />
+              </IconButton>
+            }
 
-          {hasGitlabRepo &&
-          <IconButton aria-label="GitLab" onClick={goToCommit}>
-            <FilterDramaIcon/>
-          </IconButton>
-          }
+            {hasGitlabRepo &&
+              <IconButton aria-label="GitLab" onClick={goToCommit}>
+                <FilterDramaIcon />
+              </IconButton>
+            }
 
-          {hasSonarRepo &&
-          <IconButton aria-label="SonarQube" onClick={goToCodeCoverage}>
-            <GpsFixedIcon/>
-          </IconButton>
-          }
+            {hasSonarRepo &&
+              <IconButton aria-label="SonarQube" onClick={goToCodeCoverage}>
+                <GpsFixedIcon />
+              </IconButton>
+            }
 
-          {hasTrelloBoard &&
-          <IconButton aria-label="Trello" onClick={goToTrelloBoard}>
-            <DashboardIcon/>
-          </IconButton>
-          }
+            {hasTrelloBoard &&
+              <IconButton aria-label="Trello" onClick={goToTrelloBoard}>
+                <DashboardIcon />
+              </IconButton>
+            }
 
-          {!((hasGithubRepo || hasTrelloBoard) && hasSonarRepo && hasTrelloBoard) &&
-          <IconButton aria-label="Add Repository" onClick={showAddRepoDialog}>
-            <AddIcon/>
-          </IconButton>
-          }
+            {!((hasGithubRepo || hasTrelloBoard) && hasSonarRepo && hasTrelloBoard) &&
+              <IconButton aria-label="Add Repository" onClick={showAddRepoDialog}>
+                <AddIcon />
+              </IconButton>
+            }
 
-        </CardActions>
+          </CardActions>
         }
       </Box>
       <AddRepositoryDialog
@@ -202,4 +202,4 @@ function ProjectAvatar(props) {
   )
 }
 
-export default connect(null, {setCurrentProjectId})(ProjectAvatar);
+export default connect(null, { setCurrentProjectId })(ProjectAvatar);

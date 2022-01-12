@@ -108,7 +108,7 @@ function DashboardPage() {
   useEffect(() => {
     fetchCurrentProject()
   }, [])
-  
+
   useEffect(() => {
     loadingDataStart()
     const githubRepo = currentProject.repositoryDTOList?.find(repo => repo.type === 'github')
@@ -167,13 +167,13 @@ function DashboardPage() {
               positions={positions}
               items={githubMetrics}
               onReposition={handleReposition}
-              />
+            />
           </div>
         }
         {
           sonarId &&
           <Suspense fallback={<div>Loading Sonar Metrics...</div>}>
-            <SonarMetrics sonarComponentName={sonarId}/>
+            <SonarMetrics sonarComponentName={sonarId} />
           </Suspense>
         }
       </div>

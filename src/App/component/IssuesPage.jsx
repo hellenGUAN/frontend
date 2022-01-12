@@ -124,7 +124,7 @@ function IssuesPage(prop) {
   }, [issueListData])
 
   const generateIssueChartDataset = () => {
-    const chartDataset = { labels: [], data: { closed: [] , created: []} }
+    const chartDataset = { labels: [], data: { closed: [], created: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       chartDataset.labels.push(month.format("YYYY-MM"))
     }

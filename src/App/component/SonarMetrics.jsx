@@ -10,15 +10,15 @@
  */
 
 import * as React from "react";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import {Card, CardActionArea, CardContent, CardMedia, makeStyles, Typography} from "@material-ui/core";
-import {randomHash, toUpperCamelCase} from "../../utils";
-import {SiSonarqube} from "react-icons/si";
+import { Card, CardActionArea, CardContent, CardMedia, makeStyles, Typography } from "@material-ui/core";
+import { randomHash, toUpperCamelCase } from "../../utils";
+import { SiSonarqube } from "react-icons/si";
 
 // import type definitions for documentation.
 // eslint-disable-next-line no-unused-vars
-import {AxiosInstance, AxiosRequestHeaders, AxiosResponse, Method} from 'axios'
+import { AxiosInstance, AxiosRequestHeaders, AxiosResponse, Method } from 'axios'
 
 /**
  * @summary URL for calling the PVS back-end API.
@@ -84,7 +84,7 @@ const sonarMetricsProxyApiPath = '/proxy/sonar/metrics';
  * @return {AxiosInstance}
  */
 const createClient = (baseURL, headers) => {
-  return axios.create({baseURL, headers});
+  return axios.create({ baseURL, headers });
 };
 
 
@@ -163,7 +163,7 @@ const SONAR_METRICS_KEYS = [
  */
 const sendHttpRequest = async (client, method, url, params, data) => {
   try {
-    return (await client.request({url, method, params, data}))?.data;
+    return (await client.request({ url, method, params, data }))?.data;
   } catch (e) {
     console.warn(e);
     return null;
@@ -271,7 +271,7 @@ const useStyles = makeStyles(() => ({
 const SonarMetrics = React.memo((props) => {
   const httpClientHeaders = useMemo(() => {
     return {
-      ...(jwt && {'Authorization': jwt})
+      ...(jwt && { 'Authorization': jwt })
     };
   }, [jwt]);
 
@@ -307,9 +307,9 @@ const SonarMetrics = React.memo((props) => {
   return (
     <>
       <h1 className={styles.metricsTitle}>
-        <SiSonarqube size={24}/> Sonar Metrics
+        <SiSonarqube size={24} /> Sonar Metrics
       </h1>
-      <div className={styles.colorfulDivider}/>
+      <div className={styles.colorfulDivider} />
       {
         metricsData &&
         <div className={styles.metricsContainer}>

@@ -167,7 +167,7 @@ function ContributionPage(prop) {
     }
   }, [isLoading]);
 
-    // Generate commits pie chart
+  // Generate commits pie chart
   const generatePieChart = () => {
     let chartDataset = { labels: [], data: {} }
     new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
@@ -189,7 +189,7 @@ function ContributionPage(prop) {
     generatePieChart()
   }, [commitListData])
 
-    // Generate code base bar chart
+  // Generate code base bar chart
   const generateBarChart = () => {
     let chartDataset_Addition = { labels: [], data: {} }
     let chartDataset_Deletion = { labels: [], data: {} }

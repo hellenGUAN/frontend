@@ -124,7 +124,7 @@ function PullRequestsPage(prop) {
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
       chartDataset.labels.push(month.format("YYYY-MM"))
     }
-    
+
     chartDataset.data.created = getPRCreatedCountArray()
     chartDataset.data.closed = getPRClosedCountArray()
     chartDataset.data.merged = getPRMergedCountArray()

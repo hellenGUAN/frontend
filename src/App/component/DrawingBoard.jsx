@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react'
-import {Line} from "react-chartjs-2"
+import { useEffect, useState } from 'react'
+import { Line } from "react-chartjs-2"
 
 export default function DrawingBoard(props) {
 
@@ -65,7 +65,7 @@ export default function DrawingBoard(props) {
     scales: {
       xAxes: [
         {
-          ticks: {display: true}
+          ticks: { display: true }
         }
       ],
       yAxes: [
@@ -84,7 +84,7 @@ export default function DrawingBoard(props) {
 
   return (
     <div className="App main" id={props.id}>
-      <Line data={data} options={options} type={""}/>
+      <Line data={data} options={options} type={""} />
     </div>
   )
 }

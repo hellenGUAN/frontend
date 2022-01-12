@@ -120,11 +120,11 @@ function TrelloBoardPage() {
       </Backdrop>
       <div className={classes.boardContainer}>
         {hasBoardData &&
-        <Board
-          data={boardData}
-          canAddLanes
-          t={createTranslate(TEXTS)}
-        />
+          <Board
+            data={boardData}
+            canAddLanes
+            t={createTranslate(TEXTS)}
+          />
         }
       </div>
     </div>

@@ -1,10 +1,10 @@
-import {useState} from 'react'
-import {makeStyles} from '@material-ui/core/styles'
+import { useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import Axios from 'axios'
 import logo from '../../assets/welcome.png'
-import {useHistory} from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import './Login.css'
-import {Backdrop, Button, CircularProgress, TextField} from '@material-ui/core'
+import { Backdrop, Button, CircularProgress, TextField } from '@material-ui/core'
 
 const passwordRegex = new RegExp("^(?=.*?[0-9])(?=.*?[A-Za-z])(?=.*?[`!@#$%^&*()_+-=[\\]{};'\":\\|,.<>/?~]).{8,}$")
 
@@ -99,7 +99,7 @@ export default function Login() {
     }
 
     try {
-      const {data} = await Axios.post(`http://localhost:9100/pvs-api/auth/register`, payload)
+      const { data } = await Axios.post(`http://localhost:9100/pvs-api/auth/register`, payload)
       data?.toString() === 'true' ?
         setAccountOperationHint("registerSuccess") :
         setAccountOperationHint("registerFailed")
@@ -141,10 +141,10 @@ export default function Login() {
   return (
     <div className={classes.root}>
       <Backdrop className={classes.backdrop} open={accountChecking}>
-        <CircularProgress color="inherit"/>
+        <CircularProgress color="inherit" />
       </Backdrop>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
+        <img src={logo} className="App-logo" alt="logo" />
         {accountOperationHint === "InvalidAccount" &&
           <p className={classes.accountOperationHint}>Invalid username or password</p>
         }
@@ -175,7 +175,7 @@ export default function Login() {
             setPassword(e.target.value)
           }}
         />
-        <br/>
+        <br />
         <span>
           <Button className={classes.registerButton} variant="contained" onClick={register} color="primary">
             Register

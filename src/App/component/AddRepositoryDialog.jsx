@@ -133,7 +133,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
           label="Repository URL"
           type="text"
           fullWidth
-          onChange={(e) => {repositoryURL=e.target.value}}
+          onChange={(e) => { repositoryURL = e.target.value }}
           required
           autoFocus
           InputProps={{
@@ -190,7 +190,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
           <RadioGroup row aria-label="repositoryType" name="row-radio-buttons-group">
             <FormControlLabel value="github" disabled={hasGitRepo} control={<Radio />} onChange={selected} label="GitHub" />
             <FormControlLabel value="gitlab" disabled={hasGitRepo} control={<Radio />} onChange={selected} label="GitLab" />
-            <FormControlLabel value="sonar"  disabled={hasSonar} control={<Radio />} onChange={selected} label="SonarQube" />
+            <FormControlLabel value="sonar" disabled={hasSonar} control={<Radio />} onChange={selected} label="SonarQube" />
             <FormControlLabel value="trello" disabled={hasTrello} control={<Radio />} onChange={selected} label="Trello" />
             <FormControlLabel
               value="disabled"
