@@ -78,42 +78,12 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
   }
 
   const checkRepositoryURL = async (url) => {
-    if (repoType === "github") {
+    if (repoType !== "") {
       try {
-        await sendPVSBackendRequest('GET', `/repository/github/check?url=${url}`)
+        await sendPVSBackendRequest('GET', `/repository/${repoType}/check?url=${url}`)
         return true
       } catch (e) {
         alert("Invalid GitHub URL")
-        return false
-      }
-    }
-
-    if (repoType === "gitlab") {
-      try {
-        await sendPVSBackendRequest('GET', `/repository/gitlab/check?url=${url}`)
-        return true
-      } catch (e) {
-        alert("Invalid GitLab URL")
-        return false
-      }
-    }
-
-    if (repoType === "sonar") {
-      try {
-        await sendPVSBackendRequest('GET', `/repository/sonar/check?url=${url}`)
-        return true
-      } catch (e) {
-        alert("Invalid SonarQube URL")
-        return false
-      }
-    }
-
-    if (repoType === "trello") {
-      try {
-        await sendPVSBackendRequest('GET', `/repository/trello/check?url=${url}`)
-        return true
-      } catch (e) {
-        alert("Invalid Trello URL")
         return false
       }
     }
@@ -205,7 +175,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
+        <Button onClick={close} color="secondary">
           Cancel
         </Button>
         <Button onClick={addRepository} color="primary" id="AddRepositoryBtn">
