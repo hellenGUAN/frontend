@@ -46,35 +46,28 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
     return (await Axios.request(requestConfig))?.data
   }
 
-  const addRepository = () => {
-    let checker = []
+  const addRepository = async () => {
+//     let checker = []
     if (repositoryURL.trim() === "") {
       alert("不準啦馬的>///<")
     } else {
 
-      checker.push(checkRepositoryURL(repositoryURL));
+      const urlCheckResult = await checkRepositoryURL(repositoryURL)
+      if (urlCheckResult === true) {
+        let payload = {
+          projectId,
+          repositoryURL
+        }
 
-      Promise.all(checker)
-        .then(async (response) => {
-          if (response.includes(false) === false) {
-            let payload = {
-              projectId,
-              repositoryURL
-            }
-
-            try {
-              await sendPVSBackendRequest('POST', `/project/${projectId}/repository/${repoType}`, payload)
-              reloadProjects()
-              handleClose()
-            } catch (e) {
-              alert(e?.response?.status)
-              console.error(e)
-            }
-          }
-        }).catch((e) => {
-          alert(e.response?.status)
+        try {
+          await sendPVSBackendRequest('POST', `/project/${projectId}/repository/${repoType}`, payload)
+          reloadProjects()
+          handleClose()
+        } catch (e) {
+          alert(e?.response?.status)
           console.error(e)
-        })
+        }
+      }
     }
   }
 
