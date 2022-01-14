@@ -48,13 +48,14 @@ function TrelloBoardPage() {
     }
   }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async (method, url, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      config
+      config,
+      params
     }
     return (await Axios.request(requestConfig))?.data
   }
@@ -75,9 +76,10 @@ function TrelloBoardPage() {
 
   const getTrelloData = async () => {
     const trelloBoard = currentProject.repositoryDTOList.find(repo => repo.type === 'trello')
+    const url = trelloBoard.url
     if (trelloBoard !== undefined) {
       try {
-        const response = await sendPVSBackendRequest('GET', `/trello/board?url=${trelloBoard.url}`)
+        const response = await sendPVSBackendRequest('GET', `/trello/board`, {url})
         setBoardData(response)
         setHasBoardData(true)
         loadingBoardEnd()

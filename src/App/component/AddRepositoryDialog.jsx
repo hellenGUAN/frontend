@@ -34,14 +34,15 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
     }
   }
 
-  const sendPVSBackendRequest = async (method, url, data) => {
+  const sendPVSBackendRequest = async (method, url, data, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
       config,
-      data
+      data,
+      params
     }
     return (await Axios.request(requestConfig))?.data
   }
@@ -73,7 +74,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
   const checkRepositoryURL = async (url) => {
     if (repoType !== "") {
       try {
-        await sendPVSBackendRequest('GET', `/repository/${repoType}/check?url=${url}`)
+        await sendPVSBackendRequest('GET', `/repository/${repoType}/check`, "", { url })
         return true
       } catch (e) {
         alert("Invalid GitHub URL")

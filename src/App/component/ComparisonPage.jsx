@@ -92,12 +92,13 @@ function ComparisonPage(prop) {
   const projectId = localStorage.getItem("projectId")
   const memberId = localStorage.getItem("memberId")
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async (method, url, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
-      method
+      method,
+      params
     }
     return (await Axios.request(requestConfig))?.data
   }
@@ -137,7 +138,7 @@ function ComparisonPage(prop) {
     }
   }
 
-  const getCommitFromDBLeft = async (branch) => {
+  const getCommitFromDBLeft = async (branchName) => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
@@ -148,7 +149,7 @@ function ComparisonPage(prop) {
       const repoName = query.split("/")[1]
 
       try {
-        const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
+        const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits`, {repoOwner, repoName, branchName})
         setCommitListDataLeft(response)
       } catch (e) {
         alert(e.response?.status)
@@ -157,7 +158,7 @@ function ComparisonPage(prop) {
     }
   }
 
-  const getCommitFromDBRight = async (branch) => {
+  const getCommitFromDBRight = async (branchName) => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
@@ -168,7 +169,7 @@ function ComparisonPage(prop) {
       const repoName = query.split("/")[1]
 
       try {
-        const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
+        const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits`, {repoOwner, repoName, branchName})
         setCommitListDataRight(response)
       } catch (e) {
         alert(e.response?.status)
