@@ -92,7 +92,7 @@ function IssuesPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+    const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
       const query = repo.url.split(repo.type + ".com/")[1]
 

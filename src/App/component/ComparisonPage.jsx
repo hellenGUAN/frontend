@@ -142,7 +142,7 @@ function ComparisonPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+    const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
       const query = repo.url.split(repo.type + ".com/")[1]
       const repoOwner = query.split("/")[0]
@@ -162,7 +162,7 @@ function ComparisonPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+    const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
       const query = repo.url.split(repo.type + ".com/")[1]
       const repoOwner = query.split("/")[0]
@@ -182,7 +182,7 @@ function ComparisonPage(prop) {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
-    const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+    const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
       const query = repo.url.split(repo.type + ".com/")[1]
 
@@ -226,12 +226,12 @@ function ComparisonPage(prop) {
   }
 
   const getCommitCountFromSelectedBranch = (branch, month) => {
-    if (branch !== "" && branch == leftBranchSelected) {
+    if (branch !== "" && branch === leftBranchSelected) {
       return commitListDataLeft.filter(commit => {
         return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
       }).length
     }
-    if (branch !== "" && branch == rightBranchSelected) {
+    if (branch !== "" && branch === rightBranchSelected) {
       return commitListDataRight.filter(commit => {
         return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
       }).length
