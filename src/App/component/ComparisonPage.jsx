@@ -72,7 +72,7 @@ function ComparisonPage(prop) {
 
   const [commitListDataLeft, setCommitListDataLeft] = useState([])
   const [commitListDataRight, setCommitListDataRight] = useState([])
-  const [dataForComparisonChart, setDataForComparisonChart] = useState({ labels: [], data: {} })
+  const [dataOfComparisonChart, setDataOfComparisonChart] = useState({ labels: [], data: {} })
   const [currentProject, setCurrentProject] = useState({})
 
   const [branchList, setBranchList] = useState([])
@@ -222,7 +222,7 @@ function ComparisonPage(prop) {
         dataset.data[branch].push(getCommitCountFromSelectedBranch(branch, month))
       }
     }
-    setDataForComparisonChart(dataset)
+    setDataOfComparisonChart(dataset)
   }
 
   const getCommitCountFromSelectedBranch = (branch, month) => {
@@ -324,7 +324,7 @@ function ComparisonPage(prop) {
           </div>
 
           <div>
-            <DrawingBoard data={dataForComparisonChart} id="branches-commit-chart" />
+            <DrawingBoard data={dataOfComparisonChart} id="branches-commit-chart" />
           </div>
         </div>
       </div>
