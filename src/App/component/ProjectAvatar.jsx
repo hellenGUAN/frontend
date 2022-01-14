@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import { Box, CardActionArea, Avatar, CardActions, Icon, IconButton, InputAdornment } from '@material-ui/core'
+import { Box, CardActionArea, Avatar, CardActions/*, Icon*/, IconButton, InputAdornment } from '@material-ui/core'
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { SiSonarcloud, SiGitlab, SiTrello } from 'react-icons/si';
 import AddIcon from '@material-ui/icons/Add';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { BiEditAlt } from 'react-icons/bi';
-import { MdTextFields } from 'react-icons/md'
+// import { MdTextFields } from 'react-icons/md'
 import AddRepositoryDialog from './AddRepositoryDialog';
 import { connect } from 'react-redux'
 import { setCurrentProjectId } from '../../redux/action'
@@ -72,6 +72,7 @@ function ProjectAvatar(props) {
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
   const [projectName, setProjectName] = useState("")
   const [projectNameChangeStatus, setProjectNameChangeStatus] = useState(true)
+  const [editButtonShow, setEditButtonShow] = useState(true)
   const jwt = localStorage.getItem("jwtToken")
 
   useEffect(() => {
@@ -193,17 +194,15 @@ function ProjectAvatar(props) {
               type="text"
               inputProps={{ style: { marginLeft: '11px', textAlign: 'center' } }}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Icon edge="start">
-                      <MdTextFields />
-                    </Icon>
-                  </InputAdornment>
-                ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton edge="end" color="secondary" onClick={() => setProjectNameChangeStatus(false)}>
-                      <BiEditAlt />
+                    <IconButton
+                      onMouseEnter={()=>setEditButtonShow(false)}
+                      onMouseLeave={()=>setEditButtonShow(true)}
+                      color="secondary"
+                      edge="end"
+                      onClick={() => setProjectNameChangeStatus(false)}>
+                      {editButtonShow ? "" : <BiEditAlt />}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -214,7 +213,6 @@ function ProjectAvatar(props) {
                 setProjectName(e.target.value)
               }}
               onKeyDown={(ev) => {
-                console.log(ev.key)
                 if (ev.key === 'Enter') {
                   renameProject()
                   setProjectNameChangeStatus(true)
