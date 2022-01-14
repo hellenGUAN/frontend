@@ -128,8 +128,8 @@ function ComparisonPage(prop) {
 
       try {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
-        getCommitFromDBLeft(leftBranchSelected)
-        getCommitFromDBRight(rightBranchSelected)
+        getCommitFromDB("left", leftBranchSelected)
+        getCommitFromDB("right", rightBranchSelected)
         setLoading(false)
       } catch (e) {
         alert(e.response?.status)
@@ -138,7 +138,7 @@ function ComparisonPage(prop) {
     }
   }
 
-  const getCommitFromDBLeft = async (branchName) => {
+  const getCommitFromDB = async (whichBranch, branchName) => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
@@ -150,27 +150,7 @@ function ComparisonPage(prop) {
 
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits`, {repoOwner, repoName, branchName})
-        setCommitListDataLeft(response)
-      } catch (e) {
-        alert(e.response?.status)
-        console.error(e)
-      }
-    }
-  }
-
-  const getCommitFromDBRight = async (branchName) => {
-    const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
-    const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
-
-    const repo = githubRepo ?? gitlabRepo
-    if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
-
-      try {
-        const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits`, {repoOwner, repoName, branchName})
-        setCommitListDataRight(response)
+        whichBranch === "left" ? setCommitListDataLeft(response) : setCommitListDataRight(response)
       } catch (e) {
         alert(e.response?.status)
         console.error(e)
@@ -198,13 +178,13 @@ function ComparisonPage(prop) {
 
   const leftDiagramUpdate = (e) => {
     setLeftBranchSelected(e)
-    getCommitFromDBLeft(e)
+    getCommitFromDB("left", e)
     setSelectedBranchList([leftBranchSelected, rightBranchSelected])
   }
 
   const rightDiagramUpdate = (e) => {
     setRightBranchSelected(e)
-    getCommitFromDBRight(e)
+    getCommitFromDB("right", e)
     setSelectedBranchList([leftBranchSelected, rightBranchSelected])
   }
 
@@ -242,8 +222,8 @@ function ComparisonPage(prop) {
     if (Object.keys(currentProject).length !== 0) {
       loadingCommitsStart()
       getBranches()
-      getCommitFromDBLeft(leftBranchSelected)
-      getCommitFromDBRight(rightBranchSelected)
+      getCommitFromDB("left", leftBranchSelected)
+      getCommitFromDB("right", rightBranchSelected)
       setSelectedBranchList([leftBranchSelected, rightBranchSelected])
       loadingCommitsEnd()
     }
