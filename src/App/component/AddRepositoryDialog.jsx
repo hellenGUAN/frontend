@@ -47,7 +47,6 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
   }
 
   const addRepository = async () => {
-//     let checker = []
     if (repositoryURL.trim() === "") {
       alert("不準啦馬的>///<")
     } else {
