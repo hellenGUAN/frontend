@@ -99,7 +99,7 @@ export default function Login() {
     }
 
     try {
-      const {data} = await Axios.post(`http://localhost:9100/pvs-api/auth/register`, payload)
+      const { data } = await Axios.post(`http://localhost:9100/pvs-api/auth/register`, payload)
       setAccountOperationHint(data?.toString())
     } catch (e) {
       alert(e.response?.status)
