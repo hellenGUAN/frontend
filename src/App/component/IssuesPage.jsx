@@ -58,7 +58,7 @@ function IssuesPage(prop) {
     setLoading(false)
   }
   const loadingIssuesStart = () => {
-    setLoading(!isLoading)
+    setLoading(true)
   }
 
   const headers = { ...(jwtToken && { "Authorization": jwtToken }) }

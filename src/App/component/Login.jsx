@@ -46,7 +46,7 @@ export default function Login() {
   };
   const accountCheckingStart = () => {
     setAccountOperationHint('')
-    setAccountChecking(!accountChecking);
+    setAccountChecking(true);
   };
 
   const login = async () => {

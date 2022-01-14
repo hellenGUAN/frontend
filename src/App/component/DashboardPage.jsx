@@ -86,7 +86,7 @@ function DashboardPage() {
     setLoading(false);
   }
   const loadingDataStart = () => {
-    setLoading(!isLoading);
+    setLoading(true);
   }
 
   const fetchCurrentProject = async () => {

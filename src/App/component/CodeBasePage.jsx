@@ -69,7 +69,7 @@ function CodeBasePage(prop) {
     setOpen(false)
   }
   const loadingCommitsStart = () => {
-    setOpen(!open)
+    setOpen(true)
   }
 
   const headers = { ...(jwtToken && { "Authorization": jwtToken }) }

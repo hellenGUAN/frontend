@@ -69,7 +69,7 @@ function CommitsPage(prop) {
     setOpen(false)
   }
   const loadingCommitsStart = () => {
-    setOpen(!open)
+    setOpen(true)
   }
 
   const projectId = localStorage.getItem("projectId")
