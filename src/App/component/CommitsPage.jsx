@@ -76,11 +76,7 @@ function CommitsPage(prop) {
   const jwtToken = localStorage.getItem("jwtToken")
   const memberId = localStorage.getItem("memberId")
 
-  const config = {
-    headers: {
-      ...(jwtToken && { "Authorization": jwtToken })
-    }
-  }
+  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
 
   const sendPVSBackendRequest = async (method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
@@ -88,7 +84,7 @@ function CommitsPage(prop) {
       baseURL,
       url,
       method,
-      config
+      headers
     }
     return (await Axios.request(requestConfig))?.data
   }

@@ -27,11 +27,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       projectName
     }
 
-    const config = {
-      headers: {
-        ...(jwtToken && { "Authorization": jwtToken })
-      }
-    }
+    const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
 
     const sendPVSBackendRequest = async (method, url, data) => {
       const baseURL = 'http://localhost:9100/pvs-api'
@@ -39,7 +35,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
         baseURL,
         url,
         method,
-        config,
+        headers,
         data
       }
       return (await Axios.request(requestConfig))?.data

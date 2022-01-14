@@ -42,11 +42,7 @@ function TrelloBoardPage() {
     setLoading(true)
   }
 
-  const config = {
-    headers: {
-      ...(jwtToken && { "Authorization": jwtToken })
-    }
-  }
+  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
 
   const sendPVSBackendRequest = async (method, url, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
@@ -54,7 +50,7 @@ function TrelloBoardPage() {
       baseURL,
       url,
       method,
-      config,
+      headers,
       params
     }
     return (await Axios.request(requestConfig))?.data
