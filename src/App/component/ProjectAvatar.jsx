@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import { Box, CardActionArea, Avatar, CardActions/*, Icon*/, IconButton, InputAdornment } from '@material-ui/core'
+import { Box, CardActionArea, Avatar, CardActions, IconButton, InputAdornment } from '@material-ui/core'
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { SiSonarcloud, SiGitlab, SiTrello } from 'react-icons/si';
 import AddIcon from '@material-ui/icons/Add';
