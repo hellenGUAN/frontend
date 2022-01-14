@@ -33,8 +33,20 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
       }
     }
 
+    const sendPVSBackendRequest = async (method, url, data) => {
+      const baseURL = 'http://localhost:9100/pvs-api'
+      const requestConfig = {
+        baseURL,
+        url,
+        method,
+        config,
+        data
+      }
+      return (await Axios.request(requestConfig))?.data
+    }
+
     try {
-      await Axios.post("http://localhost:9100/pvs-api/project", payload, config)
+      await sendPVSBackendRequest('POST', `/project`, payload)
     } catch (e) {
       alert(e?.response?.status)
       console.error(e)

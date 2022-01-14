@@ -34,13 +34,14 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
     }
   }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async (method, url, data) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      config
+      config,
+      data
     }
     return (await Axios.request(requestConfig))?.data
   }
@@ -62,7 +63,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
             }
 
             try {
-              await Axios.post(`http://localhost:9100/pvs-api/project/${projectId}/repository/${repoType}`, payload, config)
+              await sendPVSBackendRequest('POST', `/project/${projectId}/repository/${repoType}`, payload)
               reloadProjects()
               handleClose()
             } catch (e) {
@@ -175,7 +176,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={close} color="secondary">
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         <Button onClick={addRepository} color="primary" id="AddRepositoryBtn">
