@@ -197,8 +197,8 @@ function ProjectAvatar(props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onMouseEnter={()=>setEditButtonShow(false)}
-                      onMouseLeave={()=>setEditButtonShow(true)}
+                      onMouseEnter={() => setEditButtonShow(false)}
+                      onMouseLeave={() => setEditButtonShow(true)}
                       color="secondary"
                       edge="end"
                       onClick={() => setProjectNameChangeStatus(false)}>
