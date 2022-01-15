@@ -48,9 +48,9 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
       alert("不準啦馬的>///<")
     } else {
 
-      const urlCheckResult = await checkRepositoryURL(repositoryURL)
-      if (urlCheckResult === true) {
-        let payload = {
+      const isValidUrl = await checkRepositoryURL(repositoryURL)
+      if (isValidUrl) {
+        const payload = {
           projectId,
           repositoryURL
         }

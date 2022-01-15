@@ -156,7 +156,7 @@ function ContributionPage(prop) {
     if (isLoading) {
       const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
-      const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
+      const repo = githubRepo ?? gitlabRepo
       if (repo !== undefined) {
         getCommit()
       }
@@ -187,8 +187,8 @@ function ContributionPage(prop) {
 
   // Generate code base bar chart
   const generateBarChart = () => {
-    let chartDataset_Addition = { labels: [], data: {} }
-    let chartDataset_Deletion = { labels: [], data: {} }
+    const chartDataset_Addition = { labels: [], data: {} }
+    const chartDataset_Deletion = { labels: [], data: {} }
     new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
       chartDataset_Addition.data[author] = 0
       chartDataset_Addition.labels.push(author)

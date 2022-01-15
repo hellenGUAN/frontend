@@ -191,7 +191,7 @@ function ComparisonPage(prop) {
   const handleClick = () => setLoading(true);
 
   const setComparisonChart = () => {
-    let dataset = { labels: [], data: {} }
+    const dataset = { labels: [], data: {} }
     new Set(selectedBranchList).forEach(branch => {
       dataset.data[branch] = []
     })
