@@ -29,11 +29,13 @@ const theme = createTheme({
 });
 
 ReactDOM.render(
-  <Provider store={myStore}>
-    <ThemeProvider theme={theme}>
-      <App/>
-    </ThemeProvider>
-  </Provider>,
+  <React.StrictMode>
+    <Provider store={ store }>
+      <ThemeProvider theme={ theme }>
+        <App/>
+      </ThemeProvider>
+    </Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 )
 
