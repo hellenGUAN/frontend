@@ -9,17 +9,18 @@
  * @author TU Lin Xanonymous.
  */
 
-import * as React from "react";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import axios from "axios";
-import {Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {randomHash, toUpperCamelCase} from "../utils";
-import {SiSonarqube} from "react-icons/si";
+import * as React from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+// eslint-disable-next-line import/no-duplicates
+import axios from 'axios'
+import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { SiSonarqube } from 'react-icons/si'
 
 // import type definitions for documentation.
-// eslint-disable-next-line no-unused-vars
-import {AxiosInstance, AxiosRequestHeaders, AxiosResponse, Method} from 'axios'
+// eslint-disable-next-line no-unused-vars,import/no-duplicates
+import { AxiosInstance, AxiosRequestHeaders, AxiosResponse, Method } from 'axios'
+import { randomHash, toUpperCamelCase } from '../utils'
 
 /**
  * @summary URL for calling the PVS back-end API.
@@ -30,8 +31,7 @@ import {AxiosInstance, AxiosRequestHeaders, AxiosResponse, Method} from 'axios'
  *
  * @type {string}
  */
-const baseURL = 'http://localhost:9100/pvs-api';
-
+const baseURL = 'http://localhost:9100/pvs-api'
 
 /**
  * @summary Json Web Token for PVS backend authorizations.
@@ -63,15 +63,13 @@ const baseURL = 'http://localhost:9100/pvs-api';
  *
  * @type {string | null}
  */
-const jwt = localStorage.getItem("jwtToken");
-
+const jwt = localStorage.getItem('jwtToken')
 
 /**
  * The path of the PVS backend API, in order to obtain sonarqube metrics.
  * @type {string}
  */
-const sonarMetricsProxyApiPath = '/proxy/sonar/metrics';
-
+const sonarMetricsProxyApiPath = '/proxy/sonar/metrics'
 
 /**
  * @function createClient
@@ -85,23 +83,20 @@ const sonarMetricsProxyApiPath = '/proxy/sonar/metrics';
  * @return {AxiosInstance}
  */
 const createClient = (baseURL, headers) => {
-  return axios.create({baseURL, headers});
-};
-
+  return axios.create({ baseURL, headers })
+}
 
 /**
  * The URL for an icon which will be displayed when the value of a metric is the best value.
  * @type {string}
  */
-const bestValueBadgeUrl = 'https://i.imgur.com/iPwxQft.webp';
-
+const bestValueBadgeUrl = 'https://i.imgur.com/iPwxQft.webp'
 
 /**
  * The URL for an icon which will be displayed when the value of a metric is not the best value.
  * @type {string}
  */
-const warningValueBadgeUrl = 'https://i.imgur.com/WtPSvXt.webp';
-
+const warningValueBadgeUrl = 'https://i.imgur.com/WtPSvXt.webp'
 
 /**
  * @typedef SonarMetricsRecord
@@ -111,7 +106,6 @@ const warningValueBadgeUrl = 'https://i.imgur.com/WtPSvXt.webp';
  * @property {string} logoUrl An URL of a picture that shows inside the metric.
  */
 
-
 /**
  * The key of the metric item that needs to be displayed by sonar metrics.
  * @type {Array<SonarMetricsRecord>}
@@ -119,30 +113,29 @@ const warningValueBadgeUrl = 'https://i.imgur.com/WtPSvXt.webp';
 const SONAR_METRICS_KEYS = [
   {
     name: 'reliability_rating',
-    logoUrl: 'https://i.imgur.com/RxfGk5l.webp'
+    logoUrl: 'https://i.imgur.com/RxfGk5l.webp',
   },
   {
     name: 'bugs',
-    logoUrl: 'https://i.imgur.com/9fieME5.webp'
+    logoUrl: 'https://i.imgur.com/9fieME5.webp',
   },
   {
     name: 'code_smells',
-    logoUrl: 'https://i.imgur.com/ANhJtOM.webp'
+    logoUrl: 'https://i.imgur.com/ANhJtOM.webp',
   },
   {
     name: 'security_rating',
-    logoUrl: 'https://i.imgur.com/JoUXs1o.webp'
+    logoUrl: 'https://i.imgur.com/JoUXs1o.webp',
   },
   {
     name: 'duplicated_blocks',
-    logoUrl: 'https://i.imgur.com/cmxC7ZG.webp'
+    logoUrl: 'https://i.imgur.com/cmxC7ZG.webp',
   },
   {
     name: 'critical_violations',
-    logoUrl: 'https://i.imgur.com/mwqZYrI.webp'
-  }
-];
-
+    logoUrl: 'https://i.imgur.com/mwqZYrI.webp',
+  },
+]
 
 /**
  * @function sendHttpRequest
@@ -162,15 +155,15 @@ const SONAR_METRICS_KEYS = [
  * @param {any} [data] - The request body of this request.
  * @return {Promise<AxiosResponse.data | null>}
  */
-const sendHttpRequest = async (client, method, url, params, data) => {
+const sendHttpRequest = async(client, method, url, params, data) => {
   try {
-    return (await client.request({url, method, params, data}))?.data;
-  } catch (e) {
-    console.warn(e);
-    return null;
+    return (await client.request({ url, method, params, data }))?.data
+  }
+  catch (e) {
+    console.warn(e)
+    return null
   }
 }
-
 
 /**
  * A self-defined hook that will be used to declare the css class name of a JSX component.
@@ -188,7 +181,7 @@ const sendHttpRequest = async (client, method, url, params, data) => {
 const useStyles = makeStyles(() => ({
   metricsTitle: {
     margin: '2rem 0 0 calc(1.5rem + 8px)',
-    fontFamily: 'Trebuchet MS'
+    fontFamily: 'Trebuchet MS',
   },
 
   metricsContainer: {
@@ -198,24 +191,24 @@ const useStyles = makeStyles(() => ({
     gridTemplateRows: 'auto',
     justifyItems: 'center',
     gap: '1.5rem',
-    padding: '1.5rem'
+    padding: '1.5rem',
   },
 
   metricCard: {
-    width: '100%'
+    width: '100%',
   },
 
   metricCardHeaderContainer: {
     display: 'flex',
     alignContent: 'center',
     alignItems: 'center',
-    margin: '0 0 1em 0'
+    margin: '0 0 1em 0',
   },
 
   metricCardTitle: {
     fontWeight: 'bolder',
     color: 'rgb(82, 104, 116)',
-    fontFamily: 'Trebuchet MS'
+    fontFamily: 'Trebuchet MS',
   },
 
   metricCardContentContainer: {
@@ -231,7 +224,7 @@ const useStyles = makeStyles(() => ({
     height: 'auto',
     lineHeight: 'normal',
     verticalAlign: 'middle',
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
 
   metricCardImg: {
@@ -254,15 +247,13 @@ const useStyles = makeStyles(() => ({
     marginRight: 'auto',
     marginLeft: 'auto',
     position: 'relative',
-    background: 'linear-gradient(-45deg,#3ec1d3,#f6f7d7,#ff9a00,#ff165d)'
-  }
-}));
-
+    background: 'linear-gradient(-45deg,#3ec1d3,#f6f7d7,#ff9a00,#ff165d)',
+  },
+}))
 
 /**
  * @typedef {sonarComponentName: string} SonarMetricsProps
  */
-
 
 /**
  * @summary Create the SonarMetrics JSX Component with React Memo.
@@ -272,11 +263,11 @@ const useStyles = makeStyles(() => ({
 const SonarMetrics = React.memo((props) => {
   const httpClientHeaders = useMemo(() => {
     return {
-      ...(jwt && {'Authorization': jwt})
-    };
-  }, [jwt]);
+      ...(jwt && { Authorization: jwt }),
+    }
+  }, [jwt])
 
-  const httpClient = useMemo(() => createClient(baseURL, httpClientHeaders), [baseURL, httpClientHeaders]);
+  const httpClient = useMemo(() => createClient(baseURL, httpClientHeaders), [baseURL, httpClientHeaders])
 
   /**
    * @function getMetricsData
@@ -286,24 +277,24 @@ const SonarMetrics = React.memo((props) => {
    *
    * Please refer to Sonar Cloud API doc {@link https://sonarcloud.io/web_api/api/measures/component} for more details of `param`
    */
-  const getMetricsData = useCallback(async () => {
+  const getMetricsData = useCallback(async() => {
     const params = {
-      'metricKeys': SONAR_METRICS_KEYS.map(key => key.name).join(','),
-      'component': props.sonarComponentName
-    };
-    return await sendHttpRequest(httpClient, 'GET', sonarMetricsProxyApiPath, params);
-  }, [props.sonarComponentName]);
+      metricKeys: SONAR_METRICS_KEYS.map(key => key.name).join(','),
+      component: props.sonarComponentName,
+    }
+    return await sendHttpRequest(httpClient, 'GET', sonarMetricsProxyApiPath, params)
+  }, [props.sonarComponentName])
 
-  const styles = useStyles();
-  const [metricsData, setMetricData] = useState();
+  const styles = useStyles()
+  const [metricsData, setMetricData] = useState()
 
   useEffect(() => {
     getMetricsData().then((data) => {
       if (!data)
-        return;
-      setMetricData(data);
-    });
-  }, [props.sonarComponentName]);
+        return
+      setMetricData(data)
+    })
+  }, [props.sonarComponentName])
 
   return (
     <>
@@ -312,10 +303,10 @@ const SonarMetrics = React.memo((props) => {
       </h1>
       <div className={ styles.colorfulDivider }/>
       {
-        metricsData &&
-        <div className={ styles.metricsContainer }>
+        metricsData
+        && <div className={ styles.metricsContainer }>
           {
-            metricsData.component.measures.map((measure) => (
+            metricsData.component.measures.map(measure => (
               <Card key={ randomHash() } className={ styles.metricCard }>
                 <CardActionArea>
                   <CardContent>
@@ -346,8 +337,8 @@ const SonarMetrics = React.memo((props) => {
       }
     </>
   )
-});
+})
 
-SonarMetrics.displayName = SonarMetrics.name;
+SonarMetrics.displayName = SonarMetrics.name
 
-export default SonarMetrics;
+export default SonarMetrics

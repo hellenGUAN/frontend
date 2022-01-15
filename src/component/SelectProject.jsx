@@ -1,27 +1,25 @@
-import {useState} from 'react';
-import Axios from 'axios';
+import { useEffect, useState } from 'react'
+import Axios from 'axios'
 import {
   Card,
   CardActionArea,
-  IconButton
-} from '@mui/material';
-import {makeStyles} from "@mui/styles";
-import Add from '@mui/icons-material/Add';
-import ProjectAvatar from './ProjectAvatar';
-import {useEffect} from 'react';
-import AddProjectDialog from './AddProjectDialog';
-import {connect} from 'react-redux';
-import {setCurrentProjectId} from '../redux/action';
-import {randomHash} from "../utils";
+  IconButton,
+} from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import Add from '@mui/icons-material/Add'
+import { connect } from 'react-redux'
+import { setCurrentProjectId } from '../redux/action'
+import { randomHash } from '../utils'
+import AddProjectDialog from './AddProjectDialog'
+import ProjectAvatar from './ProjectAvatar'
 
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    flexWrap: 'wrap'
+    'flexWrap': 'wrap',
   },
   small: {
     width: theme.spacing(10),
@@ -32,32 +30,32 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(25),
   },
   createProjectCard: {
-    height: theme.spacing(25)
-  }
-}));
+    height: theme.spacing(25),
+  },
+}))
 
-function SelectProject({setCurrentProjectId}) {
+function SelectProject({ setCurrentProjectId }) {
   const classes = useStyles()
   const [addRepoDialogOpen, setAddRepoDialogOpen] = useState(false)
   const [projects, setProjects] = useState([])
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   const loadProjects = () => {
     Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/active`,
-      {headers: {"Authorization": `${jwtToken}`}})
+      { headers: { Authorization: `${jwtToken}` } })
       .then((response) => {
         setProjects(response.data)
       })
       .catch((e) => {
-        alert(e.response?.status);
+        alert(e.response?.status)
         console.error(e)
       })
   }
 
   useEffect(() => {
     setCurrentProjectId(0)
-    loadProjects();
+    loadProjects()
   }, [])
 
   return (
@@ -66,7 +64,7 @@ function SelectProject({setCurrentProjectId}) {
 
       <div className={ classes.root }>
         {projects.map(project =>
-          <ProjectAvatar key={ randomHash() } size="large" project={ project } reloadProjects={ loadProjects }/>
+          <ProjectAvatar key={ randomHash() } size="large" project={ project } reloadProjects={ loadProjects }/>,
         )}
         <Card id="create-project-card" className={ classes.createProjectCard }>
           <CardActionArea onClick={ () => setAddRepoDialogOpen(true) }>
@@ -85,4 +83,4 @@ function SelectProject({setCurrentProjectId}) {
   )
 }
 
-export default connect(null, {setCurrentProjectId})(SelectProject)
+export default connect(null, { setCurrentProjectId })(SelectProject)

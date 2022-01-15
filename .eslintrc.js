@@ -1,8 +1,8 @@
 module.exports = {
   env: {
-    es6: true,
     browser: true,
     node: true,
+    es2021: true,
   },
   extends: [
     'standard',
@@ -10,6 +10,9 @@ module.exports = {
     'plugin:eslint-comments/recommended',
     'plugin:jsonc/recommended-with-jsonc',
     'plugin:yml/standard',
+    'plugin:react/recommended',
+    'eslint:recommended',
+    'plugin:react/jsx-runtime',
   ],
   plugins: [
     'html',
@@ -113,8 +116,9 @@ module.exports = {
     'curly': ['error', 'multi-or-nest', 'consistent'],
     'quotes': ['error', 'single'],
     'quote-props': ['error', 'consistent-as-needed'],
-    'no-unused-vars': 'error',
     'no-param-reassign': 'off',
+    'react/prop-types': 'warn',
+    'import/no-duplicates': 'error',
     'array-bracket-spacing': ['error', 'never'],
     'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
     'block-spacing': ['error', 'always'],
@@ -225,7 +229,7 @@ module.exports = {
     // Use new when throwing error
     'unicorn/throw-new-error': 'error',
 
-    'no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
+    'no-use-before-define': ['warn', { functions: false, classes: false, variables: true }],
     'eslint-comments/disable-enable-pair': 'off',
     'import/no-named-as-default-member': 'off',
 
@@ -239,5 +243,12 @@ module.exports = {
         allowSeparatedGroups: false,
       },
     ],
+  },
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-react'],
+    },
   },
 }

@@ -1,20 +1,19 @@
-import {useEffect, useState} from 'react'
-import {makeStyles} from "@mui/styles";
+import { useEffect, useState } from 'react'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 
-import Board from "react-trello";
-import { createTranslate } from 'react-trello'
+import Board, { createTranslate } from 'react-trello'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    marginLeft: '10px'
+    marginLeft: '10px',
   },
   boardContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -23,19 +22,18 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function TrelloBoardPage() {
-
   const classes = useStyles()
   const [boardData, setBoardData] = useState({})
   const [hasBoardData, setHasBoardData] = useState(false)
   const [currentProject, setCurrentProject] = useState({})
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   useEffect(() => {
     Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      {headers: {"Authorization": `${jwtToken}`}})
+      { headers: { Authorization: `${jwtToken}` } })
       .then((response) => {
         setCurrentProject(response.data)
       })
@@ -48,55 +46,54 @@ function TrelloBoardPage() {
   const getTrelloData = () => {
     const trelloBoard = currentProject.repositoryDTOList.find(repo => repo.type === 'trello')
     if (trelloBoard !== undefined) {
-      Axios.get(`http://localhost:9100/pvs-api/repository/trello/check?url=${trelloBoard.url}` ,
-      {headers: {"Authorization": `${jwtToken}`}})
-      .then(
-        Axios.get(`http://localhost:9100/pvs-api/trello/board?url=${trelloBoard.url}` ,
-        {headers: {"Authorization": `${jwtToken}`}})
-        .then((response) => {
-          setBoardData(response.data)
-          setHasBoardData(true)
-        })
+      Axios.get(`http://localhost:9100/pvs-api/repository/trello/check?url=${trelloBoard.url}`,
+        { headers: { Authorization: `${jwtToken}` } })
+        .then(
+          Axios.get(`http://localhost:9100/pvs-api/trello/board?url=${trelloBoard.url}`,
+            { headers: { Authorization: `${jwtToken}` } })
+            .then((response) => {
+              setBoardData(response.data)
+              setHasBoardData(true)
+            })
+            .catch((e) => {
+              alert(e.response.status)
+              console.error(e)
+            }),
+        )
         .catch((e) => {
           alert(e.response.status)
           console.error(e)
         })
-      )
-      .catch((e) => {
-        alert(e.response.status)
-        console.error(e)
-      })
     }
   }
 
   const TEXTS = {
-    "Add another lane": "NEW LANE",
-    "Click to add card": "Click to add card",
-    "Delete lane": "Delete lane",
-    "Lane actions": "Lane actions",
-    "button": {
-      "Add lane": "Add lane",
-      "Add card": "ADD CARD",
-      "Cancel": "Cancel"
+    'Add another lane': 'NEW LANE',
+    'Click to add card': 'Click to add card',
+    'Delete lane': 'Delete lane',
+    'Lane actions': 'Lane actions',
+    'button': {
+      'Add lane': 'Add lane',
+      'Add card': 'ADD CARD',
+      'Cancel': 'Cancel',
     },
-    "placeholder": {
-      "title": "title",
-      "description": "description",
-      "label": "label"
-    }
+    'placeholder': {
+      title: 'title',
+      description: 'description',
+      label: 'label',
+    },
   }
 
   useEffect(() => {
-    if (Object.keys(currentProject).length !== 0) {
+    if (Object.keys(currentProject).length !== 0)
       getTrelloData()
-    }
   }, [currentProject])
 
   return (
     <div className={ classes.root }>
       <div className={ classes.boardContainer }>
-        {hasBoardData &&
-        <Board
+        {hasBoardData
+        && <Board
           data={ boardData }
           canAddLanes
           t={ createTranslate(TEXTS) }
@@ -104,7 +101,7 @@ function TrelloBoardPage() {
         }
       </div>
     </div>
-  );
+  )
 }
 
-export default TrelloBoardPage;
+export default TrelloBoardPage

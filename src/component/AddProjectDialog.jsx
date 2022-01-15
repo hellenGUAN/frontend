@@ -12,30 +12,31 @@ import {
 } from '@mui/material'
 
 export default function AddProjectDialog({ open, reloadProjects, handleClose }) {
-  const [projectName, setProjectName] = useState("")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const [projectName, setProjectName] = useState('')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
-  const createProject = async () => {
-    if (projectName.trim() === "") {
-      alert("不準啦馬的>///<")
+  const createProject = async() => {
+    if (projectName.trim() === '') {
+      alert('不準啦馬的>///<')
       return
     }
 
     const payload = {
       memberId,
-      projectName
+      projectName,
     }
 
     const config = {
       headers: {
-        ...(jwtToken && { "Authorization": jwtToken })
-      }
+        ...(jwtToken && { Authorization: jwtToken }),
+      },
     }
 
     try {
-      await Axios.post("http://localhost:9100/pvs-api/project", payload, config)
-    } catch (e) {
+      await Axios.post('http://localhost:9100/pvs-api/project', payload, config)
+    }
+    catch (e) {
       alert(e?.response?.status)
       console.error(e)
     } // 回傳給後端
@@ -46,7 +47,7 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
 
   // 刷新
   useEffect(() => {
-    setProjectName("")
+    setProjectName('')
   }, [open])
 
   // dialog 介面

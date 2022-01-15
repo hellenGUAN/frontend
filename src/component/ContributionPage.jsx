@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Backdrop, CircularProgress } from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import ProjectAvatar from './ProjectAvatar'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import Chart from 'react-google-charts'
+import ProjectAvatar from './ProjectAvatar'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginLeft: '10px',
   },
   chartContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   chart: {
     width: '67%',
@@ -27,14 +27,14 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff',
   },
   buttonContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
-    alignItems: 'center',
-    width: "67%",
-    justifyContent: "space-between",
+    'minWidth': '30px',
+    'alignItems': 'center',
+    'width': '67%',
+    'justifyContent': 'space-between',
   },
   title: {
     display: 'flex',
@@ -43,39 +43,38 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '95%'
+    width: '95%',
   },
 }))
 
 function ContributionPage(prop) {
-
   const classes = useStyles()
   const [commitListData, setCommitListData] = useState([])
   const [dataForMemberCommitPieChart, setDataForMemberCommitPieChart] = useState({ data: [] })
   const [dataForMemberCommitBarChart, setDataForMemberCommitBarChart] = useState({ data: [] })
   const [currentProject, setCurrentProject] = useState({})
 
-  const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const handleToggle = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   // Get current project
   useEffect(() => {
     Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      { headers: { "Authorization": `${jwtToken}` } })
+      { headers: { Authorization: `${jwtToken}` } })
       .then((response) => {
         setCurrentProject(response.data)
       })
@@ -88,9 +87,9 @@ function ContributionPage(prop) {
   const getCommitFromGitHub = () => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     if (githubRepo !== undefined) {
-      const query = githubRepo.url.split("github.com/")[1]
-      Axios.post(`http://localhost:9100/pvs-api/github/commits/${query}`, "",
-        { headers: { "Authorization": `${jwtToken}` } })
+      const query = githubRepo.url.split('github.com/')[1]
+      Axios.post(`http://localhost:9100/pvs-api/github/commits/${query}`, '',
+        { headers: { Authorization: `${jwtToken}` } })
         .then(() => {
           getGitHubCommitFromDB()
           setLoading(false)
@@ -105,10 +104,10 @@ function ContributionPage(prop) {
   const getGitHubCommitFromDB = () => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     if (githubRepo !== undefined) {
-      const query = githubRepo.url.split("github.com/")[1]
+      const query = githubRepo.url.split('github.com/')[1]
       // todo need refactor with async
       Axios.get(`http://localhost:9100/pvs-api/github/commits/${query}`,
-        { headers: { "Authorization": `${jwtToken}` } })
+        { headers: { Authorization: `${jwtToken}` } })
         .then((response) => {
           setCommitListData(response.data)
         })
@@ -122,9 +121,9 @@ function ContributionPage(prop) {
   const getCommitFromGitLab = () => {
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
     if (gitlabRepo !== undefined) {
-      const query = gitlabRepo.url.split("gitlab.com/")[1]
-      Axios.post(`http://localhost:9100/pvs-api/gitlab/commits/${query}`, "",
-        { headers: { "Authorization": `${jwtToken}` } })
+      const query = gitlabRepo.url.split('gitlab.com/')[1]
+      Axios.post(`http://localhost:9100/pvs-api/gitlab/commits/${query}`, '',
+        { headers: { Authorization: `${jwtToken}` } })
         .then(() => {
           getGitLabCommitFromDB()
           setLoading(false)
@@ -139,9 +138,9 @@ function ContributionPage(prop) {
   const getGitLabCommitFromDB = () => {
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
     if (gitlabRepo !== undefined) {
-      const query = gitlabRepo.url.split("gitlab.com/")[1]
+      const query = gitlabRepo.url.split('gitlab.com/')[1]
       Axios.get(`http://localhost:9100/pvs-api/gitlab/commits/${query}`,
-        { headers: { "Authorization": `${jwtToken}` } })
+        { headers: { Authorization: `${jwtToken}` } })
         .then((response) => {
           setCommitListData(previousArray => [...previousArray, ...response.data])
         })
@@ -152,7 +151,7 @@ function ContributionPage(prop) {
     }
   }
 
-  const handleClick = () => setLoading(true);
+  const handleClick = () => setLoading(true)
 
   // Default get commits from database
   useEffect(() => {
@@ -169,57 +168,56 @@ function ContributionPage(prop) {
     if (isLoading) {
       const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
-      if (githubRepo !== undefined) {
+      if (githubRepo !== undefined)
         getCommitFromGitHub()
-      }
-      if (gitlabRepo !== undefined) {
+
+      if (gitlabRepo !== undefined)
         getCommitFromGitLab()
-      }
     }
-  }, [isLoading]);
+  }, [isLoading])
 
   // Generate commits pie chart
   useEffect(() => {
-    let chartDataset = {
+    const chartDataset = {
       labels: [],
-      data: {}
+      data: {},
     }
-    new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
+    new Set(commitListData.map(commit => commit.authorName)).forEach((author) => {
       chartDataset.data[author] = 0
       chartDataset.labels.push(author)
     })
-    commitListData.forEach(commitData => {
+    commitListData.forEach((commitData) => {
       chartDataset.data[commitData.authorName] += 1
     })
-    setDataForMemberCommitPieChart([["Member", "Numbers of commits"]])
-    chartDataset.labels.forEach(member => {
-      setDataForMemberCommitPieChart(previousArray => [...previousArray, [member.replace("\"", "").replace("\"", ""), chartDataset.data[member]]])
+    setDataForMemberCommitPieChart([['Member', 'Numbers of commits']])
+    chartDataset.labels.forEach((member) => {
+      setDataForMemberCommitPieChart(previousArray => [...previousArray, [member.replace('"', '').replace('"', ''), chartDataset.data[member]]])
     })
   }, [commitListData])
 
   // Generate code base bar chart
   useEffect(() => {
-    let chartDataset_Addition = {
+    const chartDataset_Addition = {
       labels: [],
-      data: {}
+      data: {},
     }
-    let chartDataset_Deletion = {
+    const chartDataset_Deletion = {
       labels: [],
-      data: {}
+      data: {},
     }
-    new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
+    new Set(commitListData.map(commit => commit.authorName)).forEach((author) => {
       chartDataset_Addition.data[author] = 0
       chartDataset_Addition.labels.push(author)
       chartDataset_Deletion.data[author] = 0
       chartDataset_Deletion.labels.push(author)
     })
-    commitListData.forEach(commitData => {
+    commitListData.forEach((commitData) => {
       chartDataset_Addition.data[commitData.authorName] += commitData.additions
       chartDataset_Deletion.data[commitData.authorName] += commitData.deletions
     })
-    setDataForMemberCommitBarChart([["Member", "Additions", "Deletions"]])
-    chartDataset_Addition.labels.forEach(member => {
-      setDataForMemberCommitBarChart(previousArray => [...previousArray, [member.replace("\"", "").replace("\"", ""), chartDataset_Addition.data[member], chartDataset_Deletion.data[member]]])
+    setDataForMemberCommitBarChart([['Member', 'Additions', 'Deletions']])
+    chartDataset_Addition.labels.forEach((member) => {
+      setDataForMemberCommitBarChart(previousArray => [...previousArray, [member.replace('"', '').replace('"', ''), chartDataset_Addition.data[member], chartDataset_Deletion.data[member]]])
     })
   }, [commitListData])
 
@@ -241,7 +239,7 @@ function ContributionPage(prop) {
             project={ currentProject }
             className={ classes.avatar }
           />
-          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
         </div>
         <div className={ classes.buttonContainer }>
           {/* Reload Button */}
@@ -296,4 +294,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(ContributionPage);
+export default connect(mapStateToProps)(ContributionPage)

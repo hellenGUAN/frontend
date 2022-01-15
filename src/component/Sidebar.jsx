@@ -1,15 +1,12 @@
-import {useEffect, useState} from 'react'
-import logo_p from '../assets/images/p.png'
-import logo_v from '../assets/images/v.png'
-import logo_s from '../assets/images/s.png'
-import {useHistory} from 'react-router-dom'
-import ExitToApp from "@mui/icons-material/ExitToApp";
-import ArrowBack from "@mui/icons-material/ArrowBack";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import Code from "@mui/icons-material/Code";
-import GpsFixed from "@mui/icons-material/GpsFixed";
-import Compare from "@mui/icons-material/Compare";
+import { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import ExitToApp from '@mui/icons-material/ExitToApp'
+import ArrowBack from '@mui/icons-material/ArrowBack'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import Code from '@mui/icons-material/Code'
+import GpsFixed from '@mui/icons-material/GpsFixed'
+import Compare from '@mui/icons-material/Compare'
 import {
   AppBar,
   Collapse,
@@ -22,26 +19,29 @@ import {
   ListItemIcon,
   ListItemText,
   TextField,
-  Toolbar
+  Toolbar,
 } from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import {AiFillBug} from 'react-icons/ai'
-import {IoGitCommitSharp, IoNuclear} from 'react-icons/io5'
-import {GoIssueOpened} from 'react-icons/go'
-import {HiChartPie, HiDocumentDuplicate} from 'react-icons/hi'
-import {SiGithub, SiGitlab, SiSonarqube, SiTrello} from 'react-icons/si'
-import {RiDashboardFill} from 'react-icons/ri'
-import {BiGitPullRequest} from 'react-icons/bi'
+import { makeStyles } from '@mui/styles'
+import { AiFillBug } from 'react-icons/ai'
+import { IoGitCommitSharp, IoNuclear } from 'react-icons/io5'
+import { GoIssueOpened } from 'react-icons/go'
+import { HiChartPie, HiDocumentDuplicate } from 'react-icons/hi'
+import { SiGithub, SiGitlab, SiSonarqube, SiTrello } from 'react-icons/si'
+import { RiDashboardFill } from 'react-icons/ri'
+import { BiGitPullRequest } from 'react-icons/bi'
 import clsx from 'clsx'
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {connect} from 'react-redux'
-import {setEndMonth, setStartMonth} from '../redux/action'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import { connect } from 'react-redux'
 import Axios from 'axios'
 import DateAdapter from '@mui/lab/AdapterMoment'
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker'
+import { setEndMonth, setStartMonth } from '../redux/action'
+import logo_s from '../assets/images/s.png'
+import logo_v from '../assets/images/v.png'
+import logo_p from '../assets/images/p.png'
 
 const drawerWidth = 240
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
   },
@@ -97,12 +97,12 @@ const useStyles = makeStyles((theme) => ({
   },
   list: {
     height: 'calc(100%)',
-    width: 'auto'
+    width: 'auto',
   },
   logout: {
     position: 'absolute !important',
     margin: '.5em !important',
-    right: 0
+    right: 0,
   },
   menuList: {
     height: 'calc(100%)',
@@ -112,12 +112,12 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 3, 1),
   },
   innerList: {
-    backgroundColor: "#fafafa"
-  }
+    backgroundColor: '#fafafa',
+  },
 }))
 
 function Sidebar(prop) {
-  //todo separate sidebar and appbar~~~
+  // todo separate sidebar and appbar~~~
 
   const open = useState(true)[0]
   const history = useHistory()
@@ -152,8 +152,8 @@ function Sidebar(prop) {
   const buildSidebarList = () => (
     <div className={ classes.list } role="presentation">
       <List className={ classes.menuList } width="inher">
-        {prop.currentProjectId !== 0 &&
-          <div>
+        {prop.currentProjectId !== 0
+          && <div>
 
             {/* back to select page UI button */}
             <ListItem button onClick={ goToSelect }>
@@ -175,20 +175,20 @@ function Sidebar(prop) {
             <Divider/>
 
             {/* github metrics UI button */}
-            {currentProject &&
-              currentProject.repositoryDTOList.find(x => x.type === "github") &&
-              <div>
-                {buildTitleListItem("GitHub", SiGithub, githubMenuOpen, setGithubMenuOpen)}
+            {currentProject
+              && currentProject.repositoryDTOList.find(x => x.type === 'github')
+              && <div>
+                {buildTitleListItem('GitHub', SiGithub, githubMenuOpen, setGithubMenuOpen)}
                 <Divider/>
 
                 <Collapse in={ githubMenuOpen } timeout="auto" unmountOnExit>
                   <List component="div" disablePadding className={ classes.innerList }>
-                    {buildSmallListItem("Commits", IoGitCommitSharp, goToCommit)}
-                    {buildSmallListItem("Issues", GoIssueOpened, goToIssue)}
-                    {buildSmallListItem("Pull Request", BiGitPullRequest, goToPullRequest)}
-                    {buildSmallListItem("Code Base", Code, goToCodeBase)}
-                    {buildSmallListItem("Comparison", Compare, goToComparison)}
-                    {buildSmallListItem("Contribution", HiChartPie, goToContribution)}
+                    {buildSmallListItem('Commits', IoGitCommitSharp, goToCommit)}
+                    {buildSmallListItem('Issues', GoIssueOpened, goToIssue)}
+                    {buildSmallListItem('Pull Request', BiGitPullRequest, goToPullRequest)}
+                    {buildSmallListItem('Code Base', Code, goToCodeBase)}
+                    {buildSmallListItem('Comparison', Compare, goToComparison)}
+                    {buildSmallListItem('Contribution', HiChartPie, goToContribution)}
                   </List>
                   <Divider/>
                 </Collapse>
@@ -196,19 +196,19 @@ function Sidebar(prop) {
             }
 
             {/* gitlab metrics UI button */}
-            {currentProject &&
-              currentProject.repositoryDTOList.find(x => x.type === "gitlab") &&
-              <div>
-                {buildTitleListItem("GitLab", SiGitlab, gitlabMenuOpen, setGitlabMenuOpen)}
+            {currentProject
+              && currentProject.repositoryDTOList.find(x => x.type === 'gitlab')
+              && <div>
+                {buildTitleListItem('GitLab', SiGitlab, gitlabMenuOpen, setGitlabMenuOpen)}
                 <Divider/>
 
                 <Collapse in={ gitlabMenuOpen } timeout="auto" unmountOnExit>
                   <List component="div" disablePadding className={ classes.innerList }>
-                    {buildSmallListItem("Commits", IoGitCommitSharp, goToCommit)}
-                    {buildSmallListItem("Issues", GoIssueOpened, goToIssue)}
-                    {buildSmallListItem("Code Base", Code, goToCodeBase)}
-                    {buildSmallListItem("Comparison", Compare, goToComparison)}
-                    {buildSmallListItem("Contribution", HiChartPie, goToContribution)}
+                    {buildSmallListItem('Commits', IoGitCommitSharp, goToCommit)}
+                    {buildSmallListItem('Issues', GoIssueOpened, goToIssue)}
+                    {buildSmallListItem('Code Base', Code, goToCodeBase)}
+                    {buildSmallListItem('Comparison', Compare, goToComparison)}
+                    {buildSmallListItem('Contribution', HiChartPie, goToContribution)}
                   </List>
                   <Divider/>
                 </Collapse>
@@ -216,18 +216,18 @@ function Sidebar(prop) {
             }
 
             {/* sonar metrics UI button */}
-            {currentProject &&
-              currentProject.repositoryDTOList.find(x => x.type === "sonar") &&
-              <div>
-                {buildTitleListItem("SonarQube", SiSonarqube, sonarMenuOpen, setSonarMenuOpen)}
+            {currentProject
+              && currentProject.repositoryDTOList.find(x => x.type === 'sonar')
+              && <div>
+                {buildTitleListItem('SonarQube', SiSonarqube, sonarMenuOpen, setSonarMenuOpen)}
                 <Divider/>
 
                 <Collapse in={ sonarMenuOpen } timeout="auto" unmountOnExit>
                   <List component="div" disablePadding className={ classes.innerList }>
-                    {buildSmallListItem("Code Coverage", GpsFixed, goToCodeCoverage)}
-                    {buildSmallListItem("Bugs", AiFillBug, goToBug)}
-                    {buildSmallListItem("Code Smells", IoNuclear, goToCodeSmell)}
-                    {buildSmallListItem("Duplications", HiDocumentDuplicate, goToDuplication)}
+                    {buildSmallListItem('Code Coverage', GpsFixed, goToCodeCoverage)}
+                    {buildSmallListItem('Bugs', AiFillBug, goToBug)}
+                    {buildSmallListItem('Code Smells', IoNuclear, goToCodeSmell)}
+                    {buildSmallListItem('Duplications', HiDocumentDuplicate, goToDuplication)}
                   </List>
                   <Divider/>
                 </Collapse>
@@ -235,15 +235,15 @@ function Sidebar(prop) {
             }
 
             {/* trello metrics UI button */}
-            {currentProject &&
-              currentProject.repositoryDTOList.find(x => x.type === "trello") &&
-              <div>
-                {buildTitleListItem("Trello", SiTrello, trelloMenuOpen, setTrelloMenuOpen)}
+            {currentProject
+              && currentProject.repositoryDTOList.find(x => x.type === 'trello')
+              && <div>
+                {buildTitleListItem('Trello', SiTrello, trelloMenuOpen, setTrelloMenuOpen)}
                 <Divider/>
 
                 <Collapse in={ trelloMenuOpen } timeout="auto" unmountOnExit>
                   <List component="div" disablePadding className={ classes.innerList }>
-                    {buildSmallListItem("board", IoGitCommitSharp, goToTrelloBoard)}
+                    {buildSmallListItem('board', IoGitCommitSharp, goToTrelloBoard)}
                   </List>
                   <Divider/>
                 </Collapse>
@@ -261,64 +261,64 @@ function Sidebar(prop) {
   }
 
   const goToSelect = () => {
-    history.push("/select")
+    history.push('/select')
   }
 
   const goToDashBoard = () => {
-    history.push("/dashboard")
+    history.push('/dashboard')
   }
 
   const goToCommit = () => {
-    history.push("/commits")
+    history.push('/commits')
   }
 
   const goToIssue = () => {
-    history.push("/issues")
+    history.push('/issues')
   }
 
   const goToPullRequest = () => {
-    history.push("/pull_requests")
+    history.push('/pull_requests')
   }
 
   const goToCodeBase = () => {
-    history.push("/codebase")
+    history.push('/codebase')
   }
 
   const goToComparison = () => {
-    history.push("/comparison")
+    history.push('/comparison')
   }
 
   const goToContribution = () => {
-    history.push("/contribution")
+    history.push('/contribution')
   }
 
   const goToCodeCoverage = () => {
-    history.push("/code_coverage")
+    history.push('/code_coverage')
   }
 
   const goToBug = () => {
-    history.push("/bugs")
+    history.push('/bugs')
   }
 
   const goToCodeSmell = () => {
-    history.push("/code_smells")
+    history.push('/code_smells')
   }
 
   const goToDuplication = () => {
-    history.push("/duplications")
+    history.push('/duplications')
   }
 
   const goToTrelloBoard = () => {
-    history.push("/trello_board")
+    history.push('/trello_board')
   }
 
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   useEffect(() => {
     if (prop.currentProjectId && prop.currentProjectId !== '0') {
       Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${prop.currentProjectId}`,
-        {headers: {"Authorization": `${jwtToken}`}})
+        { headers: { Authorization: `${jwtToken}` } })
         .then((response) => {
           setCurrentProject(response.data)
         })
@@ -338,9 +338,9 @@ function Sidebar(prop) {
         }) }
       >
         <Toolbar>
-          <img src={ logo_p } alt={ "" }/>
-          <img src={ logo_v } alt={ "" }/>
-          <img src={ logo_s } alt={ "" }/>
+          <img src={ logo_p } alt={ '' }/>
+          <img src={ logo_v } alt={ '' }/>
+          <img src={ logo_s } alt={ '' }/>
           <div className={ classes.monthSelector }>
             <LocalizationProvider dateAdapter={ DateAdapter }>
               <MobileDatePicker
@@ -348,11 +348,11 @@ function Sidebar(prop) {
                 fullWidth
                 focused={ false }
                 openTo="year"
-                views={ ["year", "month"] }
+                views={ ['year', 'month'] }
                 label="Start Month and Year"
                 value={ prop.startMonth }
                 onChange={ prop.setStartMonth }
-                renderInput={ (params) => <TextField { ...params } /> }
+                renderInput={ params => <TextField { ...params } /> }
               />
             </LocalizationProvider>
           </div>
@@ -363,11 +363,11 @@ function Sidebar(prop) {
                 fullWidth
                 focused={ false }
                 openTo="year"
-                views={ ["year", "month"] }
+                views={ ['year', 'month'] }
                 label="End Month and Year"
                 value={ prop.endMonth }
                 onChange={ prop.setEndMonth }
-                renderInput={ (params) => <TextField { ...params } /> }
+                renderInput={ params => <TextField { ...params } /> }
               />
             </LocalizationProvider>
           </div>
@@ -404,14 +404,14 @@ const mapStateToProps = (state) => {
   return {
     startMonth: state.selectedMonth.startMonth,
     endMonth: state.selectedMonth.endMonth,
-    currentProjectId: state.currentProjectId
+    currentProjectId: state.currentProjectId,
   }
 }
 
 const mapActionToProps = (dispatch) => {
   return {
-    setStartMonth: (startMonth) => dispatch(setStartMonth(startMonth)),
-    setEndMonth: (endMonth) => dispatch(setEndMonth(endMonth))
+    setStartMonth: startMonth => dispatch(setStartMonth(startMonth)),
+    setEndMonth: endMonth => dispatch(setEndMonth(endMonth)),
   }
 }
 

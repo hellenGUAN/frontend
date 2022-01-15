@@ -1,29 +1,29 @@
-import "@progress/kendo-theme-material/dist/all.css";
-import { TileLayout } from "@progress/kendo-react-layout";
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
-import { Backdrop, CircularProgress } from '@mui/material';
-import {makeStyles} from "@mui/styles";
-import CommitsViews from "./DashBoardComponent/CommitsViews"
-import IssueViews from "./DashBoardComponent/IssueViews"
-import PullRequestsViews from "./DashBoardComponent/PullRequestViews"
-import CodeBaseViews from "./DashBoardComponent/CodeBaseViews"
-import ProjectAvatar from './ProjectAvatar'
+import '@progress/kendo-theme-material/dist/all.css'
+import { TileLayout } from '@progress/kendo-react-layout'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Backdrop, CircularProgress } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
+import CommitsViews from './DashBoardComponent/CommitsViews'
+import IssueViews from './DashBoardComponent/IssueViews'
+import PullRequestsViews from './DashBoardComponent/PullRequestViews'
+import CodeBaseViews from './DashBoardComponent/CodeBaseViews'
+import ProjectAvatar from './ProjectAvatar'
 
 const SonarMetrics = lazy(() => import('./SonarMetrics'))
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
-    width: 'auto',
+    'minWidth': '30px',
+    'width': 'auto',
   },
   title: {
     display: 'inline-block',
     marginLeft: '15px',
-    marginRight: '15px'
+    marginRight: '15px',
   },
   DashBoard: {
     width: 'calc(100vw - 304px)',
@@ -37,11 +37,11 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '100%'
+    width: '100%',
   },
 }))
 
@@ -69,8 +69,8 @@ const initialPositions = [
     row: 2,
     colSpan: 2,
     rowSpan: 1,
-  }
-];
+  },
+]
 
 function DashboardPage() {
   const classes = useStyles()
@@ -78,23 +78,24 @@ function DashboardPage() {
   const [currentProject, setCurrentProject] = useState({})
   const [hasGitHubRepo, setHasGitHubRepo] = useState(false)
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
-  const [open, setOpen] = useState(false);
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
+  const [open, setOpen] = useState(false)
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const handleToggle = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
-  const fetchCurrentProject = async () => {
+  const fetchCurrentProject = async() => {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-        { headers: { "Authorization": `${jwtToken}` } })
+        { headers: { Authorization: `${jwtToken}` } })
       setCurrentProject(response.data)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -112,34 +113,34 @@ function DashboardPage() {
   useEffect(() => {
     handleToggle()
     const githubRepo = currentProject.repositoryDTOList?.find(repo => repo.type === 'github')
-    if (githubRepo !== undefined) {
+    if (githubRepo !== undefined)
       setHasGitHubRepo(true)
-    }
+
     handleClose()
   }, [currentProject])
 
   const githubMetrics = [
     {
-      header: "Commits",
+      header: 'Commits',
       body: <CommitsViews />,
     },
     {
-      header: "Issues",
+      header: 'Issues',
       body: <IssueViews />,
     },
     {
-      header: "Pull Requests",
+      header: 'Pull Requests',
       body: <PullRequestsViews />,
     },
     {
-      header: "Code Base",
+      header: 'Code Base',
       body: <CodeBaseViews />,
     },
-  ];
+  ]
 
-  const handleReposition = e => {
-    setPositions(e.value);
-  };
+  const handleReposition = (e) => {
+    setPositions(e.value)
+  }
 
   return (
     <div className={ classes.root }>
@@ -153,12 +154,12 @@ function DashboardPage() {
             project={ currentProject }
             className={ classes.avatar }
           />
-          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
         </header>
 
         {
-          hasGitHubRepo &&
-          <div className={ classes.DashBoard }>
+          hasGitHubRepo
+          && <div className={ classes.DashBoard }>
             <TileLayout
               className={ classes.tileLayout }
               columns={ 4 }
@@ -167,12 +168,12 @@ function DashboardPage() {
               positions={ positions }
               items={ githubMetrics }
               onReposition={ handleReposition }
-              />
+            />
           </div>
         }
         {
-          sonarId &&
-          <Suspense fallback={ <div>Loading Sonar Metrics...</div> }>
+          sonarId
+          && <Suspense fallback={ <div>Loading Sonar Metrics...</div> }>
             <SonarMetrics sonarComponentName={ sonarId }/>
           </Suspense>
         }
@@ -181,4 +182,4 @@ function DashboardPage() {
   )
 }
 
-export default DashboardPage;
+export default DashboardPage

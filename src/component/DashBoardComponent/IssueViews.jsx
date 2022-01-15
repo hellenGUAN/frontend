@@ -1,8 +1,8 @@
-import {makeStyles} from "@mui/styles";
-import {useEffect, useState} from 'react'
+import { makeStyles } from '@mui/styles'
+import { useEffect, useState } from 'react'
 import Axios from 'axios'
 import moment from 'moment'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 
 const useStyles = makeStyles(() => ({
   totalJobViewsGrid: {
@@ -47,31 +47,33 @@ function IssueViews(prop) {
   const [jobs, setJobs] = useState([])
   const [currentProject, setCurrentProject] = useState({})
   const [issueListData, setIssueListData] = useState([])
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
-  const fetchCurrentProject = async () => {
+  const fetchCurrentProject = async() => {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-        {headers: {"Authorization": `${jwtToken}`}})
+        { headers: { Authorization: `${jwtToken}` } })
       setCurrentProject(response.data)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
   }
 
   // Get issues(include pull requests) from GitHub
-  const getIssueFromGitHub = async () => {
+  const getIssueFromGitHub = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     if (githubRepo !== undefined) {
-      const query = githubRepo.url.split("github.com/")[1]
+      const query = githubRepo.url.split('github.com/')[1]
       try {
         const response = await Axios.get(`http://localhost:9100/pvs-api/github/issues/${query}`,
-          {headers: {"Authorization": `${jwtToken}`}})
+          { headers: { Authorization: `${jwtToken}` } })
         setIssueListData(response.data)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }
@@ -83,16 +85,15 @@ function IssueViews(prop) {
   }, [])
 
   useEffect(() => {
-    if (Object.keys(currentProject).length !== 0) {
+    if (Object.keys(currentProject).length !== 0)
       getIssueFromGitHub()
-    }
   }, [currentProject, prop.startMonth, prop.endMonth])
 
   // Only triger the page rendering once
-  const calculateData = async () => {
+  const calculateData = async() => {
     await Promise.all([
       setIssueCreatedCount(),
-      setIssueClosedCount()
+      setIssueClosedCount(),
     ])
   }
 
@@ -105,13 +106,13 @@ function IssueViews(prop) {
   const getIssueListSortedBy = (issueList, key) => issueList.sort((prev, curr) => prev[key] - curr[key])
 
   const getIssueCreatedCount = () => {
-    const {endMonth} = prop
+    const { endMonth } = prop
     let created = 0
     const issueListSortedByCreatedAt = getIssueListSortedBy(issueListData, 'createdAt')
 
     if (issueListSortedByCreatedAt.length > 0) {
       const month = moment(endMonth)
-      const issueCountInSelectedRange = issueListSortedByCreatedAt.findIndex(issue => {
+      const issueCountInSelectedRange = issueListSortedByCreatedAt.findIndex((issue) => {
         return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
       })
       created = (issueCountInSelectedRange === -1 ? issueListData.length : issueCountInSelectedRange)
@@ -121,14 +122,14 @@ function IssueViews(prop) {
   }
 
   const getIssueClosedCount = () => {
-    const {endMonth} = prop
+    const { endMonth } = prop
     let closed = 0
     const issueListSortedByClosedAt = getIssueListSortedBy(issueListData, 'closedAt')
 
     if (issueListSortedByClosedAt.length > 0) {
       const month = moment(endMonth)
       let noCloseCount = 0
-      const issueCountInSelectedRange = issueListSortedByClosedAt.findIndex(issue => {
+      const issueCountInSelectedRange = issueListSortedByClosedAt.findIndex((issue) => {
         if (issue.closedAt == null) noCloseCount += 1
         return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
       })
@@ -139,19 +140,19 @@ function IssueViews(prop) {
   }
 
   const setIssueCreatedCount = () => {
-    const job = {id: '1', job: "Created", views: getIssueCreatedCount()}
+    const job = { id: '1', job: 'Created', views: getIssueCreatedCount() }
     setJobs([job])
   }
 
   const setIssueClosedCount = () => {
-    const job = {id: '2', job: "Closed", views: getIssueClosedCount()}
+    const job = { id: '2', job: 'Closed', views: getIssueClosedCount() }
     setJobs(prevArray => [...prevArray, job])
   }
 
   return (
     <div>
       <ul className={ classes.totalJobViewsGrid }>
-        {jobs?.map(job => {
+        {jobs?.map((job) => {
           return (
             <li className={ classes.jobViewsBlock } key={ job.id }>
               <span className={ classes.jobTitle }>{job.job}</span>
@@ -160,7 +161,7 @@ function IssueViews(prop) {
                 <span className={ classes.jobViews }>{job.views}</span>
               </div>
             </li>
-          );
+          )
         })}
       </ul>
     </div>
@@ -169,8 +170,8 @@ function IssueViews(prop) {
 
 const mapStateToProps = (state) => {
   return {
-    endMonth: state.selectedMonth.endMonth
+    endMonth: state.selectedMonth.endMonth,
   }
 }
 
-export default connect(mapStateToProps)(IssueViews);
+export default connect(mapStateToProps)(IssueViews)

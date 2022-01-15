@@ -2,7 +2,7 @@ const init = localStorage.getItem('projectId')
 
 const currentProjectIdReducer = (state = init, action) => {
   switch (action.type) {
-    case "SET_CURRENT_PROJECT_ID":
+    case 'SET_CURRENT_PROJECT_ID':
       localStorage.setItem('projectId', action.projectId)
       return action.projectId
     default:

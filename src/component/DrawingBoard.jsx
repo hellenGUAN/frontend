@@ -1,27 +1,25 @@
-import {useEffect, useState} from 'react'
-import {Line} from "react-chartjs-2"
+import { useEffect, useState } from 'react'
+import { Line } from 'react-chartjs-2'
 
 export default function DrawingBoard(props) {
-
   const [data, setData] = useState({})
 
   let i = -1
-  let _backgroundColor = ""
+  let _backgroundColor = ''
 
   const getColor = () => {
     // let colorChips =["#85c446", "#bce7c5", "#fdbd10", "#0066b2", "#ed7902", "#0085ad", "#009f4d", "#335238" ,"#c68143" ,"#ec1c24"]
-    let colorChips = ["#84abd6", "#ff97ba", "#fdbd10", "#0066b2", "#ed7902", "#0085ad", "#009f4d", "#335238", "#c68143", "#ec1c24"]
+    const colorChips = ['#84abd6', '#ff97ba', '#fdbd10', '#0066b2', '#ed7902', '#0085ad', '#009f4d', '#335238', '#c68143', '#ec1c24']
 
     i++
-    let boardColor = `${colorChips[i]}`
+    const boardColor = `${colorChips[i]}`
     _backgroundColor = boardColor
     return props.isIssue ? props.color : boardColor
   }
 
   const isFilled = () => {
-    return props.isIssue || props.isCodeBase ? "origin" : false
+    return props.isIssue || props.isCodeBase ? 'origin' : false
   }
-
 
   // const getRandomColor = () => {
   //   return `rgb(${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)})`
@@ -34,7 +32,7 @@ export default function DrawingBoard(props) {
       //   _backgroundColor = `${props.color}`
       //   // #bce7c5
       // }
-      let datasets = Object.keys(props.data.data).map(key => {
+      const datasets = Object.keys(props.data.data).map((key) => {
         return {
           label: key,
           fill: isFilled(),
@@ -43,30 +41,30 @@ export default function DrawingBoard(props) {
           borderWidth: 2,
           pointRadius: 2,
           data: props.data.data[key],
-          tension: 0
+          tension: 0,
         }
       })
 
       setData({
         labels: props.data.labels,
-        datasets: datasets
+        datasets,
       })
     }
   }, [props.data])
 
   const options = {
     legend: {
-      position: "top",
+      position: 'top',
       display: true,
       labels: {
-        boxWidth: 10
+        boxWidth: 10,
       },
     },
     scales: {
       xAxes: [
         {
-          ticks: {display: true}
-        }
+          ticks: { display: true },
+        },
       ],
       yAxes: [
         {
@@ -74,17 +72,16 @@ export default function DrawingBoard(props) {
             beginAtZero: true,
           },
         },
-      ]
-    }
-  };
-
-  if (props.maxBoardY) {
-    options.scales.yAxes[0].ticks.max = props.maxBoardY
+      ],
+    },
   }
+
+  if (props.maxBoardY)
+    options.scales.yAxes[0].ticks.max = props.maxBoardY
 
   return (
     <div className="App main" id={ props.id }>
-      <Line data={ data } options={ options } type={ "" }/>
+      <Line data={ data } options={ options } type={ '' }/>
     </div>
   )
 }

@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Backdrop, CircularProgress } from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import ProjectAvatar from './ProjectAvatar'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 import { connect } from 'react-redux'
-import DrawingBoard from './DrawingBoard'
 import moment from 'moment'
+import DrawingBoard from './DrawingBoard'
+import ProjectAvatar from './ProjectAvatar'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginLeft: '10px',
   },
   chartContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   chart: {
     width: '67%',
@@ -32,23 +32,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '95%'
+    width: '95%',
   },
 }))
 
 function CodeCoveragePage(prop) {
   const classes = useStyles()
   const [currentProject, setCurrentProject] = useState({})
-  const [dataForCoverageChart, setDataForCoverageChart] = useState({labels: [], data: {coverage: []}})
-  const [coverageUrl, setCoverageUrl] = useState("")
+  const [dataForCoverageChart, setDataForCoverageChart] = useState({ labels: [], data: { coverage: [] } })
+  const [coverageUrl, setCoverageUrl] = useState('')
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   const [isLoading, setLoading] = useState(false)
   const loadingCoverageEnd = () => {
@@ -60,26 +60,27 @@ function CodeCoveragePage(prop) {
 
   const config = {
     headers: {
-      ...(jwtToken && { "Authorization": jwtToken })
-    }
+      ...(jwtToken && { Authorization: jwtToken }),
+    },
   }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      config
+      config,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -89,14 +90,15 @@ function CodeCoveragePage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getCoverageData = async () => {
-    const repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-    const sonarComponent = repositoryDTO.url.split("id=")[1]
+  const getCoverageData = async() => {
+    const repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === 'sonar')
+    const sonarComponent = repositoryDTO.url.split('id=')[1]
     setCoverageUrl(`https://sonarcloud.io/component_measures?id=${sonarComponent}&metric=Coverage&view=list`)
     try {
       const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/coverage`)
       setCoverageChart(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
       loadingCoverageEnd()
@@ -104,9 +106,9 @@ function CodeCoveragePage(prop) {
   }
 
   const setCoverageChart = (coverageList) => {
-    const dataset = {labels: [], data: {coverage: []}}
-    coverageList.forEach(coverage => {
-      dataset.labels.push(moment(coverage.date).format("YYYY-MM-DD HH:mm:ss"))
+    const dataset = { labels: [], data: { coverage: [] } }
+    coverageList.forEach((coverage) => {
+      dataset.labels.push(moment(coverage.date).format('YYYY-MM-DD HH:mm:ss'))
       dataset.data.coverage.push(coverage.value)
     })
     setDataForCoverageChart(dataset)
@@ -131,7 +133,7 @@ function CodeCoveragePage(prop) {
           project={ currentProject }
           className={ classes.avatar }
         />
-        <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+        <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
       </header>
       <h2>
         <a href={ coverageUrl } target="blank">{dataForCoverageChart.data.coverage[dataForCoverageChart.data.coverage.length - 1]}%</a>
@@ -153,7 +155,7 @@ function CodeCoveragePage(prop) {
 const mapStateToProps = (state) => {
   return {
     startMonth: state.selectedMonth.startMonth,
-    endMonth: state.selectedMonth.endMonth
+    endMonth: state.selectedMonth.endMonth,
   }
 }
 

@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react'
-import ProjectAvatar from './ProjectAvatar'
-import DrawingBoard from './DrawingBoard'
 import Axios from 'axios'
 import moment from 'moment'
-import { Backdrop, CircularProgress} from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import { connect } from 'react-redux';
+import { Backdrop, CircularProgress } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { connect } from 'react-redux'
+import DrawingBoard from './DrawingBoard'
+import ProjectAvatar from './ProjectAvatar'
 
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    marginLeft: '10px'
+    marginLeft: '10px',
   },
   chartContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   chart: {
     width: '67%',
@@ -33,11 +32,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '100%'
+    width: '100%',
   },
 }))
 
@@ -48,24 +47,25 @@ function PullRequestsPage(prop) {
 
   const [currentProject, setCurrentProject] = useState({})
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const loadingEnd = () => {
-    setLoading(false);
-  };
+    setLoading(false)
+  }
   const isLoading = () => {
-    setLoading(true);
-  };
+    setLoading(true)
+  }
 
-  const fetchCurrentProject = async () => {
+  const fetchCurrentProject = async() => {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${projectId}`,
-      { headers: { "Authorization": `${jwtToken}` } })
+        { headers: { Authorization: `${jwtToken}` } })
       setCurrentProject(response.data)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -75,16 +75,17 @@ function PullRequestsPage(prop) {
     fetchCurrentProject()
   }, [])
 
-  const getPullRequestsFromGitHub = async () => {
+  const getPullRequestsFromGitHub = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     if (githubRepo !== undefined) {
-      const query = githubRepo.url.split("github.com/")[1]
+      const query = githubRepo.url.split('github.com/')[1]
       try {
         const response = await Axios.get(`http://localhost:9100/pvs-api/github/pullRequests/${query}`,
-        { headers: { "Authorization": `${jwtToken}` } })
+          { headers: { Authorization: `${jwtToken}` } })
         setPullRequestListData(response.data)
-      } catch (e) {
-        alert(e.response?.status);
+      }
+      catch (e) {
+        alert(e.response?.status)
         console.error(e)
       }
     }
@@ -103,11 +104,10 @@ function PullRequestsPage(prop) {
 
   const generateChartDataset = () => {
     const { startMonth, endMonth } = prop
-    let chartDataset = { labels: [], data: { merged: [], closed: [], created: [] } };
+    const chartDataset = { labels: [], data: { merged: [], closed: [], created: [] } }
 
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-    }
+    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months'))
+      chartDataset.labels.push(month.format('YYYY-MM'))
 
     chartDataset.data.created = getPRCreatedCountArray()
     chartDataset.data.closed = getPRClosedCountArray()
@@ -130,7 +130,7 @@ function PullRequestsPage(prop) {
     if (prListSortedByCreatedAt.length > 0) {
       // Number of pull requests in each month
       for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-        const prCountInSelectedRange = prListSortedByCreatedAt.findIndex(pullRequest => {
+        const prCountInSelectedRange = prListSortedByCreatedAt.findIndex((pullRequest) => {
           return moment(pullRequest.createdAt).year() > month.year() || moment(pullRequest.createdAt).year() === month.year() && moment(pullRequest.createdAt).month() > month.month()
         })
         created.push(prCountInSelectedRange === -1 ? pullRequestListData.length : prCountInSelectedRange)
@@ -150,10 +150,10 @@ function PullRequestsPage(prop) {
       // Number of pull requests in each month
       for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
         noCloseCount = 0 // Number of pull requests without 'closedAt' date
-        const prCountInSelectedRange = prListSortedByClosedAt.findIndex(pullRequest => {
-          if (pullRequest.closedAt == null) {
+        const prCountInSelectedRange = prListSortedByClosedAt.findIndex((pullRequest) => {
+          if (pullRequest.closedAt == null)
             noCloseCount += 1
-          }
+
           return moment(pullRequest.closedAt).year() > month.year() || moment(pullRequest.closedAt).year() === month.year() && moment(pullRequest.closedAt).month() > month.month()
         })
         closed.push(prCountInSelectedRange === -1 ? pullRequestListData.length - noCloseCount : prCountInSelectedRange - noCloseCount)
@@ -173,10 +173,10 @@ function PullRequestsPage(prop) {
       // Number of pull requests in each month
       for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
         noMergeCount = 0 // Number of pull requests without 'mergedAt' date
-        const prCountInSelectedRange = prListSortedByMergedAt.findIndex(pullRequest => {
-          if (pullRequest.mergedAt == null) {
+        const prCountInSelectedRange = prListSortedByMergedAt.findIndex((pullRequest) => {
+          if (pullRequest.mergedAt == null)
             noMergeCount += 1
-          }
+
           return moment(pullRequest.mergedAt).year() > month.year() || moment(pullRequest.mergedAt).year() === month.year() && moment(pullRequest.mergedAt).month() > month.month()
         })
         merged.push(prCountInSelectedRange === -1 ? pullRequestListData.length - noMergeCount : prCountInSelectedRange - noMergeCount)
@@ -198,7 +198,7 @@ function PullRequestsPage(prop) {
             project={ currentProject }
             className={ classes.avatar }
           />
-          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
         </div>
       </header>
 
@@ -221,8 +221,8 @@ function PullRequestsPage(prop) {
 const mapStateToProps = (state) => {
   return {
     startMonth: state.selectedMonth.startMonth,
-    endMonth: state.selectedMonth.endMonth
+    endMonth: state.selectedMonth.endMonth,
   }
 }
 
-export default connect(mapStateToProps)(PullRequestsPage);
+export default connect(mapStateToProps)(PullRequestsPage)

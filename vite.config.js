@@ -1,6 +1,6 @@
-import {defineConfig} from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import {minifyHtml} from 'vite-plugin-html'
+import { minifyHtml } from 'vite-plugin-html'
 
 export default defineConfig({
   plugins: [
@@ -13,10 +13,10 @@ export default defineConfig({
       minifyURLs: true,
       removeAttributeQuotes: true,
       removeComments: true,
-      removeEmptyAttributes: true
+      removeEmptyAttributes: true,
     })],
   define: {
-    'process.env': {}
+    'process.env': {},
   },
   build: {
     minify: 'terser',
@@ -30,15 +30,15 @@ export default defineConfig({
       compress: true,
       format: {
         preserve_annotations: false,
-        comments: false
-      }
+        comments: false,
+      },
     },
     chunkSizeWarningLimit: 100000,
     rollupOptions: {
       output: {
         preferConst: true,
         freeze: true,
-      }
-    }
+      },
+    },
   },
 })

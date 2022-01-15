@@ -41,6 +41,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.16.0",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/preset-react": "^7.16.7",
     "@vitejs/plugin-react": "^1.1.4",
     "eslint": "^8.6.0",
     "eslint-plugin-react": "^7.28.0",

@@ -1,22 +1,22 @@
-import {useEffect, useState} from 'react'
-import {Backdrop, CircularProgress} from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import ProjectAvatar from './ProjectAvatar'
+import { useEffect, useState } from 'react'
+import { Backdrop, CircularProgress } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
-import {connect} from 'react-redux'
-import DrawingBoard from './DrawingBoard'
+import { connect } from 'react-redux'
 import moment from 'moment'
+import DrawingBoard from './DrawingBoard'
+import ProjectAvatar from './ProjectAvatar'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginLeft: '10px',
   },
   chartContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   chart: {
     width: '67%',
@@ -32,23 +32,23 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '95%'
+    width: '95%',
   },
 }))
 
 function BugsPage(prop) {
   const classes = useStyles()
   const [currentProject, setCurrentProject] = useState({})
-  const [bugUrl, setBugUrl] = useState("")
-  const [dataForBugChart, setDataForBugChart] = useState({labels: [], data: {bug: []}})
+  const [bugUrl, setBugUrl] = useState('')
+  const [dataForBugChart, setDataForBugChart] = useState({ labels: [], data: { bug: [] } })
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
 
   const [isLoading, setLoading] = useState(false)
   const loadingBugDataEnd = () => {
@@ -60,26 +60,27 @@ function BugsPage(prop) {
 
   const config = {
     headers: {
-      ...(jwtToken && {"Authorization": jwtToken})
-    }
+      ...(jwtToken && { Authorization: jwtToken }),
+    },
   }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      config
+      config,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -89,14 +90,15 @@ function BugsPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getBugData = async () => {
-    const repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === "sonar")
-    const sonarComponent = repositoryDTO.url.split("id=")[1]
+  const getBugData = async() => {
+    const repositoryDTO = currentProject.repositoryDTOList.find(x => x.type === 'sonar')
+    const sonarComponent = repositoryDTO.url.split('id=')[1]
     setBugUrl(`https://sonarcloud.io/project/issues?id=${sonarComponent}&resolved=false&types=BUG`)
     try {
       const response = await sendPVSBackendRequest('GET', `/sonar/${sonarComponent}/bug`)
       setBugChart(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
       loadingBugDataEnd()
@@ -104,9 +106,9 @@ function BugsPage(prop) {
   }
 
   const setBugChart = (bugList) => {
-    const dataset = {labels: [], data: {bug: []}}
-    bugList.forEach(bug => {
-      dataset.labels.push(moment(bug.date).format("YYYY-MM-DD HH:mm:ss"))
+    const dataset = { labels: [], data: { bug: [] } }
+    bugList.forEach((bug) => {
+      dataset.labels.push(moment(bug.date).format('YYYY-MM-DD HH:mm:ss'))
       dataset.data.bug.push(bug.value)
     })
     setDataForBugChart(dataset)
@@ -131,7 +133,7 @@ function BugsPage(prop) {
           project={ currentProject }
           className={ classes.avatar }
         />
-        <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+        <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
       </header>
       <h2 id="number-of-sonar">
         <a href={ bugUrl } target="blank">{dataForBugChart.data.bug[dataForBugChart.data.bug.length - 1]}</a>
@@ -142,7 +144,7 @@ function BugsPage(prop) {
             <h1>Bugs</h1>
             <div>
               <DrawingBoard data={ dataForBugChart } maxBoardY={ Math.max(...dataForBugChart.data.bug) + 5 }
-                            id="bugs-chart"/>
+                id="bugs-chart"/>
             </div>
           </div>
         </div>
@@ -154,7 +156,7 @@ function BugsPage(prop) {
 const mapStateToProps = (state) => {
   return {
     startMonth: state.selectedMonth.startMonth,
-    endMonth: state.selectedMonth.endMonth
+    endMonth: state.selectedMonth.endMonth,
   }
 }
 

@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Backdrop, CircularProgress, MenuItem, Select } from '@mui/material'
-import {makeStyles} from "@mui/styles";
-import ProjectAvatar from './ProjectAvatar'
-import DrawingBoard from './DrawingBoard'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
+import DrawingBoard from './DrawingBoard'
+import ProjectAvatar from './ProjectAvatar'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginLeft: '10px',
   },
   chart: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
+    'minWidth': '30px',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -41,14 +41,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 20,
   },
   buttonContainer: {
-    display: 'flex',
+    'display': 'flex',
     '& > *': {
       margin: theme.spacing(1),
     },
-    minWidth: '30px',
-    alignItems: 'center',
-    width: "67%",
-    justifyContent: "space-between",
+    'minWidth': '30px',
+    'alignItems': 'center',
+    'width': '67%',
+    'justifyContent': 'space-between',
   },
   title: {
     display: 'flex',
@@ -57,16 +57,15 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatar: {
-    display: 'inline-block'
+    display: 'inline-block',
   },
   header: {
     display: 'flex',
-    width: '100%'
+    width: '100%',
   },
 }))
 
 function ComparisonPage(prop) {
-
   const classes = useStyles()
   const [commitListDataLeft, setCommitListDataLeft] = useState([])
   const [commitListDataRight, setCommitListDataRight] = useState([])
@@ -75,37 +74,36 @@ function ComparisonPage(prop) {
 
   const [branchList, setBranchList] = useState([])
   const [selectedBranchList, setSelectedBranchList] = useState([])
-  const [leftBranchSelected, setLeftBranchSelected] = useState("")
-  const [rightBranchSelected, setRightBranchSelected] = useState("")
+  const [leftBranchSelected, setLeftBranchSelected] = useState('')
+  const [rightBranchSelected, setRightBranchSelected] = useState('')
 
-  const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const handleToggle = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
-  const projectId = localStorage.getItem("projectId")
-  const memberId = localStorage.getItem("memberId")
+  const projectId = localStorage.getItem('projectId')
+  const memberId = localStorage.getItem('memberId')
 
-  const sendPVSBackendRequest = async (method, url) => {
-    const baseURL = 'http://localhost:9100/pvs-api';
+  const sendPVSBackendRequest = async(method, url) => {
+    const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
-      method
-    };
-    return (await Axios.request(requestConfig))?.data;
-  };
+      method,
+    }
+    return (await Axios.request(requestConfig))?.data
+  }
 
   const loadInitialProjectInfo = () => {
     sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       .then((responseData) => {
-        if (responseData) {
+        if (responseData)
           setCurrentProject(responseData)
-        }
       })
       .catch((e) => {
         alert(e)
@@ -124,7 +122,7 @@ function ComparisonPage(prop) {
     // Only GitHub & GitLab repo has comparison page, so repo could only be GitHub or GitLab
     const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
         .then(() => {
@@ -145,15 +143,14 @@ function ComparisonPage(prop) {
 
     const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
+      const repoOwner = query.split('/')[0]
+      const repoName = query.split('/')[1]
 
       sendPVSBackendRequest('GET', `/${repo.type}/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
-          if (responseData) {
+          if (responseData)
             setCommitListDataLeft(responseData)
-          }
         })
         .catch((e) => {
           alert(e)
@@ -168,15 +165,14 @@ function ComparisonPage(prop) {
 
     const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
+      const repoOwner = query.split('/')[0]
+      const repoName = query.split('/')[1]
 
       sendPVSBackendRequest('GET', `/${repo.type}/commits?repoOwner=${repoOwner}&repoName=${repoName}&branchName=${branch}`)
         .then((responseData) => {
-          if (responseData) {
+          if (responseData)
             setCommitListDataRight(responseData)
-          }
         })
         .catch((e) => {
           alert(e)
@@ -191,13 +187,12 @@ function ComparisonPage(prop) {
 
     const repo = githubRepo !== undefined ? githubRepo : gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       sendPVSBackendRequest('GET', `/${repo.type}/branchList/${query}`)
         .then((responseData) => {
-          if (responseData) {
+          if (responseData)
             setBranchList(responseData)
-          }
         })
         .catch((e) => {
           alert(e)
@@ -218,7 +213,7 @@ function ComparisonPage(prop) {
     setSelectedBranchList([leftBranchSelected, rightBranchSelected])
   }
 
-  const handleClick = () => setLoading(true);
+  const handleClick = () => setLoading(true)
 
   useEffect(() => {
     if (Object.keys(currentProject).length !== 0) {
@@ -232,29 +227,28 @@ function ComparisonPage(prop) {
   }, [currentProject, prop.startMonth, prop.endMonth, leftBranchSelected, rightBranchSelected])
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading)
       updateCommits()
-    }
   }, [isLoading])
 
   useEffect(() => {
     const { startMonth, endMonth } = prop
-    let chartDataset = { labels: [], data: {} }
-    new Set(selectedBranchList).forEach(branch => {
+    const chartDataset = { labels: [], data: {} }
+    new Set(selectedBranchList).forEach((branch) => {
       chartDataset.data[branch] = []
     })
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
+      chartDataset.labels.push(month.format('YYYY-MM'))
       for (const branch in chartDataset.data) {
-        if (branch !== "") {
+        if (branch !== '') {
           if (branch === leftBranchSelected) {
-            chartDataset.data[branch].push(commitListDataLeft.filter(commit => {
-              return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+            chartDataset.data[branch].push(commitListDataLeft.filter((commit) => {
+              return moment(commit.committedDate).format('YYYY-MM') === month.format('YYYY-MM')
             }).length)
           }
           else if (branch === rightBranchSelected) {
-            chartDataset.data[branch].push(commitListDataRight.filter(commit => {
-              return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+            chartDataset.data[branch].push(commitListDataRight.filter((commit) => {
+              return moment(commit.committedDate).format('YYYY-MM') === month.format('YYYY-MM')
             }).length)
           }
         }
@@ -282,7 +276,7 @@ function ComparisonPage(prop) {
             project={ currentProject }
             className={ classes.avatar }
           />
-          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ""}</h2>
+          <h2 className={ classes.title }>{currentProject ? currentProject.projectName : ''}</h2>
         </div>
         <div className={ classes.buttonContainer }>
           {/* Reload Button */}
@@ -305,9 +299,9 @@ function ComparisonPage(prop) {
               labelId="list-of-branches-label"
               id="list-of-branches"
               value={ leftBranchSelected }
-              onChange={ (e) => leftDiagramUpdate(e.target.value) }
+              onChange={ e => leftDiagramUpdate(e.target.value) }
             >
-              {branchList.map((name) => (
+              {branchList.map(name => (
                 <MenuItem key={ name } value={ name }>{name}</MenuItem>
               ))}
             </Select>
@@ -319,9 +313,9 @@ function ComparisonPage(prop) {
               labelId="list-of-branches-label"
               id="list-of-branches"
               value={ rightBranchSelected }
-              onChange={ (e) => rightDiagramUpdate(e.target.value) }
+              onChange={ e => rightDiagramUpdate(e.target.value) }
             >
-              {branchList.map((name) => (
+              {branchList.map(name => (
                 <MenuItem key={ name } value={ name }>{name}</MenuItem>
               ))}
             </Select>
@@ -336,7 +330,6 @@ function ComparisonPage(prop) {
   )
 }
 
-
 const mapStateToProps = (state) => {
   return {
     startMonth: state.selectedMonth.startMonth,
@@ -344,4 +337,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(ComparisonPage);
+export default connect(mapStateToProps)(ComparisonPage)
