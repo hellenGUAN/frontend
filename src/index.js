@@ -30,7 +30,7 @@ const theme = createTheme({
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={ store }>
+    <Provider store={ myStore }>
       <ThemeProvider theme={ theme }>
         <App/>
       </ThemeProvider>
