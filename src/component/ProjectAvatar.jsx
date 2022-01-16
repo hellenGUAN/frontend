@@ -77,7 +77,6 @@ function ProjectAvatar(props) {
   const [projectName, setProjectName] = useState('')
   const [projectNameChangeStatus, setProjectNameChangeStatus] = useState(true)
   const [editButtonShow, setEditButtonShow] = useState(true)
-  const jwt = localStorage.getItem('jwtToken')
 
   const checkExistedRepo = () => {
     if (props.size === 'large') {
