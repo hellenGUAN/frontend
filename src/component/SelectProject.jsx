@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
+import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 import {
   Card,
   CardActionArea,
   IconButton,
 } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-import Add from '@mui/icons-material/Add'
+import { Add } from '@mui/icons-material'
 import { connect } from 'react-redux'
 import { setCurrentProjectId } from '../redux/action'
 import { randomHash } from '../utils'
@@ -27,10 +27,12 @@ const useStyles = makeStyles(theme => ({
   },
   large: {
     width: theme.spacing(20),
-    height: theme.spacing(25),
+    height: theme.spacing(30),
   },
   createProjectCard: {
-    height: theme.spacing(25),
+    marginTop: '3.4rem',
+    marginLeft: '1rem',
+    height: theme.spacing(30),
   },
 }))
 
@@ -63,21 +65,22 @@ function SelectProject({ setCurrentProjectId }) {
     <div>
       <h1>Projects</h1>
 
-      <div className={ classes.root }>
+      <div className={classes.root}>
         {projects.map(project =>
-          <ProjectAvatar key={ randomHash() } size="large" project={ project } reloadProjects={ loadProjects }/>,
+          <ProjectAvatar key={randomHash()} size="large" project={project} reloadProjects={loadProjects}/>,
         )}
-        <Card id="create-project-card" className={ classes.createProjectCard }>
-          <CardActionArea onClick={ () => setAddRepoDialogOpen(true) }>
-            <IconButton color="primary" className={ classes.large } disabled>
-              <Add className={ classes.large }/>
+        <Card id="create-project-card" className={classes.createProjectCard}>
+          <CardActionArea onClick={() => setAddRepoDialogOpen(true)}>
+            <IconButton color="primary" className={classes.large} disabled>
+              <Add className={classes.small}/>
             </IconButton>
           </CardActionArea>
+
         </Card>
         <AddProjectDialog
-          open={ addRepoDialogOpen }
-          reloadProjects={ loadProjects }
-          handleClose={ () => setAddRepoDialogOpen(false) }
+          open={addRepoDialogOpen}
+          reloadProjects={loadProjects}
+          handleClose={() => setAddRepoDialogOpen(false)}
         />
       </div>
     </div>
