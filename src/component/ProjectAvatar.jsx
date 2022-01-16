@@ -24,7 +24,7 @@ import {
 } from '@mui/material'
 import Axios from 'axios'
 import { setCurrentProjectId } from '../redux/action'
-import defaultAvatar from '../assets/defaultAvatar.png'
+import defaultAvatarUrl from '../assets/images/defaultAvatar.png'
 import AddRepositoryDialog from './AddRepositoryDialog'
 
 const useStyles = makeStyles(theme => ({
@@ -190,7 +190,7 @@ function ProjectAvatar(props) {
             && <Avatar alt="first repository" src={props.project.avatarURL} className={classes.avatar} />
           }
           {props.project.avatarURL === ''
-            && <Avatar alt="first repository" src={defaultAvatar} className={classes.avatar} />
+            && <Avatar alt="first repository" src={defaultAvatarUrl} className={classes.avatar} />
           }
         </CardActionArea>
 
