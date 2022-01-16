@@ -1,23 +1,30 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { makeStyles } from '@mui/styles'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import FilterDramaIcon from '@mui/icons-material/FilterDrama'
-import GpsFixedIcon from '@mui/icons-material/GpsFixed'
-import DashboardIcon from '@mui/icons-material/Dashboard'
+import { SiGitlab, SiSonarcloud, SiTrello } from 'react-icons/si'
 import AddIcon from '@mui/icons-material/Add'
+import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { BiEditAlt } from 'react-icons/bi'
 import { connect } from 'react-redux'
 import {
-  Avatar, Box, Button, CardActionArea, CardActions,
+  Avatar,
+  Box,
+  Button,
+  CardActionArea,
+  CardActions,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   IconButton,
+  InputAdornment,
+  TextField,
 } from '@mui/material'
-import { makeStyles } from '@mui/styles'
 import Axios from 'axios'
 import { setCurrentProjectId } from '../redux/action'
+import defaultAvatar from '../assets/defaultAvatar.png'
 import AddRepositoryDialog from './AddRepositoryDialog'
 
 const useStyles = makeStyles(theme => ({
@@ -34,10 +41,26 @@ const useStyles = makeStyles(theme => ({
   large: {
     width: theme.spacing(25),
   },
-  icon: {},
+  span: {
+    marginLeft: '1rem',
+    marginRight: '1rem',
+  },
   avatar: {
-    width: '100% !important',
-    height: '100% !important',
+    width: '100%',
+    height: '100%',
+  },
+  cancelButton: {
+    marginBlockStart: 0,
+    marginBlockEnd: 0,
+    color: '#9fddff',
+  },
+  deleteButton: {
+    marginBlockStart: 0,
+    marginBlockEnd: 0,
+    color: '#ff4444',
+  },
+  projectNameContainer: {
+    marginTop: '10px',
   },
 }))
 
@@ -51,6 +74,9 @@ function ProjectAvatar(props) {
   const [hasSonarRepo, setHasSonarRepo] = useState(false)
   const [hasTrelloBoard, setHasTrelloBoard] = useState(false)
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
+  const [projectName, setProjectName] = useState('')
+  const [projectNameChangeStatus, setProjectNameChangeStatus] = useState(true)
+  const [editButtonShow, setEditButtonShow] = useState(true)
   const jwt = localStorage.getItem('jwtToken')
 
   useEffect(() => {
@@ -111,15 +137,28 @@ function ProjectAvatar(props) {
       })
   }
 
+  const renameProject = async() => {
+    const projectId = props.project.projectId
+    try {
+      await Axios.patch(`http://localhost:9100/pvs-api/project?name=${projectName}&projectId=${projectId}`)
+    }
+    catch (e) {
+      alert(e.response?.status)
+      console.error(e)
+    }
+  }
+
   return (
-    <span>
-      <Box className={ props.size === 'large' ? classes.large : classes.small }>
+    <span className={classes.span}>
+      <Box className={props.size === 'large' ? classes.large : classes.small}>
         {props.size === 'large'
-        && <Button onClick={ toggleDeletionAlertDialog }>X</Button>
+          && <IconButton onClick={toggleDeletionAlertDialog}>
+            <AiOutlineCloseCircle />
+          </IconButton>
         }
         <Dialog
-          open={ deletionAlertDialog }
-          onClose={ toggleDeletionAlertDialog }
+          open={deletionAlertDialog}
+          onClose={toggleDeletionAlertDialog}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description">
           <DialogTitle id="alert-dialog-title">
@@ -127,53 +166,99 @@ function ProjectAvatar(props) {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-            You cannot restore it after deleting.
+              You cannot restore it after deleting.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={ toggleDeletionAlertDialog }>Back</Button>
-            <Button onClick={ deleteProject } autoFocus>
-            Delete
+            <Button onClick={toggleDeletionAlertDialog}>
+              <p className={classes.cancelButton}>
+                Cancel
+              </p>
+            </Button>
+            <Button onClick={deleteProject} autoFocus>
+              <p className={classes.deleteButton}>
+                Delete
+              </p>
             </Button>
           </DialogActions>
         </Dialog>
-        <CardActionArea onClick={ goToDashboard }>
-          <Avatar alt="first repository" src={ props.project.avatarURL } className={ classes.avatar }/>
-          {props.size === 'large'
-            && <p style={ { textAlign: 'center' } }>{props.project.projectName}</p>
+        <CardActionArea onClick={goToDashboard}>
+          {props.project.avatarURL !== ''
+            && <Avatar alt="first repository" src={props.project.avatarURL} className={classes.avatar} />
+          }
+          {props.project.avatarURL === ''
+            && <Avatar alt="first repository" src={defaultAvatar} className={classes.avatar} />
           }
         </CardActionArea>
+
+        {/* Project Name TextField */}
+        {props.size === 'large'
+          && <div className={classes.projectNameContainer}>
+            <TextField
+              id="projectName"
+              type="text"
+              inputProps={{ style: { marginLeft: '11px', textAlign: 'center' } }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onMouseEnter={() => setEditButtonShow(false)}
+                      onMouseLeave={() => setEditButtonShow(true)}
+                      color="secondary"
+                      edge="end"
+                      onClick={() => setProjectNameChangeStatus(false)}>
+                      {editButtonShow ? '' : <BiEditAlt />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              defaultValue={props.project.projectName}
+              disabled={projectNameChangeStatus}
+              onChange={(e) => {
+                setProjectName(e.target.value)
+              }}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') {
+                  renameProject()
+                  setProjectNameChangeStatus(true)
+                }
+                if (ev.key === 'Escape')
+                  setProjectNameChangeStatus(true)
+              }}
+            />
+          </div>
+        }
 
         {props.size === 'large'
           && <CardActions disableSpacing>
 
             {hasGithubRepo
-              && <IconButton aria-label="GitHub" onClick={ goToCommit }>
-                <GitHubIcon/>
+              && <IconButton aria-label="GitHub" onClick={goToCommit}>
+                <GitHubIcon />
               </IconButton>
             }
 
             {hasGitlabRepo
-              && <IconButton aria-label="GitLab" onClick={ goToCommit }>
-                <FilterDramaIcon/>
+              && <IconButton aria-label="GitLab" onClick={goToCommit}>
+                <SiGitlab />
               </IconButton>
             }
 
             {hasSonarRepo
-              && <IconButton aria-label="SonarQube" onClick={ goToCodeCoverage }>
-                <GpsFixedIcon/>
+              && <IconButton aria-label="SonarQube" onClick={goToCodeCoverage}>
+                <SiSonarcloud />
               </IconButton>
             }
 
             {hasTrelloBoard
-              && <IconButton aria-label="Trello" onClick={ goToTrelloBoard }>
-                <DashboardIcon/>
+              && <IconButton aria-label="Trello" onClick={goToTrelloBoard}>
+                <SiTrello />
               </IconButton>
             }
 
             {!((hasGithubRepo || hasTrelloBoard) && hasSonarRepo && hasTrelloBoard)
-              && <IconButton aria-label="Add Repository" onClick={ showAddRepoDialog }>
-                <AddIcon/>
+              && <IconButton aria-label="Add Repository" onClick={showAddRepoDialog}>
+                <AddIcon />
               </IconButton>
             }
 
@@ -181,13 +266,13 @@ function ProjectAvatar(props) {
         }
       </Box>
       <AddRepositoryDialog
-        open={ addRepoDialogOpen }
-        reloadProjects={ props.reloadProjects }
-        handleClose={ () => setAddRepoDialogOpen(false) }
-        projectId={ props.project.projectId }
-        hasGitRepo={ hasGithubRepo || hasGitlabRepo }
-        hasSonar={ hasSonarRepo }
-        hasTrello={ hasTrelloBoard }
+        open={addRepoDialogOpen}
+        reloadProjects={props.reloadProjects}
+        handleClose={() => setAddRepoDialogOpen(false)}
+        projectId={props.project.projectId}
+        hasGitRepo={hasGithubRepo || hasGitlabRepo}
+        hasSonar={hasSonarRepo}
+        hasTrello={hasTrelloBoard}
       />
     </span>
   )
