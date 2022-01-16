@@ -1,4 +1,4 @@
-name: build
+name: ci
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
+  test-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,6 +26,7 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm i -g pnpm
       - run: pnpm i --frozen-lockfile
-      - run: pnpm run build
+      - run: pnpm lint
+      - run: pnpm build
         env:
           NODE_OPTIONS: --openssl-legacy-provider
