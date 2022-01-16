@@ -134,38 +134,36 @@ function IssuesPage(prop) {
 
   const getIssueCreatedCountArray = () => {
     const created = []
-    const issueListDataSortedByCreatedAt = issueListData
-    if (typeof issueListDataSortedByCreatedAt === typeof []) {
-      issueListDataSortedByCreatedAt.sort((a, b) => a.createdAt - b.createdAt)
-      if (issueListDataSortedByCreatedAt.length > 0) {
-        for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-          const issueCountInSelectedRange = issueListDataSortedByCreatedAt.findIndex((issue) => {
-            return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
-          })
-          created.push(issueCountInSelectedRange === -1 ? issueListData.length : issueCountInSelectedRange)
-        }
+    const issueListDataSortedByCreatedAt = [].slice.call(issueListData).sort((a, b) => a.createdAt - b.createdAt)
+
+    if (issueListDataSortedByCreatedAt.length > 0) {
+      for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
+        const issueCountInSelectedRange = issueListDataSortedByCreatedAt.findIndex((issue) => {
+          return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
+        })
+        created.push(issueCountInSelectedRange === -1 ? issueListData.length : issueCountInSelectedRange)
       }
     }
+
     return created
   }
 
   const getIssueClosedCountArray = () => {
     const closed = []
-    const issueListDataSortedByClosedAt = issueListData
-    if (typeof issueListDataSortedByCreatedAt === typeof []) {
-      issueListDataSortedByClosedAt?.sort((a, b) => a.closedAt - b.closedAt)
-      if (issueListDataSortedByClosedAt.length > 0) {
-        for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-          let noCloseCount = 0
+    const issueListDataSortedByClosedAt = [].slice.call(issueListData).sort((a, b) => a.closedAt - b.closedAt)
 
-          const issueCountInSelectedRange = issueListDataSortedByClosedAt.findIndex((issue) => {
-            if (issue.closedAt == null) noCloseCount += 1
-            return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
-          })
-          closed.push(issueCountInSelectedRange === -1 ? issueListData.length - noCloseCount : issueCountInSelectedRange - noCloseCount)
-        }
+    if (issueListDataSortedByClosedAt.length > 0) {
+      for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
+        let noCloseCount = 0
+
+        const issueCountInSelectedRange = issueListDataSortedByClosedAt.findIndex((issue) => {
+          if (issue.closedAt == null) noCloseCount += 1
+          return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
+        })
+        closed.push(issueCountInSelectedRange === -1 ? issueListData.length - noCloseCount : issueCountInSelectedRange - noCloseCount)
       }
     }
+
     return closed
   }
 
