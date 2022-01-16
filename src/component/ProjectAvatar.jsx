@@ -140,7 +140,7 @@ function ProjectAvatar(props) {
   const renameProject = async() => {
     const projectId = props.project.projectId
     try {
-      await Axios.patch(`http://localhost:9100/pvs-api/project?name=${projectName}&projectId=${projectId}`)
+      await Axios.patch(`http://localhost:9100/pvs-api/project/name?name=${projectName}&projectId=${projectId}`)
     }
     catch (e) {
       alert(e.response?.status)
