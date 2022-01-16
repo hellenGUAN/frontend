@@ -321,7 +321,8 @@ function Sidebar(prop) {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${prop.currentProjectId}`, headers)
       setCurrentProject(response.data)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e?.response?.status)
       console.error(e)
     }

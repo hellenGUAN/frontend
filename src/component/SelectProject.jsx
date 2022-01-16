@@ -47,7 +47,8 @@ function SelectProject({ setCurrentProjectId }) {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/active`, headers)
       setProjects(response.data)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }

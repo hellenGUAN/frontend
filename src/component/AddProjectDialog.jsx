@@ -43,7 +43,8 @@ export default function AddProjectDialog({ open, reloadProjects, handleClose }) 
 
     try {
       await sendPVSBackendRequest('POST', `/project`, payload)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e?.response?.status)
       console.error(e)
     } // 回傳給後端

@@ -58,7 +58,8 @@ function TrelloBoardPage() {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -77,7 +78,8 @@ function TrelloBoardPage() {
         setBoardData(response)
         setHasBoardData(true)
         loadingBoardEnd()
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
         loadingBoardEnd()
@@ -110,7 +112,7 @@ function TrelloBoardPage() {
 
   return (
     <div className={ classes.root }>
-      <Backdrop className={classes.backdrop} open={ isLoading }>
+      <Backdrop className={ classes.backdrop } open={ isLoading }>
         <CircularProgress color="inherit" />
       </Backdrop>
       <div className={ classes.boardContainer }>

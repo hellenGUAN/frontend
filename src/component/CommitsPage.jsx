@@ -92,7 +92,8 @@ function CommitsPage(prop) {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -114,7 +115,8 @@ function CommitsPage(prop) {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
         getCommitFromDB()
         setLoading(false)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }
@@ -134,7 +136,8 @@ function CommitsPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
         setCommitListData(response)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
         loadingCommitsEnd()

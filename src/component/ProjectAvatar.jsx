@@ -110,7 +110,8 @@ function ProjectAvatar(props) {
       await Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`, config)
       toggleDeletionAlertDialog()
       props.reloadProjects()
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }

@@ -96,7 +96,8 @@ function PullRequestsPage(prop) {
         const response = await sendPVSBackendRequest('GET', `/github/pullRequests/${query}`)
         setPullRequestListData(response)
         loadingEnd()
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status);
         console.error(e)
         loadingEnd()

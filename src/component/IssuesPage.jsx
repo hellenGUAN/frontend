@@ -78,7 +78,8 @@ function IssuesPage(prop) {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }

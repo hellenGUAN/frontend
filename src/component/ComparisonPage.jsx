@@ -106,7 +106,8 @@ function ComparisonPage(prop) {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -130,7 +131,8 @@ function ComparisonPage(prop) {
         getCommitFromDB("left", leftBranchSelected)
         getCommitFromDB("right", rightBranchSelected)
         setLoading(false)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }
@@ -150,7 +152,8 @@ function ComparisonPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits`, {repoOwner, repoName, branchName})
         whichBranch === "left" ? setCommitListDataLeft(response) : setCommitListDataRight(response)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }
@@ -168,7 +171,8 @@ function ComparisonPage(prop) {
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/branchList/${query}`)
         setBranchList(response)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }

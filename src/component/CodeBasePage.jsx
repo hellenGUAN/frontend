@@ -89,7 +89,8 @@ function CodeBasePage(prop) {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
-    } catch (e) {
+    }
+    catch (e) {
       alert(e.response?.status)
       console.error(e)
     }
@@ -111,7 +112,8 @@ function CodeBasePage(prop) {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
         getCommitFromDB()
         setLoading(false)
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
       }
@@ -132,7 +134,8 @@ function CodeBasePage(prop) {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
         setCommitListData(response)
         loadingCommitsEnd()
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
         loadingCommitsEnd()
@@ -219,11 +222,11 @@ function CodeBasePage(prop) {
         </div>
       </header>
 
-      <div className={classes.chartContainer}>
-        <div className={classes.chart}>
+      <div className={ classes.chartContainer }>
+        <div className={ classes.chart }>
           <h1>Team</h1>
           <div>
-            <DrawingBoard data={dataForCodeBaseChart} isCodeBase={true} id="team-codebase-chart" />
+            <DrawingBoard data={ dataForCodeBaseChart } isCodeBase={ true } id="team-codebase-chart" />
           </div>
         </div>
       </div>

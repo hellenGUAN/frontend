@@ -58,7 +58,8 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
           await sendPVSBackendRequest('POST', `/project/${projectId}/repository/${repoType}`, payload)
           reloadProjects()
           handleClose()
-        } catch (e) {
+        }
+        catch (e) {
           alert(e?.response?.status)
           console.error(e)
         }
@@ -71,7 +72,8 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
       try {
         await sendPVSBackendRequest('GET', `/repository/${repoType}/check`, "", { url })
         return true
-      } catch (e) {
+      }
+      catch (e) {
         alert("Invalid URL")
         return false
       }
@@ -92,7 +94,7 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
           label="Repository URL"
           type="text"
           fullWidth
-          onChange={(e) => { repositoryURL = e.target.value }}
+          onChange={ (e) => { repositoryURL = e.target.value } }
           required
           autoFocus
           InputProps={ {
