@@ -46,8 +46,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: '1rem',
   },
   avatar: {
-    width: '100%',
-    height: '100%',
+    width: '100% !important',
+    height: '100% !important',
   },
   cancelButton: {
     marginBlockStart: 0,
@@ -195,6 +195,7 @@ function ProjectAvatar(props) {
         {props.size === 'large'
           && <div className={classes.projectNameContainer}>
             <TextField
+              variant="standard"
               id="projectName"
               type="text"
               inputProps={{ style: { marginLeft: '11px', textAlign: 'center' } }}
