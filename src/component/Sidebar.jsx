@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawer: {
     zIndex: '1',
-    marginTop: '4rem',
+    paddingTop: '4rem',
     position: 'relative',
     width: drawerWidth,
     flexShrink: 0,
@@ -96,7 +96,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   list: {
-    height: 'calc(100%)',
+    height: '100%',
     width: 'auto',
   },
   logout: {
@@ -105,7 +105,7 @@ const useStyles = makeStyles(theme => ({
     right: 0,
   },
   menuList: {
-    height: 'calc(100%)',
+    height: '100%',
   },
   monthSelector: {
     width: 240,
@@ -315,9 +315,9 @@ function Sidebar(prop) {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/${prop.currentProjectId}`, headers)
       setCurrentProject(response.data)
@@ -329,9 +329,8 @@ function Sidebar(prop) {
   }
 
   useEffect(() => {
-    if (prop.currentProjectId !== 0) {
+    if (prop.currentProjectId && prop.currentProjectId !== '0')
       loadInitialProjectInfo()
-    }
   }, [prop.currentProjectId])
 
   return (

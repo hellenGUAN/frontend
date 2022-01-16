@@ -51,14 +51,13 @@ function ProjectAvatar(props) {
   const [hasSonarRepo, setHasSonarRepo] = useState(false)
   const [hasTrelloBoard, setHasTrelloBoard] = useState(false)
   const [deletionAlertDialog, setDeletionAlertDialog] = useState(false)
-  const jwt = localStorage.getItem('jwtToken')
 
   const checkExistedRepo = () => {
     if (props.size === 'large') {
-      const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === "github")
-      const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === "gitlab")
-      const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === "sonar")
-      const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === "trello")
+      const getGithubRepo = props.project.repositoryDTOList.find(x => x.type === 'github')
+      const getGitlabRepo = props.project.repositoryDTOList.find(x => x.type === 'gitlab')
+      const getSonarRepo = props.project.repositoryDTOList.find(x => x.type === 'sonar')
+      const getTrelloBoard = props.project.repositoryDTOList.find(x => x.type === 'trello')
 
       setHasGithubRepo(getGithubRepo !== undefined)
       setHasGitlabRepo(getGitlabRepo !== undefined)
@@ -103,11 +102,9 @@ function ProjectAvatar(props) {
     setDeletionAlertDialog(!deletionAlertDialog)
   }
 
-  const headers = { ...(jwt && { "Authorization": jwt }) }
-
-  const deleteProject = async () => {
+  const deleteProject = async() => {
     try {
-      await Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`, config)
+      await Axios.delete(`http://localhost:9100/pvs-api/project/remove/${props.project.projectId}`)
       toggleDeletionAlertDialog()
       props.reloadProjects()
     }

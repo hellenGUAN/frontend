@@ -41,9 +41,9 @@ function SelectProject({ setCurrentProjectId }) {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const loadProjects = async () => {
+  const loadProjects = async() => {
     try {
       const response = await Axios.get(`http://localhost:9100/pvs-api/project/${memberId}/active`, headers)
       setProjects(response.data)

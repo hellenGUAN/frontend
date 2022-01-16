@@ -27,9 +27,9 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
 
   let repositoryURL = ''
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url, data, params) => {
+  const sendPVSBackendRequest = async(method, url, data, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
@@ -37,21 +37,21 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
       method,
       headers,
       data,
-      params
+      params,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const addRepository = async () => {
-    if (repositoryURL.trim() === "") {
-      alert("不準啦馬的>///<")
-    } else {
-
+  const addRepository = async() => {
+    if (repositoryURL.trim() === '') {
+      alert('不準啦馬的>///<')
+    }
+    else {
       const isValidUrl = await checkRepositoryURL(repositoryURL)
       if (isValidUrl) {
         const payload = {
           projectId,
-          repositoryURL
+          repositoryURL,
         }
 
         try {
@@ -67,14 +67,14 @@ export default function AddRepositoryDialog({ open, reloadProjects, handleClose,
     }
   }
 
-  const checkRepositoryURL = async (url) => {
-    if (repoType !== "") {
+  const checkRepositoryURL = async(url) => {
+    if (repoType !== '') {
       try {
-        await sendPVSBackendRequest('GET', `/repository/${repoType}/check`, "", { url })
+        await sendPVSBackendRequest('GET', `/repository/${repoType}/check`, '', { url })
         return true
       }
       catch (e) {
-        alert("Invalid URL")
+        alert('Invalid URL')
         return false
       }
     }

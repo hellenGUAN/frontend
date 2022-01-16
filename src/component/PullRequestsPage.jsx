@@ -60,15 +60,15 @@ function PullRequestsPage(prop) {
     setLoading(true)
   }
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers
+      headers,
     }
     return (await Axios.request(requestConfig))?.data
   }
@@ -98,7 +98,7 @@ function PullRequestsPage(prop) {
         loadingEnd()
       }
       catch (e) {
-        alert(e.response?.status);
+        alert(e.response?.status)
         console.error(e)
         loadingEnd()
       }

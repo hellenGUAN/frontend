@@ -32,7 +32,7 @@ function TrelloBoardPage() {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false)
   const loadingBoardEnd = () => {
     setLoading(false)
   }
@@ -40,21 +40,21 @@ function TrelloBoardPage() {
     setLoading(true)
   }
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url, params) => {
+  const sendPVSBackendRequest = async(method, url, params) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
       headers,
-      params
+      params,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
@@ -69,12 +69,12 @@ function TrelloBoardPage() {
     loadInitialProjectInfo()
   }, [])
 
-  const getTrelloData = async () => {
+  const getTrelloData = async() => {
     const trelloBoard = currentProject.repositoryDTOList.find(repo => repo.type === 'trello')
     const url = trelloBoard.url
     if (trelloBoard !== undefined) {
       try {
-        const response = await sendPVSBackendRequest('GET', `/trello/board`, {url})
+        const response = await sendPVSBackendRequest('GET', '/trello/board', { url })
         setBoardData(response)
         setHasBoardData(true)
         loadingBoardEnd()

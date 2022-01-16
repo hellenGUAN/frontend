@@ -66,7 +66,7 @@ export default function Login() {
     const jwt = await getJWTFrom(credential)
     if (jwt && jwt !== '') {
       localStorage.setItem('jwtToken', jwt)
-      Axios.defaults.headers.common['Authorization'] = jwt
+      Axios.defaults.headers.common.Authorization = jwt
       const memberId = await getMemberId()
       if (memberId && memberId !== '') {
         localStorage.setItem('memberId', memberId)

@@ -78,15 +78,15 @@ function DashboardPage() {
   const [currentProject, setCurrentProject] = useState({})
   const [hasGitHubRepo, setHasGitHubRepo] = useState(false)
 
-  const projectId = localStorage.getItem("projectId")
-  const jwtToken = localStorage.getItem("jwtToken")
-  const memberId = localStorage.getItem("memberId")
-  const [isLoading, setLoading] = useState(false);
+  const projectId = localStorage.getItem('projectId')
+  const jwtToken = localStorage.getItem('jwtToken')
+  const memberId = localStorage.getItem('memberId')
+  const [isLoading, setLoading] = useState(false)
   const loadingDataEnd = () => {
-    setLoading(false);
+    setLoading(false)
   }
   const loadingDataStart = () => {
-    setLoading(true);
+    setLoading(true)
   }
 
   const fetchCurrentProject = async() => {
@@ -113,9 +113,9 @@ function DashboardPage() {
   useEffect(() => {
     loadingDataStart()
     const githubRepo = currentProject.repositoryDTOList?.find(repo => repo.type === 'github')
-    if (githubRepo !== undefined) {
+    if (githubRepo !== undefined)
       setHasGitHubRepo(true)
-    }
+
     loadingDataEnd()
   }, [currentProject])
 

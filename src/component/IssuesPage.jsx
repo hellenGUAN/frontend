@@ -53,7 +53,7 @@ function IssuesPage(prop) {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false)
   const loadingIssuesEnd = () => {
     setLoading(false)
   }
@@ -61,20 +61,20 @@ function IssuesPage(prop) {
     setLoading(true)
   }
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers
+      headers,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
@@ -89,19 +89,20 @@ function IssuesPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getIssue = async () => {
+  const getIssue = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/issues/${query}`)
         setIssueListData(response)
         loadingIssuesEnd()
-      } catch (e) {
+      }
+      catch (e) {
         alert(e.response?.status)
         console.error(e)
         loadingIssuesEnd()
@@ -122,9 +123,9 @@ function IssuesPage(prop) {
 
   const generateIssueChartDataset = () => {
     const chartDataset = { labels: [], data: { closed: [], created: [] } }
-    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      chartDataset.labels.push(month.format("YYYY-MM"))
-    }
+    for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months'))
+      chartDataset.labels.push(month.format('YYYY-MM'))
+
     chartDataset.data.created = getIssueCreatedCountArray()
     chartDataset.data.closed = getIssueClosedCountArray()
 
@@ -134,13 +135,15 @@ function IssuesPage(prop) {
   const getIssueCreatedCountArray = () => {
     const created = []
     const issueListDataSortedByCreatedAt = issueListData
-    issueListDataSortedByCreatedAt.sort((a, b) => a.createdAt - b.createdAt)
-    if (issueListDataSortedByCreatedAt.length > 0) {
-      for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-        const issueCountInSelectedRange = issueListDataSortedByCreatedAt.findIndex((issue) => {
-          return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
-        })
-        created.push(issueCountInSelectedRange === -1 ? issueListData.length : issueCountInSelectedRange)
+    if (typeof issueListDataSortedByCreatedAt === typeof []) {
+      issueListDataSortedByCreatedAt.sort((a, b) => a.createdAt - b.createdAt)
+      if (issueListDataSortedByCreatedAt.length > 0) {
+        for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
+          const issueCountInSelectedRange = issueListDataSortedByCreatedAt.findIndex((issue) => {
+            return moment(issue.createdAt).year() > month.year() || moment(issue.createdAt).year() === month.year() && moment(issue.createdAt).month() > month.month()
+          })
+          created.push(issueCountInSelectedRange === -1 ? issueListData.length : issueCountInSelectedRange)
+        }
       }
     }
     return created
@@ -149,16 +152,18 @@ function IssuesPage(prop) {
   const getIssueClosedCountArray = () => {
     const closed = []
     const issueListDataSortedByClosedAt = issueListData
-    issueListDataSortedByClosedAt.sort((a, b) => a.closedAt - b.closedAt)
-    if (issueListDataSortedByClosedAt.length > 0) {
-      for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-        let noCloseCount = 0
+    if (typeof issueListDataSortedByCreatedAt === typeof []) {
+      issueListDataSortedByClosedAt?.sort((a, b) => a.closedAt - b.closedAt)
+      if (issueListDataSortedByClosedAt.length > 0) {
+        for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
+          let noCloseCount = 0
 
-        const issueCountInSelectedRange = issueListDataSortedByClosedAt.findIndex((issue) => {
-          if (issue.closedAt == null) noCloseCount += 1
-          return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
-        })
-        closed.push(issueCountInSelectedRange === -1 ? issueListData.length - noCloseCount : issueCountInSelectedRange - noCloseCount)
+          const issueCountInSelectedRange = issueListDataSortedByClosedAt.findIndex((issue) => {
+            if (issue.closedAt == null) noCloseCount += 1
+            return moment(issue.closedAt).year() > month.year() || moment(issue.closedAt).year() === month.year() && moment(issue.closedAt).month() > month.month()
+          })
+          closed.push(issueCountInSelectedRange === -1 ? issueListData.length - noCloseCount : issueCountInSelectedRange - noCloseCount)
+        }
       }
     }
     return closed

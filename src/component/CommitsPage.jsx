@@ -62,8 +62,8 @@ function CommitsPage(prop) {
 
   const [numberOfMember, setNumberOfMember] = useState(5)
 
-  const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const loadingCommitsEnd = () => {
     setOpen(false)
   }
@@ -75,20 +75,20 @@ function CommitsPage(prop) {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers
+      headers,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
@@ -103,13 +103,13 @@ function CommitsPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const updateCommit = async () => {
+  const updateCommit = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       try {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
@@ -123,15 +123,15 @@ function CommitsPage(prop) {
     }
   }
 
-  const getCommitFromDB = async () => {
+  const getCommitFromDB = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
+      const repoOwner = query.split('/')[0]
+      const repoName = query.split('/')[1]
 
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
@@ -162,18 +162,17 @@ function CommitsPage(prop) {
       const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
       const repo = githubRepo ?? gitlabRepo
-      if (repo !== undefined) {
+      if (repo !== undefined)
         updateCommit()
-      }
     }
   }, [isLoading])
 
   const setCommitChart = () => {
     const dataset = { labels: [], data: { team: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      dataset.labels.push(month.format("YYYY-MM"))
-      dataset.data.team.push(commitListData.filter(commit => {
-        return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+      dataset.labels.push(month.format('YYYY-MM'))
+      dataset.data.team.push(commitListData.filter((commit) => {
+        return moment(commit.committedDate).format('YYYY-MM') === month.format('YYYY-MM')
       }).length)
     }
     setDataForTeamCommitChart(dataset)
@@ -184,22 +183,21 @@ function CommitsPage(prop) {
   }, [commitListData, prop.startMonth, prop.endMonth])
 
   const setMemberCommitChart = () => {
-    let dataset = { labels: [], data: {} }
-    new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
+    const dataset = { labels: [], data: {} }
+    new Set(commitListData.map(commit => commit.authorName)).forEach((author) => {
       dataset.data[author] = []
     })
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      dataset.labels.push(month.format("YYYY-MM"))
-      for (const key in dataset.data) {
+      dataset.labels.push(month.format('YYYY-MM'))
+      for (const key in dataset.data)
         dataset.data[key].push(0)
-      }
-      commitListData.forEach(commitData => {
-        if (moment(commitData.committedDate).format("YYYY-MM") === month.format("YYYY-MM")) {
+
+      commitListData.forEach((commitData) => {
+        if (moment(commitData.committedDate).format('YYYY-MM') === month.format('YYYY-MM'))
           dataset.data[commitData.authorName][dataset.labels.length - 1] += 1
-        }
       })
     }
-    let temp = Object.keys(dataset.data).map(key => [key, dataset.data[key]])
+    const temp = Object.keys(dataset.data).map(key => [key, dataset.data[key]])
     temp.sort((first, second) => second[1].reduce((a, b) => a + b) - first[1].reduce((a, b) => a + b))
     const result = {}
     temp.slice(0, numberOfMember).forEach((x) => {

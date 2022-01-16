@@ -63,8 +63,8 @@ function CodeBasePage(prop) {
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const loadingCommitsEnd = () => {
     setOpen(false)
   }
@@ -72,20 +72,20 @@ function CodeBasePage(prop) {
     setOpen(true)
   }
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers
+      headers,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
@@ -100,13 +100,13 @@ function CodeBasePage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getCommit = async () => {
+  const getCommit = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       try {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
@@ -120,15 +120,15 @@ function CodeBasePage(prop) {
     }
   }
 
-  const getCommitFromDB = async () => {
+  const getCommitFromDB = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
+      const repoOwner = query.split('/')[0]
+      const repoName = query.split('/')[1]
 
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
@@ -159,34 +159,33 @@ function CodeBasePage(prop) {
       const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
       const repo = githubRepo ?? gitlabRepo
-      if (repo !== undefined) {
+      if (repo !== undefined)
         getCommit()
-      }
     }
   }, [isLoading])
 
   const pushAdditionsData = (month, dataset) => {
-    dataset.data.additions.push(commitListData.filter(commit => {
-      return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+    dataset.data.additions.push(commitListData.filter((commit) => {
+      return moment(commit.committedDate).format('YYYY-MM') === month.format('YYYY-MM')
     })
-      .reduce(function (additionSum, currentCommit) {
-        return additionSum + currentCommit.additions;
+      .reduce((additionSum, currentCommit) => {
+        return additionSum + currentCommit.additions
       }, 0))
   }
 
   const pushDeletionsData = (month, dataset) => {
-    dataset.data.deletions.push(commitListData.filter(commit => {
-      return moment(commit.committedDate).format("YYYY-MM") === month.format("YYYY-MM")
+    dataset.data.deletions.push(commitListData.filter((commit) => {
+      return moment(commit.committedDate).format('YYYY-MM') === month.format('YYYY-MM')
     })
-      .reduce(function (deletionSum, currentCommit) {
-        return deletionSum - currentCommit.deletions;
+      .reduce((deletionSum, currentCommit) => {
+        return deletionSum - currentCommit.deletions
       }, 0))
   }
 
   const setCodeBaseChart = () => {
-    let dataset = { labels: [], data: { additions: [], deletions: [] } }
+    const dataset = { labels: [], data: { additions: [], deletions: [] } }
     for (let month = moment(startMonth); month <= moment(endMonth); month = month.add(1, 'months')) {
-      dataset.labels.push(month.format("YYYY-MM"))
+      dataset.labels.push(month.format('YYYY-MM'))
       pushAdditionsData(month, dataset)
       pushDeletionsData(month, dataset)
     }

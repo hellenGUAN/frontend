@@ -58,33 +58,33 @@ function ContributionPage(prop) {
   const [dataForMemberCommitBarChart, setDataForMemberCommitBarChart] = useState({ data: [] })
   const [currentProject, setCurrentProject] = useState({})
 
-  const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const loadingCommitsEnd = () => {
-    setOpen(false);
+    setOpen(false)
   }
   const loadingCommitsStart = () => {
-    setOpen(true);
+    setOpen(true)
   }
 
   const projectId = localStorage.getItem('projectId')
   const jwtToken = localStorage.getItem('jwtToken')
   const memberId = localStorage.getItem('memberId')
 
-  const headers = { ...(jwtToken && { "Authorization": jwtToken }) }
+  const headers = { ...(jwtToken && { Authorization: jwtToken }) }
 
-  const sendPVSBackendRequest = async (method, url) => {
+  const sendPVSBackendRequest = async(method, url) => {
     const baseURL = 'http://localhost:9100/pvs-api'
     const requestConfig = {
       baseURL,
       url,
       method,
-      headers
+      headers,
     }
     return (await Axios.request(requestConfig))?.data
   }
 
-  const loadInitialProjectInfo = async () => {
+  const loadInitialProjectInfo = async() => {
     try {
       const response = await sendPVSBackendRequest('GET', `/project/${memberId}/${projectId}`)
       setCurrentProject(response)
@@ -100,13 +100,13 @@ function ContributionPage(prop) {
     loadInitialProjectInfo()
   }, [])
 
-  const getCommit = async () => {
+  const getCommit = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
 
       try {
         await sendPVSBackendRequest('POST', `http://localhost:9100/pvs-api/${repo.type}/commits/${query}`)
@@ -120,15 +120,15 @@ function ContributionPage(prop) {
     }
   }
 
-  const getCommitFromDB = async () => {
+  const getCommitFromDB = async() => {
     const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
     const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
 
     const repo = githubRepo ?? gitlabRepo
     if (repo !== undefined) {
-      const query = repo.url.split(repo.type + ".com/")[1]
-      const repoOwner = query.split("/")[0]
-      const repoName = query.split("/")[1]
+      const query = repo.url.split(`${repo.type}.com/`)[1]
+      const repoOwner = query.split('/')[0]
+      const repoName = query.split('/')[1]
 
       try {
         const response = await sendPVSBackendRequest('GET', `/${repo.type}/commits/${repoOwner}/${repoName}`)
@@ -159,27 +159,26 @@ function ContributionPage(prop) {
       const githubRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'github')
       const gitlabRepo = currentProject.repositoryDTOList.find(repo => repo.type === 'gitlab')
       const repo = githubRepo ?? gitlabRepo
-      if (repo !== undefined) {
+      if (repo !== undefined)
         getCommit()
-      }
     }
   }, [isLoading])
 
   // Generate commits pie chart
   const generatePieChart = () => {
-    let chartDataset = { labels: [], data: {} }
-    new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
+    const chartDataset = { labels: [], data: {} }
+    new Set(commitListData.map(commit => commit.authorName)).forEach((author) => {
       chartDataset.data[author] = 0
       chartDataset.labels.push(author)
     })
 
-    commitListData.forEach(commitData => {
+    commitListData.forEach((commitData) => {
       chartDataset.data[commitData.authorName] += 1
     })
 
-    setDataForMemberCommitPieChart([["Member", "Numbers of commits"]])
-    chartDataset.labels.forEach(member => {
-      setDataForMemberCommitPieChart(previousArray => [...previousArray, [member.replace("\"", "").replace("\"", ""), chartDataset.data[member]]])
+    setDataForMemberCommitPieChart([['Member', 'Numbers of commits']])
+    chartDataset.labels.forEach((member) => {
+      setDataForMemberCommitPieChart(previousArray => [...previousArray, [member.replace('"', '').replace('"', ''), chartDataset.data[member]]])
     })
   }
 
@@ -191,21 +190,21 @@ function ContributionPage(prop) {
   const generateBarChart = () => {
     const chartDataset_Addition = { labels: [], data: {} }
     const chartDataset_Deletion = { labels: [], data: {} }
-    new Set(commitListData.map(commit => commit.authorName)).forEach(author => {
+    new Set(commitListData.map(commit => commit.authorName)).forEach((author) => {
       chartDataset_Addition.data[author] = 0
       chartDataset_Addition.labels.push(author)
       chartDataset_Deletion.data[author] = 0
       chartDataset_Deletion.labels.push(author)
     })
 
-    commitListData.forEach(commitData => {
+    commitListData.forEach((commitData) => {
       chartDataset_Addition.data[commitData.authorName] += commitData.additions
       chartDataset_Deletion.data[commitData.authorName] += commitData.deletions
     })
 
-    setDataForMemberCommitBarChart([["Member", "Additions", "Deletions"]])
-    chartDataset_Addition.labels.forEach(member => {
-      setDataForMemberCommitBarChart(previousArray => [...previousArray, [member.replace("\"", "").replace("\"", ""), chartDataset_Addition.data[member], chartDataset_Deletion.data[member]]])
+    setDataForMemberCommitBarChart([['Member', 'Additions', 'Deletions']])
+    chartDataset_Addition.labels.forEach((member) => {
+      setDataForMemberCommitBarChart(previousArray => [...previousArray, [member.replace('"', '').replace('"', ''), chartDataset_Addition.data[member], chartDataset_Deletion.data[member]]])
     })
   }
 
